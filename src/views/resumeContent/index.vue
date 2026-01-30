@@ -111,7 +111,8 @@
   import { storeToRefs } from 'pinia';
   import { openGlobalLoading } from '@/utils/common';
   import { useHead } from '@vueuse/head';
-  import { title } from '@/config/seo';
+  import { SEO_CONFIG } from '@/config/seo';
+  const title = SEO_CONFIG.title;
   import ResumeDetailNavBar from '@/components/NavBar/ResumeDetailNavBar.vue';
 
   const { resetResumeJson } = appStore.useCreateTemplateStore;
@@ -147,7 +148,7 @@
       HJNewJsonStore.value = data.data.template_json;
       HJNewJsonStore.value.props.title = data.data.template_title;
       useHead({
-        title: '猫步简历 - ' + (templateData.value.template_title || title)
+        title: 'AI职升姬 - ' + (templateData.value.template_title || title)
       });
     }
   };

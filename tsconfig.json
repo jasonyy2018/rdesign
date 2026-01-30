@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "typeRoots": ["node_modules/@types", "src/interface", "types"],
+    "typeRoots": [
+      "node_modules/@types",
+      "src/interface",
+      "types"
+    ],
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "target": "esnext",
@@ -12,11 +16,18 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "lib": ["esnext", "dom"],
+    "lib": [
+      "esnext",
+      "dom"
+    ],
     "baseUrl": "./",
     "paths": {
-      "@": ["src"],
-      "@/*": ["src/*"]
+      "@": [
+        "src"
+      ],
+      "@/*": [
+        "src/*"
+      ]
     },
     "skipLibCheck": true,
     "strictNullChecks": false,
@@ -27,8 +38,7 @@
       "vue3-pdfjs/esm",
       "vue3-print-nb",
       "v-contextmenu",
-      "vue-json-viewer",
-      "@vueuse/head"
+      "vue-json-viewer"
     ]
   },
   "include": [

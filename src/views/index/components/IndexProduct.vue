@@ -21,7 +21,7 @@
               text="专业简历服务"
               @click="resumeContact"
             ></hj-button-1>
-            <!-- <hj-button-1 text="AI智能生成简历" @click="generateAiResume"></hj-button-1> -->
+            <hj-button-1 text="AI智能生成简历" @click="generateAiResume"></hj-button-1>
             <!-- <hj-button-1 v-config:open_jobzx text="AI面试助手" @click="toJobzx"></hj-button-1> -->
             <!-- <hj-button-1 text="私有部署" @click="resumeContact"></hj-button-1> -->
           </div>
@@ -78,6 +78,8 @@
   </div>
 </template>
 <script lang="ts" setup>
+  import { onUnmounted } from 'vue';
+  import { useRouter } from 'vue-router';
   import { closeGlobalLoading } from '@/utils/common';
   import HjButton1 from '@/components/HjButton/HjButton1/index.vue';
   import appStore from '@/store';
@@ -94,11 +96,12 @@
 
   // 跳转AI生成简历
   const router = useRouter();
-  // const generateAiResume = () => {
-  //   router.push({
-  //     path: '/generateAiResume'
-  //   });
-  // };
+  const generateAiResume = () => {
+    console.log('Navigating to /generateAiResume');
+    router.push({
+      path: '/generateAiResume'
+    });
+  };
 
   const resumeContact = () => {
     router.push({

@@ -28,8 +28,8 @@
       <img
         class="mac-png"
         src="../../../assets/images/index-mac.svg"
-        alt="猫步简历制作"
-        title="猫步简历制作"
+        alt="AI职升姬 简历制作"
+        title="AI职升姬 简历制作"
       />
 
       <!-- 下滑提示按钮 -->

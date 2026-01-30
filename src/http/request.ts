@@ -6,14 +6,15 @@ import LoginDialog from '@/components/LoginDialog/LoginDialog';
 import { ElMessage } from 'element-plus';
 
 const handleUnauthorized = () => {
-  const { saveToken } = appStore.useTokenStore;
-  const { saveUserInfo } = appStore.useUserInfoStore;
-  const { setUuid } = appStore.useRefreshStore;
+  console.log('Unauthorized detected, but guest access is enabled. Skipping login prompt.');
+  // const { saveToken } = appStore.useTokenStore;
+  // const { saveUserInfo } = appStore.useUserInfoStore;
+  // const { setUuid } = appStore.useRefreshStore;
 
-  saveToken(''); // 清除token
-  saveUserInfo(''); // 清除用户信息
-  setUuid(); // 全局刷新
-  LoginDialog(true); // 显示登录对话框
+  // saveToken(''); // 清除token
+  // saveUserInfo(''); // 清除用户信息
+  // setUuid(); // 全局刷新
+  // LoginDialog(true); // 显示登录对话框
 };
 
 const http: any = new Request({
@@ -72,11 +73,16 @@ const http: any = new Request({
         }
 
         console.error('请求错误:', error);
-        ElMessage.error({
-          message: errorMessage,
-          duration: 5000,
-          showClose: true
-        });
+        // 如果是 401，且开启了访客模式，则不弹出错误提示
+        if (status === 401) {
+          console.warn('Suppressing 401 ElMessage error due to guest access.');
+        } else {
+          ElMessage.error({
+            message: errorMessage,
+            duration: 5000,
+            showClose: true
+          });
+        }
       } else {
         // 非HTTP状态错误
         errorMessage = error.message || '请求发生未知错误';

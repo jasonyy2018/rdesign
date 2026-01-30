@@ -225,7 +225,7 @@ export const WIDGET_CONFIG_LIST: Array<IWidgetTab> = [
     category: 'text',
     icon: 'icon-wenben',
     dataSource: {
-      text: '猫步简历' // 文本内容
+      text: 'AI职升姬' // 文本内容
     }, // 该分类下公用数据源
     list: [
       {
@@ -2053,7 +2053,7 @@ export const WIDGET_CONFIG_LIST: Array<IWidgetTab> = [
           borderStyle: 'solid'
         }, // 组件样式
         dataSource: {
-          text: '猫步简历'
+          text: 'AI职升姬'
         } // 组件单独数据
       }
     ]

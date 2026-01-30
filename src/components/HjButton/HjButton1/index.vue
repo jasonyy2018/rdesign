@@ -1,7 +1,7 @@
 <template>
-  <button class="custom-btn btn-9"
-    ><span>{{ text }}</span></button
-  >
+  <button class="custom-btn btn-9" @click="handleClick">
+    <span>{{ text }}</span>
+  </button>
 </template>
 <script setup lang="ts">
   interface IBgcColor {
@@ -10,6 +10,14 @@
   withDefaults(defineProps<IBgcColor>(), {
     text: ''
   });
+
+  const emit = defineEmits<{
+    (e: 'click', event: MouseEvent): void;
+  }>();
+
+  const handleClick = (event: MouseEvent) => {
+    emit('click', event);
+  };
 </script>
 <style lang="scss" scoped>
   .custom-btn {

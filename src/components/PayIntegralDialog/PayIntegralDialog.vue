@@ -74,7 +74,7 @@
                 </div>
                 <div class="bottom">
                   <p class="content-desc"
-                    >每邀请一位新用户注册猫步简历，您将获得+20个简币（新用户注册时填写您的专属邀请码）</p
+                    >每邀请一位新用户注册，您将获得+20个简币（新用户注册时填写您的专属邀请码）</p
                   >
                   <div class="attendance-box">
                     <div class="button" @click="getInviteCode">获取专属邀请码</div>
@@ -84,17 +84,17 @@
 
               <li>
                 <div class="top">
-                  <h1>点Star</h1>
+                  <h1>点赞支持</h1>
                   <div class="circle"
                     >20 <img width="16" src="@/assets/images/jianB.png" alt="简币"
                   /></div>
                 </div>
                 <div class="bottom">
                   <p class="content-desc"
-                    >给猫步简历项目点Star，添加小编微信，凭点赞截图和注册邮箱获取+20简币（入口在首页开源信息栏目）</p
+                    >给项目点赞支持，联系客服凭截图和注册邮箱获取+20简币</p
                   >
                   <div class="attendance-box" @click="toGithub">
-                    <div class="button"> 去点Star </div>
+                    <div class="button"> 前去点赞 </div>
                   </div>
                 </div>
               </li>

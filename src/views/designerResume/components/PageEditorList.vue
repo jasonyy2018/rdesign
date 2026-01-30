@@ -100,8 +100,11 @@
 
   // 该模块是否有moduleTitle
   const isModuleTitle = computed(() => {
+    if (!selectedModuleId.value) return false;
     const selectModule = useGetSelectedModule(selectedModuleId.value);
     if (
+      selectModule &&
+      selectModule.customProps &&
       selectModule.customProps.hasOwnProperty('ModuleTitleCpt') &&
       selectModule.customProps.ModuleTitleCpt
     ) {

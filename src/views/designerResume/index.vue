@@ -143,11 +143,20 @@
   const { token } = appStore.useTokenStore;
   if (token) {
     // 如果是从AI智能生成简历跳转过来，则不查询模版
-    console.log('fromAiGenerate', fromAiGenerate.value);
-    if (!fromAiGenerate.value) {
+    console.log('Designer entry. token:', token, 'fromAiGenerate:', fromAiGenerate.value);
+
+    // 增加安全性检查：即使 fromAiGenerate 为 true，如果 store 数据为空，也尝试加载模板
+    const hasData =
+      HJNewJsonStore.value &&
+      HJNewJsonStore.value.componentsTree &&
+      HJNewJsonStore.value.componentsTree.length > 0;
+
+    if (!fromAiGenerate.value || !hasData) {
+      if (!hasData) console.warn('HJNewJsonStore is empty, force loading template data');
       // 查询用户简历
       getUserTemplate();
     } else {
+      console.log('Loading resume from local store state.');
       isLoading.value = false;
     }
   } else {
@@ -173,23 +182,59 @@
   const generateReport = async (type: string) => {
     dialogVisible.value = true;
     timer = setInterval(() => {
-      percentage.value += 5;
-      if (percentage.value > 95) {
-        percentage.value = 98;
+      if (percentage.value < 85) {
+        percentage.value += 5;
+      } else if (percentage.value < 98) {
+        percentage.value += 1;
+      } else {
         clearInterval(timer);
       }
-    }, 500);
-    if (type === 'pdf') {
-      await exportPdfNew(route.params.id as string);
-    } else {
-      await exportPNGNew(route.params.id as string);
-    }
+    }, 800);
 
-    clearInterval(timer);
-    percentage.value = 100;
-    // 查询用简币信息
-    const { getUserIntegralTotal } = appStore.useUserInfoStore;
-    getUserIntegralTotal();
+    try {
+      // 增加 120s 导出超时控制 (实际下载可能比预览略慢)
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('TIMEOUT')), 120000)
+      );
+
+      const exportPromise =
+        type === 'pdf'
+          ? exportPdfNew(route.params.id as string)
+          : exportPNGNew(route.params.id as string);
+
+      await Promise.race([exportPromise, timeoutPromise]);
+      ElMessage.success('导出成功！');
+    } catch (error: any) {
+      console.error('Export failed:', error);
+      if (type === 'pdf') {
+        const isTimeout = error.message === 'TIMEOUT';
+        ElMessageBox.confirm(
+          isTimeout
+            ? '服务器生成PDF响应超时（预计文件较大或网络过慢）。建议直接使用浏览器打印功能手动另存为PDF。'
+            : '由于网络环境或权限限制，服务器生成PDF失败。是否尝试使用浏览器自带的“打印”功能另存为PDF？',
+          '导出提示',
+          {
+            confirmButtonText: '使用浏览器打印',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }
+        ).then(() => {
+          window.print();
+        });
+      } else {
+        ElMessage.error('导出图片失败，服务器响应超时，请重试');
+      }
+    } finally {
+      clearInterval(timer);
+      percentage.value = 100;
+      // 查询用简币信息
+      const { getUserIntegralTotal } = appStore.useUserInfoStore;
+      getUserIntegralTotal();
+      setTimeout(() => {
+        dialogVisible.value = false;
+        percentage.value = 10;
+      }, 1000);
+    }
   };
 
   // 导出为Markdown

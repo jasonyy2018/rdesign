@@ -20,7 +20,7 @@ export const pricePlans: PricePlan[] = [
     buttonText: '去下载',
     buttonColor: '#ecf1f9',
     features: [
-      { text: '猫步简历官方微信交流群', included: true, desc: '' },
+      { text: 'AI职升姬官方微信交流群', included: true, desc: '' },
       { text: '前端最新源码', included: true, desc: '' },
       { text: '个人用户可用于商业应用开发', included: false, desc: '' },
       { text: '网站开发部署文档', included: false, desc: '' },
@@ -44,7 +44,7 @@ export const pricePlans: PricePlan[] = [
       { text: '网站功能持续更新迭代', included: false, desc: '' },
       { text: '存量bug修复', included: false, desc: '' },
       { text: '二次开发指导', included: false, desc: '' },
-      { text: '是否与猫步简历官网一致', included: false, desc: '' }
+      { text: '是否与AI职升姬官网一致', included: false, desc: '' }
     ],
     bottomText: '无后端源码'
   },
@@ -54,7 +54,7 @@ export const pricePlans: PricePlan[] = [
     buttonText: '立即获取',
     buttonColor: '#9a95eb',
     features: [
-      { text: '猫步简历官方微信交流群', included: true, desc: '' },
+      { text: 'AI职升姬官方微信交流群', included: true, desc: '' },
       { text: '前端最新源码', included: true, desc: '' },
       { text: '个人用户可用于商业应用开发', included: true, desc: '' },
       { text: '网站开发部署文档', included: true, desc: '' },
@@ -78,7 +78,7 @@ export const pricePlans: PricePlan[] = [
       { text: '网站功能持续更新迭代', included: false, desc: '' },
       { text: '存量bug修复', included: false, desc: '' },
       { text: '二次开发指导', included: false, desc: '' },
-      { text: '是否与猫步简历官网一致', included: false, desc: '' }
+      { text: '是否与AI职升姬官网一致', included: false, desc: '' }
     ],
     bottomText: '后端源码更新至2023年8月',
     bottomDesc: '具备完善的后台功能，如积分、积木创作等等，简历设计器为旧版'
@@ -89,7 +89,7 @@ export const pricePlans: PricePlan[] = [
     buttonText: '立即获取',
     buttonColor: '#6ed6bd',
     features: [
-      { text: '猫步简历官方微信交流群', included: true, desc: '' },
+      { text: 'AI职升姬官方微信交流群', included: true, desc: '' },
       { text: '前端最新源码', included: true, desc: '' },
       { text: '个人用户可用于商业应用开发', included: true, desc: '' },
       { text: '网站开发部署文档', included: true, desc: '' },
@@ -113,7 +113,7 @@ export const pricePlans: PricePlan[] = [
       { text: '网站功能持续更新迭代', included: false, desc: '' },
       { text: '存量bug修复', included: false, desc: '' },
       { text: '二次开发指导', included: false, desc: '' },
-      { text: '是否与猫步简历官网一致', included: false, desc: '' }
+      { text: '是否与AI职升姬官网一致', included: false, desc: '' }
     ],
     bottomText: '后端源码更新至2025年5月',
     bottomDesc: '具备完善的后台功能，如简币体系、会员体系、支付等，简历设计器为新版'
@@ -124,7 +124,7 @@ export const pricePlans: PricePlan[] = [
     buttonText: '立即获取',
     buttonColor: '#bd9772',
     features: [
-      { text: '猫步简历官方微信交流群', included: true, desc: '' },
+      { text: 'AI职升姬官方微信交流群', included: true, desc: '' },
       { text: '前端最新源码', included: true, desc: '' },
       { text: '个人用户可用于商业应用开发', included: true, desc: '' },
       { text: '网站开发部署文档', included: true, desc: '' },
@@ -148,9 +148,9 @@ export const pricePlans: PricePlan[] = [
       { text: '网站功能持续更新迭代', included: true, desc: '' },
       { text: '存量bug修复', included: true, desc: '' },
       { text: '二次开发指导', included: true, desc: '' },
-      { text: '是否与猫步简历官网一致', included: true, desc: '' }
+      { text: '是否与AI职升姬官网一致', included: true, desc: '' }
     ],
     bottomText: '持续更新迭代',
-    bottomDesc: '与猫步简历官网完全保持一致'
+    bottomDesc: '与AI职升姬官网完全保持一致'
   }
 ];

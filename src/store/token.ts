@@ -2,10 +2,9 @@ import { defineStore } from 'pinia';
 
 // 用户信息
 export const useTokenStore = defineStore('tokenStore', () => {
-  const token = ref<string | null>(localStorage.getItem('token'));
+  const token = ref<string | null>('guest_token_mock');
   function saveToken(tokenStr: string) {
-    token.value = tokenStr;
-    localStorage.setItem('token', token.value);
+    console.log('Token mock active, skipping save');
   }
   return {
     token,

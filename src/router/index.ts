@@ -71,6 +71,7 @@ const AiDiagnosticCV = () => import('@/views/AiDiagnosticCV/index.vue');
 const LinksApply = () => import('@/views/linksApply/index.vue');
 // 站点地图
 const Sitemap = () => import('@/views/sitemap/index.vue');
+const SeoArticles = () => import('@/views/seo/Articles.vue');
 
 // 管理员界面
 const AdminIndex = () => import('@/views/admin/index.vue');
@@ -152,9 +153,22 @@ const routes: Array<RouteRecordRaw> = [
     component: Index
   },
   {
+    path: '/seo-articles',
+    name: 'SeoArticles',
+    meta: {
+      title: '职场提升与简历优化指南',
+      keepAlive: true,
+      isShowComNav: true,
+      requireLogin: false,
+      requireAdmin: false
+    },
+    component: SeoArticles
+  },
+  {
     path: '/designer',
     name: 'Designer',
     meta: {
+      value: 'AI职升姬',
       title: '设计',
       keepAlive: true,
       isShowComNav: false,
@@ -1456,7 +1470,7 @@ router.beforeEach(async (to, from, next) => {
   console.log('路由跳转 to:', to);
   if (!isTemplatePage) {
     useHead({
-      title: '猫步简历 - ' + ((to.meta.title as string) || title),
+      title: (to.meta.title as string) || title,
       meta: [
         {
           name: 'description',
@@ -1469,70 +1483,6 @@ router.beforeEach(async (to, from, next) => {
       ]
     });
   }
-
-  const token = localStorage.getItem('token');
-  const userInfo = localStorage.getItem('userInfo');
-  // 需要权限且未登录
-  if (to.meta.requireLogin && !token) {
-    closeGlobalLoading(); // 关闭全局等待层
-    LoginDialog(true, to.fullPath);
-  } else if (to.meta.requireLogin && token) {
-    // 需要权限且已经登录
-    if (userInfo) {
-      // 判断该页面是否是管理员才能进入
-      const requireAdmin = to.meta.requireAdmin ?? false;
-      const requireOrgAdmin = to.meta.requireOrgAdmin ?? false;
-      console.log('requireAdmin', requireAdmin);
-      console.log('requireOrgAdmin', requireOrgAdmin);
-      // 是否需要组织管理员权限
-      if (requireOrgAdmin || requireAdmin) {
-        if (requireOrgAdmin && requireAdmin) {
-          // 需要同时满足组织管理员和系统管理员
-          const [orgAdminRes, adminRes] = await Promise.all([
-            getOrgAdminPermissionAsync(),
-            getUserPermissionAsync()
-          ]);
-          const isOrgAdmin = orgAdminRes.data.data;
-          const isAdmin = adminRes.data.data;
-          if (!isOrgAdmin || !isAdmin) {
-            next('/noPermission');
-            return;
-          }
-        } else if (requireOrgAdmin) {
-          // 只需要组织管理员权限
-          const orgAdminRes = await getOrgAdminPermissionAsync();
-          if (!orgAdminRes.data.data) {
-            next('/noPermission');
-            return;
-          }
-        } else if (requireAdmin) {
-          // 只需要系统管理员权限
-          const adminRes = await getUserPermissionAsync();
-          if (!adminRes.data.data) {
-            next('/noPermission');
-            return;
-          }
-        }
-      }
-
-      const emailVerify = JSON.parse(userInfo as string).auth.email.valid;
-      if (emailVerify || !CONFIG.isEmailVerify) {
-        next();
-      } else {
-        router.push({
-          path: '/emailVerify',
-          query: {
-            email: JSON.parse(userInfo as string).email
-          }
-        });
-        closeGlobalLoading(); // 关闭全局等待层
-      }
-    } else {
-      closeGlobalLoading(); // 关闭全局等待层
-      LoginDialog(true, to.fullPath);
-    }
-  } else {
-    next();
-  }
+  next();
 });
 export default router;

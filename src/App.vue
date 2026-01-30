@@ -60,7 +60,7 @@
     if (isFirstLoad.value) {
       // 更新 canonical 链接
       const canonical: any = document.querySelector('link[rel="canonical"]');
-      const url = `https://maobucv.com${route.fullPath}`;
+      const url = `https://aizhishengji.example.com${route.fullPath}`; // Using a placeholder domain
 
       if (canonical) {
         canonical.href = url;

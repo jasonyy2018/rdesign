@@ -1,9 +1,7 @@
-name: 部署猫步简历到开发服务器上
+name: 部署AI职升姬到开发服务器上
 on:
-  #监听push操作
   pull_request:
     branches:
-      # main分支，你也可以改成其他分支
       - develop
 jobs:
   build:
@@ -18,9 +16,7 @@ jobs:
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
         run: export NODE_OPTIONS="--max_old_space_size=4096" && npm run build:dev
-      # 命名这个任务为发布Deploy
       - name: Deploy
-        # 因为构建之后，需要把代码上传到服务器上，所以需要连接到ssh，并且做一个拷贝操作
         uses: cross-the-world/scp-pipeline@master
         env:
           WELCOME: 'ssh scp ssh pipelines'

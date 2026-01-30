@@ -1,0 +1,1836 @@
+{
+  "version": "2.6",
+  "children": [
+    {
+      "type": "frame",
+      "id": "bRZaC",
+      "x": 0,
+      "y": 0,
+      "name": "首页 - Home Page",
+      "clip": true,
+      "width": 1440,
+      "height": 3200,
+      "fill": "#F7F7F7",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "N3AOK",
+          "name": "导航栏 - NavBar",
+          "width": "fill_container",
+          "height": 64,
+          "fill": "#FFFFFF",
+          "padding": [
+            0,
+            60
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "xjNHZ",
+              "name": "logoArea",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "BvWzq",
+                  "name": "logoIcon",
+                  "width": 36,
+                  "height": 36,
+                  "fill": "#7F6DBB",
+                  "cornerRadius": 8
+                },
+                {
+                  "type": "text",
+                  "id": "k0MUF",
+                  "name": "logoText",
+                  "fill": "#2D1B69",
+                  "content": "简历设计平台",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "bold"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "2mlnk",
+              "name": "navLinks",
+              "gap": 32,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "s7qvH",
+                  "name": "navItem1",
+                  "fill": "#7F6DBB",
+                  "content": "首页",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "OFvlT",
+                  "name": "navItem2",
+                  "fill": "#333333",
+                  "content": "模板中心",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "tBOJ3",
+                  "name": "navItem3",
+                  "fill": "#333333",
+                  "content": "在线制作",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "YTg0P",
+                  "name": "navItem4",
+                  "fill": "#333333",
+                  "content": "AI工具",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "tuubb",
+                  "name": "navItem5",
+                  "fill": "#333333",
+                  "content": "Word模板",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "T8AaS",
+                  "name": "navItem6",
+                  "fill": "#333333",
+                  "content": "PPT模板",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "zOWYo",
+              "name": "navRight",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "kQBO9",
+                  "name": "loginBtn",
+                  "fill": "#7F6DBB",
+                  "cornerRadius": 8,
+                  "padding": [
+                    10,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "9bJKz",
+                      "name": "loginText",
+                      "fill": "#FFFFFF",
+                      "content": "登录/注册",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "oUBpa",
+          "name": "Hero区域",
+          "width": "fill_container",
+          "height": 700,
+          "fill": "linear-gradient(135deg, #EDE7F6 0%, #F5F5F5 50%, #E8EAF6 100%)",
+          "padding": [
+            100,
+            120
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "SWIVK",
+              "name": "heroLeft",
+              "width": 580,
+              "layout": "vertical",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "zeEPI",
+                  "name": "heroTag",
+                  "fill": "#7F6DBB20",
+                  "cornerRadius": 20,
+                  "padding": [
+                    8,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ZAqnf",
+                      "name": "heroTagText",
+                      "fill": "#7F6DBB",
+                      "content": "🚀 已接入 DeepSeek AI",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "wryPF",
+                  "name": "heroTitle",
+                  "fill": "#2D1B69",
+                  "content": "一款开源、免费、专业的\nAI简历生成制作神器",
+                  "lineHeight": 1.3,
+                  "fontFamily": "Inter",
+                  "fontSize": 48,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "k53i3",
+                  "name": "heroDesc",
+                  "fill": "#666666",
+                  "content": "全面接入Deepseek，AI智能简历生成、AI智能简历诊断、智能润色、修改等，\n交付源码级JSON；支持导出超高清PDF、Markdown、图片格式。",
+                  "lineHeight": 1.8,
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "mPb5S",
+                  "name": "heroBtns",
+                  "gap": 20,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "nJIyc",
+                      "name": "primaryBtn",
+                      "fill": "linear-gradient(135deg, #7F6DBB 0%, #9C88DD 100%)",
+                      "cornerRadius": 12,
+                      "padding": [
+                        16,
+                        32
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "CMthQ",
+                          "name": "primaryBtnText",
+                          "fill": "#FFFFFF",
+                          "content": "免费制作专业简历",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "4zHkP",
+                      "name": "secondaryBtn",
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 12,
+                      "padding": [
+                        16,
+                        32
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "oh0gg",
+                          "name": "secondaryBtnText",
+                          "fill": "#7F6DBB",
+                          "content": "专业简历服务",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "avTdE",
+              "name": "Hero右侧插画",
+              "width": 500,
+              "height": 400,
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "./images/generated-1769659312894.png",
+                "mode": "fill"
+              },
+              "cornerRadius": 24
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "myJ5z",
+          "name": "功能特性",
+          "width": "fill_container",
+          "height": 600,
+          "layout": "vertical",
+          "gap": 48,
+          "padding": [
+            80,
+            120
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "FGspT",
+              "name": "featuresHeader",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "7pqgC",
+                  "name": "featuresTitle",
+                  "fill": "#2D1B69",
+                  "content": "强大 AI 功能，赋能求职全链路",
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 32,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "mUnGl",
+                  "name": "featuresDesc",
+                  "fill": "#666666",
+                  "content": "基于先进的大语言模型，提供全方位的简历优化与生成服务",
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "mfGJJ",
+              "name": "featureCards",
+              "width": "fill_container",
+              "gap": 24,
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "IP7xV",
+                  "name": "card1",
+                  "width": 280,
+                  "height": 260,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "layout": "vertical",
+                  "gap": 20,
+                  "padding": 32,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "senDk",
+                      "name": "icon1",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "a_zayan",
+                        "link": "https://unsplash.com/@a_zayan",
+                        "author": "Mohammed Zayan Khan"
+                      },
+                      "width": 56,
+                      "height": 56,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1666438803512-3e0f546cbab3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3Njk2NTkzMTN8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 14,
+                      "justifyContent": "center",
+                      "alignItems": "center"
+                    },
+                    {
+                      "type": "text",
+                      "id": "10sFm",
+                      "name": "cardTitle1",
+                      "fill": "#2D1B69",
+                      "content": "AI 诊断",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "id": "xOIFO",
+                      "name": "cardDesc1",
+                      "fill": "#777777",
+                      "content": "智能解析简历内容，精准发现缺失项与优化点",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "NQKyj",
+                  "name": "card2",
+                  "width": 280,
+                  "height": 260,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "layout": "vertical",
+                  "gap": 20,
+                  "padding": 32,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "lwJZ2",
+                      "name": "icon2",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "nastyakamil",
+                        "link": "https://unsplash.com/@nastyakamil",
+                        "author": "Anastasiia Kamil"
+                      },
+                      "width": 56,
+                      "height": 56,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1560483580-3eab978d71a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3Njk2NTkzMjd8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 14,
+                      "justifyContent": "center",
+                      "alignItems": "center"
+                    },
+                    {
+                      "type": "text",
+                      "id": "vsU1g",
+                      "name": "cardTitle2",
+                      "fill": "#2D1B69",
+                      "content": "AI 润色",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "id": "cEnWE",
+                      "name": "cardDesc2",
+                      "fill": "#777777",
+                      "content": "专业语言修饰，提升用词精准度与专业感",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Y5M7A",
+                  "name": "card3",
+                  "width": 280,
+                  "height": 260,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "layout": "vertical",
+                  "gap": 20,
+                  "padding": 32,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "bRIds",
+                      "name": "icon3",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "nsx_2000",
+                        "link": "https://unsplash.com/@nsx_2000",
+                        "author": "Krzysztof Hepner"
+                      },
+                      "width": 56,
+                      "height": 56,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1576615795483-3dbde96fd531?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3Njk2NTkzMjd8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 14,
+                      "justifyContent": "center",
+                      "alignItems": "center"
+                    },
+                    {
+                      "type": "text",
+                      "id": "e9nzl",
+                      "name": "cardTitle3",
+                      "fill": "#2D1B69",
+                      "content": "AI 翻译",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "id": "79tRS",
+                      "name": "cardDesc3",
+                      "fill": "#777777",
+                      "content": "多语言智能翻译，助你征战全球名企职场",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "2ep4T",
+                  "name": "card4",
+                  "width": 280,
+                  "height": 260,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 20,
+                  "layout": "vertical",
+                  "gap": 20,
+                  "padding": 32,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "h4OpO",
+                      "name": "icon4",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "cristian1",
+                        "link": "https://unsplash.com/@cristian1",
+                        "author": "Cristian Escobar"
+                      },
+                      "width": 56,
+                      "height": 56,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1498673394965-85cb14905c89?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3Njk2NTkzMjh8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 14,
+                      "justifyContent": "center",
+                      "alignItems": "center"
+                    },
+                    {
+                      "type": "text",
+                      "id": "acacH",
+                      "name": "cardTitle4",
+                      "fill": "#2D1B69",
+                      "content": "AI 生成",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "id": "KQe2P",
+                      "name": "cardDesc4",
+                      "fill": "#777777",
+                      "content": "输入基本资料，一键生成高质量职业简历",
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "TdoB0",
+          "name": "数据统计",
+          "width": "fill_container",
+          "height": 450,
+          "fill": "#FFFFFF",
+          "layout": "vertical",
+          "gap": 40,
+          "padding": [
+            60,
+            120
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "ZoxDt",
+              "name": "statsTitle",
+              "fill": "#000000",
+              "content": "网站统计",
+              "fontFamily": "Inter",
+              "fontSize": 28,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "frame",
+              "id": "Endgd",
+              "name": "statsGrid",
+              "width": "fill_container",
+              "gap": 60,
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "1CNZT",
+                  "name": "statCard1",
+                  "width": 240,
+                  "height": 200,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 24,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "pwtlm",
+                      "name": "statVal1",
+                      "fill": "#00C090",
+                      "content": "1,200,000+",
+                      "fontFamily": "Inter",
+                      "fontSize": 36,
+                      "fontWeight": "800"
+                    },
+                    {
+                      "type": "text",
+                      "id": "PgaQJ",
+                      "name": "statLabel1",
+                      "fill": "#333333",
+                      "content": "累计访问量",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "lC1aP",
+                  "name": "statCard2",
+                  "width": 240,
+                  "height": 200,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 24,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "SAN1d",
+                      "name": "statVal2",
+                      "fill": "#00C090",
+                      "content": "500,000+",
+                      "fontFamily": "Inter",
+                      "fontSize": 36,
+                      "fontWeight": "800"
+                    },
+                    {
+                      "type": "text",
+                      "id": "QkQ9R",
+                      "name": "statLabel2",
+                      "fill": "#333333",
+                      "content": "累计注册",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ZNiiU",
+                  "name": "statCard3",
+                  "width": 240,
+                  "height": 200,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 24,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "7YXZ8",
+                      "name": "statVal3",
+                      "fill": "#00C090",
+                      "content": "800,000+",
+                      "fontFamily": "Inter",
+                      "fontSize": 36,
+                      "fontWeight": "800"
+                    },
+                    {
+                      "type": "text",
+                      "id": "kpq9y",
+                      "name": "statLabel3",
+                      "fill": "#333333",
+                      "content": "累计制作简历",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "mKr6F",
+          "name": "模板库预览",
+          "width": "fill_container",
+          "height": 800,
+          "fill": "linear-gradient(to bottom, #FFFFFF 0%, #F2F4F7 100%)",
+          "layout": "vertical",
+          "gap": 48,
+          "padding": [
+            80,
+            120
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "FgqDo",
+              "name": "templeHeader",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "CaqwH",
+                  "name": "templeTitle",
+                  "fill": "#000000",
+                  "content": "热门简历模板",
+                  "fontFamily": "Inter",
+                  "fontSize": 32,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "qmzU0",
+                  "name": "templeSubtitle",
+                  "fill": "#7F8B96",
+                  "content": "选择简历模板，点击在线制作，永久云端保存，可一键导出",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "lPntY",
+              "name": "templeGrid",
+              "width": 1400,
+              "gap": 32,
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "2OlyW",
+                  "name": "tCard1",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "2hmedia",
+                    "link": "https://unsplash.com/@2hmedia",
+                    "author": "2H Media"
+                  },
+                  "width": 300,
+                  "height": 400,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1635442962671-584193cdf451?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3Njk2NTkzMjl8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 12
+                },
+                {
+                  "type": "frame",
+                  "id": "3N77F",
+                  "name": "tCard2",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "anniespratt",
+                    "link": "https://unsplash.com/@anniespratt",
+                    "author": "Annie Spratt"
+                  },
+                  "width": 300,
+                  "height": 400,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1620302044818-4209fdb10e62?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3Njk2NTkzMjl8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 12
+                },
+                {
+                  "type": "frame",
+                  "id": "TSmWu",
+                  "name": "tCard3",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "kellysikkema",
+                    "link": "https://unsplash.com/@kellysikkema",
+                    "author": "Kelly Sikkema"
+                  },
+                  "width": 300,
+                  "height": 400,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1549032305-07743102559d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3Njk2NTkzMzB8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 12
+                },
+                {
+                  "type": "frame",
+                  "id": "I0dRt",
+                  "name": "tCard4",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "chadgeorge",
+                    "link": "https://unsplash.com/@chadgeorge",
+                    "author": "Chad George"
+                  },
+                  "width": 300,
+                  "height": 400,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1534298435681-3fd5153b0b7c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3Njk2NTkzMzF8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 12
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "FXai8",
+          "name": "页脚 - Footer",
+          "width": "fill_container",
+          "height": 300,
+          "fill": "#2D1B69",
+          "padding": [
+            60,
+            120
+          ],
+          "justifyContent": "space_between",
+          "children": [
+            {
+              "type": "frame",
+              "id": "IwGwc",
+              "name": "footerCol1",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ovPFb",
+                  "name": "footerLogo",
+                  "fill": "#FFFFFF",
+                  "content": "简历设计平台",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "KUx4v",
+                  "name": "footerTagline",
+                  "fill": "#B0A5CB",
+                  "content": "助力每一位求职者打造专业简历",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "oPdcN",
+              "name": "footerCol2",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "FFRMd",
+                  "name": "footerHead2",
+                  "fill": "#FFFFFF",
+                  "content": "产品",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "AYFoF",
+                  "name": "footerLink1",
+                  "fill": "#B0A5CB",
+                  "content": "模板中心",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "7aChQ",
+                  "name": "footerLink2",
+                  "fill": "#B0A5CB",
+                  "content": "积木制作",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "OgiAm",
+              "name": "footerCol3",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "aUKNu",
+                  "name": "footerHead3",
+                  "fill": "#FFFFFF",
+                  "content": "资源",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "aPS3t",
+                  "name": "footerLink3",
+                  "fill": "#B0A5CB",
+                  "content": "求职资源库",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "RYC4J",
+                  "name": "footerLink4",
+                  "fill": "#B0A5CB",
+                  "content": "AI 工具箱",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "ljw8N",
+      "x": 1540,
+      "y": 0,
+      "name": "简历设计器 - Designer",
+      "clip": true,
+      "width": 1440,
+      "height": 1024,
+      "fill": "#F2F4F7",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "ZP4W1",
+          "x": 0,
+          "y": 0,
+          "name": "设计器导航",
+          "width": 1440,
+          "height": 50,
+          "fill": "#FFFFFF",
+          "padding": [
+            0,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "YXEJM",
+              "name": "dNavLeft",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "injQt",
+                  "name": "dLogoText",
+                  "fill": "#2D1B69",
+                  "content": "简历设计器",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "bold"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "37tSo",
+              "name": "dNavRight",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "pwoMO",
+                  "name": "dSaveBtn",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 4,
+                  "padding": [
+                    6,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "LYaS3",
+                      "name": "dSaveText",
+                      "fill": "#7F6DBB",
+                      "content": "重置",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "tKUmG",
+                  "name": "dExportBtn",
+                  "fill": "#7F6DBB",
+                  "cornerRadius": 4,
+                  "padding": [
+                    6,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "IKQKl",
+                      "name": "dExportText",
+                      "fill": "#FFFFFF",
+                      "content": "导出 PDF",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Fvppe",
+          "x": 0,
+          "y": 50,
+          "name": "工作区",
+          "width": 1440,
+          "height": 974,
+          "children": [
+            {
+              "type": "frame",
+              "id": "ScU4x",
+              "name": "左侧菜单",
+              "width": 270,
+              "height": "fill_container",
+              "fill": "#FFFFFF",
+              "layout": "vertical",
+              "gap": 20,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "eqOpZ",
+                  "name": "dSidebarTitle",
+                  "fill": "#333333",
+                  "content": "简历模块",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "frame",
+                  "id": "0NngT",
+                  "name": "dModel1",
+                  "width": "fill_container",
+                  "height": 40,
+                  "fill": "#F9F9FB",
+                  "cornerRadius": 4,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "wpUm8",
+                      "name": "dModelText1",
+                      "fill": "#333333",
+                      "content": "个人信息",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "iPgAj",
+                  "name": "dModel2",
+                  "width": "fill_container",
+                  "height": 40,
+                  "fill": "#F9F9FB",
+                  "cornerRadius": 4,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "MO20a",
+                      "name": "dModelText2",
+                      "fill": "#333333",
+                      "content": "教育背景",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "8P0Wq",
+              "name": "画布",
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": "#F2F4F7",
+              "layout": "vertical",
+              "padding": 40,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "lhTy5",
+                  "name": "简历预览",
+                  "metadata": {
+                    "type": "unsplash",
+                    "username": "kellysikkema",
+                    "link": "https://unsplash.com/@kellysikkema",
+                    "author": "Kelly Sikkema"
+                  },
+                  "width": 820,
+                  "height": 1160,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "https://images.unsplash.com/photo-1539355168476-3e8c4a84f447?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3Njk2NTkzNTF8&ixlib=rb-4.1.0&q=80&w=1080",
+                    "mode": "fill"
+                  },
+                  "layout": "vertical",
+                  "padding": 40
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "stF1H",
+              "name": "属性设置",
+              "width": 355,
+              "height": "fill_container",
+              "fill": "#FFFFFF",
+              "layout": "vertical",
+              "gap": 20,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ephoI",
+                  "name": "dConfigTitle",
+                  "fill": "#333333",
+                  "content": "样式设置",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "P6yRn",
+                  "name": "dColorLabel",
+                  "fill": "#666666",
+                  "content": "主题色",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "ft98y",
+                  "name": "dColorPicker",
+                  "width": "fill_container",
+                  "height": 32,
+                  "fill": "#7F6DBB",
+                  "cornerRadius": 4
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "6PVsl",
+      "x": 3080,
+      "y": 0,
+      "name": "模板库 - Template Library",
+      "clip": true,
+      "width": 1440,
+      "height": 1200,
+      "fill": "#F7F7F7",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "itE7z",
+          "name": "导航栏",
+          "width": "fill_container",
+          "height": 60,
+          "fill": "#FFFFFF",
+          "padding": [
+            0,
+            40
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "MJ6ZB",
+              "name": "tLogo",
+              "fill": "#2D1B69",
+              "content": "模板中心",
+              "fontFamily": "Inter",
+              "fontSize": 20,
+              "fontWeight": "bold"
+            },
+            {
+              "type": "frame",
+              "id": "m2UNm",
+              "name": "tSearch",
+              "width": 400,
+              "height": 36,
+              "fill": "#F2F4F7",
+              "cornerRadius": 18,
+              "padding": [
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ix85i",
+                  "name": "tSearchText",
+                  "fill": "#98A2B3",
+                  "content": "搜索模板...",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "7r6t0",
+          "name": "内容区",
+          "width": "fill_container",
+          "height": "fill_container",
+          "children": [
+            {
+              "type": "frame",
+              "id": "ACgpr",
+              "name": "分类侧边栏",
+              "width": 200,
+              "height": "fill_container",
+              "fill": "#FFFFFF",
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 20,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "RqJxI",
+                  "name": "tCatTitle",
+                  "fill": "#333333",
+                  "content": "全部分类",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "60O11",
+                  "name": "tCat1",
+                  "fill": "#7F6DBB",
+                  "content": "应届生简历",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "zrj2O",
+                  "name": "tCat2",
+                  "fill": "#666666",
+                  "content": "社会招聘",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "vaDhM",
+                  "name": "tCat3",
+                  "fill": "#666666",
+                  "content": "英文简历",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "by5Wo",
+                  "name": "tCat4",
+                  "fill": "#666666",
+                  "content": "考研/学术",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "grlOW",
+              "name": "模板列表",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 32,
+              "padding": 40,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "vMSJZ",
+                  "name": "tGridTitle",
+                  "fill": "#333333",
+                  "content": "最热模板",
+                  "fontFamily": "Inter",
+                  "fontSize": 24,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "frame",
+                  "id": "F1OAq",
+                  "name": "tGrid",
+                  "width": "fill_container",
+                  "gap": 32,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "sGr6s",
+                      "name": "tgCard1",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "kellysikkema",
+                        "link": "https://unsplash.com/@kellysikkema",
+                        "author": "Kelly Sikkema"
+                      },
+                      "width": 240,
+                      "height": 340,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1569511502671-8c1bbf96fc8d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3Njk2NTkzODF8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 8
+                    },
+                    {
+                      "type": "frame",
+                      "id": "X6EJI",
+                      "name": "tgCard2",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "angelekamp",
+                        "link": "https://unsplash.com/@angelekamp",
+                        "author": "Angèle Kamp"
+                      },
+                      "width": 240,
+                      "height": 340,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1551893281-e585f2fbe3a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3Njk2NTkzODJ8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 8
+                    },
+                    {
+                      "type": "frame",
+                      "id": "R30B1",
+                      "name": "tgCard3",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "ladislav_sh",
+                        "link": "https://unsplash.com/@ladislav_sh",
+                        "author": "Ladislav Sh"
+                      },
+                      "width": 240,
+                      "height": 340,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1590063031841-fd459cb0001c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3Njk2NTkzODN8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 8
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mImXb",
+                      "name": "tgCard4",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "brett_jordan",
+                        "link": "https://unsplash.com/@brett_jordan",
+                        "author": "Brett Jordan"
+                      },
+                      "width": 240,
+                      "height": 340,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1657004632819-708722496e61?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3Njk2NTkzODV8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "fill"
+                      },
+                      "cornerRadius": 8
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Mki4u",
+      "x": 4620,
+      "y": 0,
+      "name": "个人中心 - Personal Center",
+      "clip": true,
+      "width": 1440,
+      "height": 1024,
+      "fill": "#F7F8FA",
+      "layout": "vertical",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "kloy9",
+          "name": "详情页页顶 - Tech BG",
+          "width": "fill_container",
+          "height": 280,
+          "fill": "linear-gradient(135deg, #1E2A47 0%, #13203A 100%)",
+          "layout": "vertical",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "EFAAZ",
+              "name": "pHeaderText",
+              "fill": "#FFFFFF",
+              "content": "欢迎来到您的简历中心",
+              "fontFamily": "Inter",
+              "fontSize": 32,
+              "fontWeight": "bold"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "KjZxz",
+          "name": "内容卡片容器",
+          "width": 1250,
+          "height": 800,
+          "fill": "#FFFFFF",
+          "cornerRadius": 8,
+          "gap": 50,
+          "padding": 50,
+          "children": [
+            {
+              "type": "frame",
+              "id": "OfPd1",
+              "name": "侧边菜单",
+              "width": 300,
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 40,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "oAW9P",
+                  "name": "pAvatarBox",
+                  "width": 100,
+                  "height": 100,
+                  "fill": "#7F6DBB",
+                  "cornerRadius": 50,
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "zf0Vx",
+                      "name": "pAvatarInitial",
+                      "fill": "#FFFFFF",
+                      "content": "J",
+                      "fontFamily": "Inter",
+                      "fontSize": 40,
+                      "fontWeight": "bold"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Z3mk8",
+                  "name": "pMenu",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "YGoS4",
+                      "name": "pMenuItem1",
+                      "fill": "#2CBD9910",
+                      "cornerRadius": 4,
+                      "gap": 12,
+                      "padding": [
+                        10,
+                        15
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "foyRB",
+                          "name": "pMenuIcon1",
+                          "width": 24,
+                          "height": 24,
+                          "fill": "#2CBD99",
+                          "cornerRadius": 12
+                        },
+                        {
+                          "type": "text",
+                          "id": "QOh4K",
+                          "name": "pMenuText1",
+                          "fill": "#2CBD99",
+                          "content": "个人信息",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "bold"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "QX4Cp",
+                      "name": "pMenuItem2",
+                      "gap": 12,
+                      "padding": [
+                        10,
+                        15
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "nz4s8",
+                          "name": "pMenuText2",
+                          "fill": "#333333",
+                          "content": "我的简历",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "VIrS9",
+              "name": "右侧内容",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "nJY5z",
+                  "name": "pContentTitle",
+                  "fill": "#333333",
+                  "content": "基本资料",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "frame",
+                  "id": "tdciH",
+                  "name": "pInputGrp",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "eeFhj",
+                      "name": "pLabel",
+                      "fill": "#666666",
+                      "content": "用户名称",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "f3i7B",
+                      "name": "pInput",
+                      "width": "fill_container",
+                      "height": 40,
+                      "fill": "#F2F4F7",
+                      "cornerRadius": 4,
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "NXRJU",
+                          "name": "pInputText",
+                          "fill": "#333333",
+                          "content": "Jason",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "UHyc3",
+      "x": 500,
+      "y": 1100,
+      "name": "登录弹窗 - Login Dialog",
+      "width": 400,
+      "height": 500,
+      "fill": "#FFFFFF",
+      "cornerRadius": 16,
+      "layout": "vertical",
+      "gap": 24,
+      "padding": 40,
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "text",
+          "id": "GwgHr",
+          "name": "lTitle",
+          "fill": "#2D1B69",
+          "content": "登录简历平台",
+          "fontFamily": "Inter",
+          "fontSize": 24,
+          "fontWeight": "bold"
+        },
+        {
+          "type": "frame",
+          "id": "BpqAm",
+          "name": "lInput1",
+          "width": "fill_container",
+          "height": 44,
+          "fill": "#F2F4F7",
+          "cornerRadius": 8,
+          "padding": [
+            0,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "7gGXu",
+              "name": "lInputText1",
+              "fill": "#98A2B3",
+              "content": "邮箱/手机号",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "W9nP5",
+          "name": "lInput2",
+          "width": "fill_container",
+          "height": 44,
+          "fill": "#F2F4F7",
+          "cornerRadius": 8,
+          "padding": [
+            0,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Uxt6x",
+              "name": "lInputText2",
+              "fill": "#98A2B3",
+              "content": "请输入密码",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "DXN2a",
+          "name": "lBtn",
+          "width": "fill_container",
+          "height": 48,
+          "fill": "#7F6DBB",
+          "cornerRadius": 8,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "DoYKq",
+              "name": "lBtnText",
+              "fill": "#FFFFFF",
+              "content": "登录",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "bold"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

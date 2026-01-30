@@ -1,16 +1,36 @@
 import http from '../request';
+import { generateCerebrasResumeStream, generateCerebrasResume } from './cerebras';
 
-// 查询AI模型列表
-export const aiModelListAsync: any = (params: any) => {
-  return http.request({
-    url: '/huajian/ai/getModelList',
-    method: 'get',
-    params: params
-  });
+console.log('AI API module loaded v4 - Model: qwen-3-235b-a22b-instruct-2507');
+
+export const aiModelListAsync = async (params: any) => {
+  try {
+    const res = await http.request({
+      url: '/huajian/ai/getModelList',
+      method: 'get',
+      params: params
+    });
+    if (res && res.data && res.data.status === 200) {
+      res.data.data.unshift({
+        _id: 'cerebras-qwen',
+        model_name: 'Cerebras-Qwen',
+        model_is_free: 1
+      });
+      return res;
+    }
+  } catch (error) {
+    console.warn('Backend model list failed, using fallback');
+  }
+  return {
+    status: 200,
+    data: {
+      status: 200,
+      data: [{ _id: 'cerebras-qwen', model_name: 'Cerebras-Qwen', model_is_free: 1 }]
+    }
+  };
 };
 
-// 新增模型
-export const addModelAsync: any = (data: any) => {
+export const addModelAsync = (data: any) => {
   return http.request({
     url: '/huajian/ai/addModel',
     method: 'post',
@@ -18,8 +38,7 @@ export const addModelAsync: any = (data: any) => {
   });
 };
 
-// 修改模型
-export const updateModelAsync: any = (data: any) => {
+export const updateModelAsync = (data: any) => {
   return http.request({
     url: '/huajian/ai/updateIntegralPayConfig',
     method: 'post',
@@ -27,34 +46,33 @@ export const updateModelAsync: any = (data: any) => {
   });
 };
 
-// 删除模型
-export const deleteModelAsync: any = (id: string) => {
+export const deleteModelAsync = (id: string) => {
   return http.request({
     url: `/huajian/ai/deleteModel/${id}`,
     method: 'delete'
   });
 };
 
-// AI润色
-export const polishTextAsync: any = (data: any) => {
-  return http.request({
-    url: '/huajian/ai/polishText',
-    method: 'post',
-    data: data
-  });
-};
-
-// AI创作
-export const createTextAsync: any = (data: any) => {
-  return http.request({
-    url: '/huajian/ai/createText',
-    method: 'post',
-    data: data
-  });
-};
-
-// AI翻译
-export const translateTextAsync: any = (data: any) => {
+export const translateTextAsync = async (data: any) => {
+  if (data.model && data.model.startsWith('Cerebras')) {
+    const messages = [
+      {
+        role: 'system',
+        content: `你是一位精通多国语言的专业翻译官。`
+      },
+      { role: 'user', content: data.text }
+    ];
+    const result = await generateCerebrasResume({
+      messages,
+      model: 'qwen-3-235b-a22b-instruct-2507'
+    });
+    return {
+      data: {
+        status: 200,
+        data: result
+      }
+    };
+  }
   return http.request({
     url: '/huajian/ai/translateText',
     method: 'post',
@@ -62,132 +80,153 @@ export const translateTextAsync: any = (data: any) => {
   });
 };
 
-// 取消AI请求
-export const cancleAiTranslateTextAsync: any = () => {
+export const cancleAiTranslateTextAsync = () => {
   return http.cancelRequest('/huajian/ai/translateText');
 };
 
-// 流式AI润色
-export const polishTextStreamAsync: any = (
-  data: any,
-  onMessage: (chunk: string) => void,
-  onError: (error: any) => void,
-  onComplete?: () => void // 新增 onComplete 回调
-) => {
-  return http.streamRequest(
-    '/huajian/ai/polishTextStream',
-    data,
-    onMessage,
-    onError,
-    onComplete // 传递 onComplete 回调
-  );
+export const cancelPolishTextStreamAsync = (controller: AbortController) => {
+  controller.abort();
 };
 
-// 取消流式AI润色
-export const cancelPolishTextStreamAsync: any = (controller: AbortController) => {
-  controller.abort(); // 取消请求
+export const cancelCreateTextStreamAsync = (controller: AbortController) => {
+  controller.abort();
 };
 
-// AI创作（流式传输）
-export const createTextStreamAsync: any = (
-  data: any,
-  onMessage: (chunk: string) => void,
-  onError: (error: any) => void,
-  onComplete?: () => void // 新增 onComplete 回调
-) => {
-  return http.streamRequest(
-    '/huajian/ai/createTextStream',
-    data,
-    onMessage,
-    onError,
-    onComplete // 传递 onComplete 回调
-  );
-};
-
-// 取消流式AI创作
-export const cancelCreateTextStreamAsync: any = (controller: AbortController) => {
-  controller.abort(); // 取消请求
-};
-
-// 查询AI润色需要的简币数量
-export const getPolishIntegralAsync: any = () => {
+export const getPolishIntegralAsync = () => {
   return http.request({
     url: '/huajian/ai/getPolishIntegral',
     method: 'get'
   });
 };
 
-// 查询AI创作需要的简币数量
-export const getCreateIntegralAsync: any = () => {
+export const getCreateIntegralAsync = () => {
   return http.request({
     url: '/huajian/ai/getCreateIntegral',
     method: 'get'
   });
 };
 
-// 查询简历润色模型列表
-export const getPolishModelListAsync: any = () => {
-  return http.request({
-    url: '/huajian/ai/getPolishModelList',
-    method: 'get'
-  });
+export const getPolishModelListAsync = async () => {
+  try {
+    const res = await http.request({
+      url: '/huajian/ai/getPolishModelList',
+      method: 'get'
+    });
+    if (res && res.data && res.data.status === 200) {
+      res.data.data.unshift({
+        _id: 'cerebras-qwen-polish',
+        model_name: 'Cerebras-Qwen-Polish',
+        model_is_free: 1
+      });
+      return res;
+    }
+  } catch (error) {
+    console.warn('Backend polish model list failed, using fallback');
+  }
+  return {
+    status: 200,
+    data: {
+      status: 200,
+      data: [{ _id: 'cerebras-qwen-polish', model_name: 'Cerebras-Qwen-Polish', model_is_free: 1 }]
+    }
+  };
 };
 
-// 查询简历创作模型列表
-export const getCreateModelListAsync: any = () => {
-  return http.request({
-    url: '/huajian/ai/getCreateModelList',
-    method: 'get'
-  });
+export const getCreateModelListAsync = async () => {
+  try {
+    const res = await http.request({
+      url: '/huajian/ai/getCreateModelList',
+      method: 'get'
+    });
+    if (res && res.data && res.data.status === 200) {
+      res.data.data.unshift({
+        _id: 'cerebras-qwen-create',
+        model_name: 'Cerebras-Qwen-Create',
+        model_is_free: 1
+      });
+      return res;
+    }
+  } catch (error) {
+    console.warn('Backend create model list failed, using fallback');
+  }
+  return {
+    status: 200,
+    data: {
+      status: 200,
+      data: [{ _id: 'cerebras-qwen-create', model_name: 'Cerebras-Qwen-Create', model_is_free: 1 }]
+    }
+  };
 };
 
-// 查询AI简历优化需要的简币数量
-export const getOptimizeResumeIntegralAsync: any = () => {
-  return http.request({
-    url: '/huajian/ai/getOptimizeResumeIntegral',
-    method: 'get'
-  });
-};
-
-// 查询AI简历诊断上传文件需要的简币数量
-export const getOptimizeResumeUploadIntegralAsync: any = () => {
-  return http.request({
-    url: '/huajian/ai/getDiagnoseResumeIntegral',
-    method: 'get'
-  });
-};
-
-// 查询AI简历智能生成需要的简币数量
-export const getGenerateResumeIntegralAsync: any = () => {
-  return http.request({
-    url: '/huajian/ai/getGenerateResumeIntegral',
-    method: 'get'
-  });
-};
-
-// 查询AI简历优化支持的模型列表
-export const getOptimizeResumeModelListAsync: any = () => {
-  return http.request({
-    url: '/huajian/ai/getOptimizeResumeModelList',
-    method: 'get'
-  });
-};
-
-// 查询AI简历智能生成支持的模型列表
-export const getGenerateResumeModelListAsync: any = () => {
-  return http.request({
-    url: '/huajian/ai/getGenerateResumeModelList',
-    method: 'get'
-  });
-};
-
-// 流式传输AI简历优化文本
-export const optimizeResumeStreamAsync: any = (
+export const polishTextStreamAsync = (
   data: any,
   onMessage: (chunk: string) => void,
   onError: (error: any) => void,
   onComplete?: () => void
 ) => {
+  if (data.model && data.model.startsWith('Cerebras')) {
+    const messages = [
+      {
+        role: 'system',
+        content: `你是一位专业的简历润色专家。`
+      },
+      { role: 'user', content: data.text }
+    ];
+    return generateCerebrasResumeStream(
+      { messages, model: 'qwen-3-235b-a22b-instruct-2507' },
+      onMessage,
+      onError,
+      onComplete
+    );
+  }
+  return http.streamRequest('/huajian/ai/polishTextStream', data, onMessage, onError, onComplete);
+};
+
+export const createTextStreamAsync = (
+  data: any,
+  onMessage: (chunk: string) => void,
+  onError: (error: any) => void,
+  onComplete?: () => void
+) => {
+  if (data.model && data.model.startsWith('Cerebras')) {
+    const messages = [
+      {
+        role: 'system',
+        content: `你是一位精通简历撰写的专家。`
+      },
+      { role: 'user', content: data.text }
+    ];
+    return generateCerebrasResumeStream(
+      { messages, model: 'qwen-3-235b-a22b-instruct-2507' },
+      onMessage,
+      onError,
+      onComplete
+    );
+  }
+  return http.streamRequest('/huajian/ai/createTextStream', data, onMessage, onError, onComplete);
+};
+
+export const optimizeResumeStreamAsync = (
+  data: any,
+  onMessage: (chunk: string) => void,
+  onError: (error: any) => void,
+  onComplete?: () => void
+) => {
+  if (data.model && data.model.startsWith('Cerebras')) {
+    const messages = [
+      {
+        role: 'system',
+        content: '你是一位资深的职业生涯规划师和简历诊断专家。'
+      },
+      { role: 'user', content: `简历名称：${data.resumeName}\n\n简历内容：\n${data.text}` }
+    ];
+    return generateCerebrasResumeStream(
+      { messages, model: 'qwen-3-235b-a22b-instruct-2507' },
+      onMessage,
+      onError,
+      onComplete
+    );
+  }
   return http.streamRequest(
     '/huajian/ai/optimizeResumeStream',
     data,
@@ -197,13 +236,11 @@ export const optimizeResumeStreamAsync: any = (
   );
 };
 
-// 取消流式传输AI简历优化文本
-export const cancelOptimizeResumeStreamAsync: any = (controller: AbortController) => {
-  controller.abort(); // 取消请求
+export const cancelOptimizeResumeStreamAsync = (controller: AbortController) => {
+  controller.abort();
 };
 
-// 查询用户AI简历诊断列表
-export const getAiOptimizeLogsListAsync: any = (params: any) => {
+export const getAiOptimizeLogsListAsync = (params: any) => {
   return http.request({
     url: '/huajian/ai/getAiOptimizeLogsList',
     method: 'get',
@@ -211,84 +248,175 @@ export const getAiOptimizeLogsListAsync: any = (params: any) => {
   });
 };
 
-// AI生成简历（流式传输）
-export const generateResumeStreamAsync: any = (
-  data: any, // 生成简历的参数
-  onMessage: (chunk: string) => void, // 流式数据回调
-  onError: (error: any) => void, // 错误回调
-  onComplete?: () => void // 完成回调
+export const generateResumeStreamAsync = (
+  data: any,
+  onMessage: (chunk: string) => void,
+  onError: (error: any) => void,
+  onComplete?: () => void
 ) => {
   return http.streamRequest(
-    '/huajian/ai/generateResumeStream', // 后端接口路径
-    data, // 请求参数
-    onMessage, // 流式数据回调
-    onError, // 错误回调
-    onComplete // 完成回调
+    '/huajian/ai/generateResumeStream',
+    data,
+    onMessage,
+    onError,
+    onComplete
   );
 };
 
-// AI生成Markdown简历（流式传输）
-export const generateMarkdownResumeStreamAsync: any = (
-  data: any, // 生成简历的参数
-  onMessage: (chunk: string) => void, // 流式数据回调
-  onError: (error: any) => void, // 错误回调
-  onComplete?: () => void // 完成回调
+export const generateMarkdownResumeStreamAsync = (
+  data: any,
+  onMessage: (chunk: string) => void,
+  onError: (error: any) => void,
+  onComplete?: () => void
 ) => {
   return http.streamRequest(
-    '/huajian/ai/generateMDResumeStream', // 后端接口路径
-    data, // 请求参数
-    onMessage, // 流式数据回调
-    onError, // 错误回调
-    onComplete // 完成回调
+    '/huajian/ai/generateMDResumeStream',
+    data,
+    onMessage,
+    onError,
+    onComplete
   );
 };
 
-// 取消流式传输AI生成简历
-export const cancelGenerateResumeStreamAsync: any = (controller: AbortController) => {
-  controller.abort(); // 取消请求
+export const cancelGenerateResumeStreamAsync = (controller: AbortController) => {
+  controller.abort();
 };
 
-// AI json转md
-// AI生成简历（流式传输）
-export const jsonToMarkdownStreamByAiAsync: any = (
-  data: any, // 生成简历的参数
-  onMessage: (chunk: string) => void, // 流式数据回调
-  onError: (error: any) => void, // 错误回调
-  onComplete?: () => void // 完成回调
+export const jsonToMarkdownStreamByAiAsync = (
+  data: any,
+  onMessage: (chunk: string) => void,
+  onError: (error: any) => void,
+  onComplete?: () => void
 ) => {
   return http.streamRequest(
-    '/huajian/ai/jsonToMarkdownStreamByAi', // 后端接口路径
-    data, // 请求参数
-    onMessage, // 流式数据回调
-    onError, // 错误回调
-    onComplete // 完成回调
+    '/huajian/ai/jsonToMarkdownStreamByAi',
+    data,
+    onMessage,
+    onError,
+    onComplete
   );
 };
 
-// 取消流式传输AI转markdown
-export const cancelToMarkdownStreamAsync: any = (controller: AbortController) => {
-  controller.abort(); // 取消请求
+export const cancelToMarkdownStreamAsync = (controller: AbortController) => {
+  controller.abort();
 };
 
-// 获取流水号
-export const getSerialNumberAsync: any = () => {
-  return http.request({
-    url: '/huajian/ai/getSerialNumber',
-    method: 'get'
-  });
+export const getSerialNumberAsync = async () => {
+  try {
+    return await http.request({
+      url: '/huajian/ai/getSerialNumber',
+      method: 'get'
+    });
+  } catch (error) {
+    return {
+      data: {
+        status: 200,
+        data: 'guest_serial_' + Date.now()
+      }
+    };
+  }
 };
 
-// AI模型调用失败回调
-export const aiFailAsync: any = (data: any) => {
-  return http.request({
-    url: '/huajian/ai/aiFail',
-    method: 'post',
-    data: data
-  });
+export const aiFailAsync = async (data: any) => {
+  try {
+    return await http.request({
+      url: '/huajian/ai/aiFail',
+      method: 'post',
+      data: data
+    });
+  } catch (error) {
+    return { data: { status: 200 } };
+  }
 };
 
-// 管理员扉页查询AI日志调用列表
-export const getAiLogsByAdminAsync: any = (params: any) => {
+export const getGenerateResumeIntegralAsync = async () => {
+  try {
+    return await http.request({
+      url: '/huajian/ai/getGenerateResumeIntegral',
+      method: 'get'
+    });
+  } catch (error) {
+    return { data: { status: 200, data: 0 } };
+  }
+};
+
+export const getGenerateResumeModelListAsync = async () => {
+  try {
+    const res = await http.request({
+      url: '/huajian/ai/getGenerateResumeModelList',
+      method: 'get'
+    });
+    if (res && res.data && res.data.status === 200) {
+      res.data.data.unshift({
+        _id: 'cerebras-qwen-generate',
+        model_name: 'Cerebras-Qwen-Generate',
+        model_is_free: 1
+      });
+      return res;
+    }
+  } catch (error) {
+    // ignore
+  }
+  return {
+    data: {
+      status: 200,
+      data: [
+        { _id: 'cerebras-qwen-generate', model_name: 'Cerebras-Qwen-Generate', model_is_free: 1 }
+      ]
+    }
+  };
+};
+
+export const getOptimizeResumeIntegralAsync = async () => {
+  try {
+    return await http.request({
+      url: '/huajian/ai/getOptimizeResumeIntegral',
+      method: 'get'
+    });
+  } catch (error) {
+    return { data: { status: 200, data: 0 } };
+  }
+};
+
+export const getOptimizeResumeModelListAsync = async () => {
+  try {
+    const res = await http.request({
+      url: '/huajian/ai/getOptimizeResumeModelList',
+      method: 'get'
+    });
+    if (res && res.data && res.data.status === 200) {
+      res.data.data.unshift({
+        _id: 'cerebras-qwen-optimize',
+        model_name: 'Cerebras-Qwen-Optimize',
+        model_is_free: 1
+      });
+      return res;
+    }
+  } catch (error) {
+    // ignore
+  }
+  return {
+    data: {
+      status: 200,
+      data: [
+        { _id: 'cerebras-qwen-optimize', model_name: 'Cerebras-Qwen-Optimize', model_is_free: 1 }
+      ]
+    }
+  };
+};
+
+export const getOptimizeResumeUploadIntegralAsync = async () => {
+  try {
+    return await http.request({
+      url: '/huajian/ai/getOptimizeResumeUploadIntegral',
+      method: 'get'
+    });
+  } catch (error) {
+    return { data: { status: 200, data: 0 } };
+  }
+};
+
+export const getAiLogsByAdminAsync = (params: any) => {
   return http.request({
     url: '/huajian/ai/getAiLogsByAdmin',
     method: 'get',
@@ -296,18 +424,17 @@ export const getAiLogsByAdminAsync: any = (params: any) => {
   });
 };
 
-// 传入文本简历进行AI诊断
-export const aiOptimizeResumeByPdfTextStreamAsync: any = (
-  data: any, // 生成简历的参数
-  onMessage: (chunk: string) => void, // 流式数据回调
-  onError: (error: any) => void, // 错误回调
-  onComplete?: () => void // 完成回调
+export const aiOptimizeResumeByPdfTextStreamAsync = (
+  data: any,
+  onMessage: (chunk: string) => void,
+  onError: (error: any) => void,
+  onComplete?: () => void
 ) => {
   return http.streamRequest(
-    '/huajian/ai/aiOptimizeResumeByPdfTextStream', // 后端接口路径
-    data, // 请求参数
-    onMessage, // 流式数据回调
-    onError, // 错误回调
-    onComplete // 完成回调
+    '/huajian/ai/aiOptimizeResumeByPdfTextStream',
+    data,
+    onMessage,
+    onError,
+    onComplete
   );
 };

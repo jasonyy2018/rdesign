@@ -185,7 +185,7 @@
       :order-type="2"
       :options="membershipOptions"
       :membership-type="selectedMembership"
-      subject="购买猫步简历会员"
+      subject="购买 AI职升姬 会员"
       @pay-success="handlePaySuccess"
       @cancel="handleCancel"
     ></buy-qr-code-dialog>
@@ -198,7 +198,7 @@
       pay-type="wxpay"
       :options="membershipOptions"
       :membership-type="selectedMembership"
-      subject="购买猫步简历会员"
+      subject="购买 AI职升姬 会员"
       @pay-success="handleWXPaySuccess"
       @cancel="handleWXCancel"
     ></w-x-buy-qr-code-dialog>
@@ -282,7 +282,7 @@
         let params = {
           type: 'wxpay', // 支付类型
           totalAmount: selectedPrice.value,
-          subject: '购买猫步简历会员',
+          subject: '购买 AI职升姬 会员',
           orderType: 2
         };
         await yipayTradePagePayAsync(params);

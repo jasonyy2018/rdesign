@@ -25,7 +25,7 @@ export const HJSchema: IHJSchema = {
     themeColor: ''
   }, // 全局范围的css样式
   config: {
-    title: '猫步简历' // 页面标题
+    title: 'AI职升姬' // 页面标题
   }, // 当前的页面的配置信息
   meta: {}, // 全局范围的元数据
   dataSource: {} // 全局范围的公共数据源

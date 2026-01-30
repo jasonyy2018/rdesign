@@ -5,49 +5,41 @@ import appStore from './index';
 
 // 用户信息
 export const useUserInfoStore = defineStore('userInfoStore', () => {
-  const userInfo = ref<any>(
-    localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo') as string) : ''
-  );
+  const userInfo = ref<any>({
+    _id: 'guest_user',
+    name: '访客用户',
+    email: 'guest@example.com',
+    isAllFree: true,
+    roles: ['User'],
+    auth: {
+      email: { valid: true }
+    },
+    photos: {
+      profilePic: { url: '' }
+    }
+  });
   // 用户简币
-  const userIntegralInfo = ref<any>(0);
+  const userIntegralInfo = ref<any>({
+    integralTotal: 999999,
+    isattendance: true
+  });
 
   function saveUserInfo(userInfoObj: any) {
-    userInfo.value = userInfoObj;
-    localStorage.setItem('userInfo', JSON.stringify(userInfo.value));
+    console.log('User mock active, skipping save');
   }
 
   function saveIntegralInfo(integalInfo: any) {
-    userIntegralInfo.value = integalInfo;
+    console.log('Integral mock active, skipping save');
   }
 
   // 查询用户信息
   async function getAndUpdateUserInfo() {
-    const email = userInfo.value ? userInfo.value.email : '';
-    const data = await getUserInfoAsync(email);
-    if (data.data.status === 200) {
-      saveUserInfo(data.data.data);
-      // 查保存用户会员信息
-      const { saveMembershipInfo } = appStore.useMembershipStore;
-      saveMembershipInfo(data.data.data.membershipInfo);
-    } else {
-      ElMessage({
-        message: data.message,
-        type: 'error'
-      });
-    }
+    console.log('User mock active, skipping fetch');
   }
 
   // 查询用户当前用户简币信息
   async function getUserIntegralTotal() {
-    const data = await getUserIntegralTotalAsync();
-    if (data.data.status === 200) {
-      saveIntegralInfo(data.data.data);
-    } else {
-      ElMessage({
-        message: data.message,
-        type: 'error'
-      });
-    }
+    console.log('User mock active, skipping fetch');
   }
   return {
     userInfo,

@@ -4,7 +4,7 @@
     <div class="modern-tech-bg">
       <div class="light-effect"></div>
       <div class="circuit-lines"></div>
-      <div class="bg-text">{{ userInfo.name }}您好，欢迎来到猫步简历</div>
+      <div class="bg-text">{{ userInfo.name }}您好，欢迎来到 AI职升姬</div>
       <!-- 新增文字 -->
     </div>
 
@@ -25,6 +25,7 @@
   import RightContentVue from './components/RightContent.vue';
 
   const { userInfo } = appStore.useUserInfoStore;
+  const placeholder = ref<string>('请输入关键词，如毕业于 AI职升姬 大学、计算机专业、创作项目经历等');
 </script>
 
 <style lang="scss" scoped>

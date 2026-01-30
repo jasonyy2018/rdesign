@@ -35,7 +35,7 @@
               <el-radio
                 v-for="(item, index) in modelList"
                 :key="index"
-                :label="item.model_name"
+                :value="item.model_name"
                 size="large"
                 border
               >
@@ -52,7 +52,7 @@
               >
                 <el-radio
                   v-if="item.model_is_free"
-                  :label="item.model_name"
+                  :value="item.model_name"
                   size="large"
                   border
                   :disabled="!isMember"
@@ -68,7 +68,7 @@
                     width="20"
                   />
                 </el-radio>
-                <el-radio v-else :label="item.model_name" size="large" border>
+                <el-radio v-else :value="item.model_name" size="large" border>
                   {{ item.model_name }}
                   <span class="tips">
                     {{ Math.abs(payValue) }}

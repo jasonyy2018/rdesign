@@ -70,17 +70,21 @@
     {
       iconfont: 'icon-codepen',
       title: '整套的前端源码',
-      introduce: '猫步简历完整的前端源码，可直接运行使用并打包部署。'
+      introduce: 'AI职升姬 完整的前端源码，可直接运行使用并打包部署。'
     },
     {
       iconfont: 'icon-_houduankaifa',
-      title: '完整的后端源码',
-      introduce: '猫步简历完整的后端源码，配置好数据库以及文件存储服务环境后可使用。'
+      introduce: 'AI职升姬 完整的前端源码，可直接运行使用并打包部署。'
     },
     {
-      iconfont: 'icon-database',
-      title: 'Mongodb数据库',
-      introduce: '猫步简历后台使用的测试数据库，提供相关测试数据。'
+      title: '后端代码',
+      url: 'https://github.com/Hacker233/resume-design-server',
+      introduce: 'AI职升姬 完整的后端源码，配置好数据库以及文件存储服务环境后可使用。'
+    },
+    {
+      title: '测试数据库',
+      url: 'https://github.com/Hacker233/resume-design-server',
+      introduce: 'AI职升姬 后台使用的测试数据库，提供相关测试数据。'
     },
     {
       iconfont: 'icon-fuwuqi',
@@ -93,19 +97,19 @@
       introduce: '提供超多word简历模板，可根据自己的需求选择是否上传到网站。'
     },
     {
-      iconfont: 'icon-wendang',
-      title: '前端项目部署文档',
-      introduce: '全面的猫步简历前端项目部署上线的文档，学会此文档，可以让你快速入门部署前端项目。'
+      title: '前端部署文档',
+      url: '/deployDoc',
+      introduce: '全面的 AI职升姬 前端项目部署上线的文档，学会此文档，可以让你快速入门部署前端项目。'
     },
     {
-      iconfont: 'icon-fuzhi',
-      title: '后端项目部署文档',
-      introduce: '教你如何将猫步简历后端项目部署到服务器，并且配置好数据库、邮件服务、minio等等。'
+      title: '后端部署文档',
+      url: '/deployDoc',
+      introduce: '教你如何将 AI职升姬 后端项目部署到服务器，并且配置好数据库、邮件服务、minio等等。'
     },
     {
-      iconfont: 'icon-zhinan',
-      title: '项目开发指南',
-      introduce: '教你如何使用猫步简历项目，比如如何开发新的简历模板、开发后台接口等等。'
+      title: '项目使用说明',
+      url: '/deployDoc',
+      introduce: '教你如何使用 AI职升姬 项目，比如如何开发新的简历模板、开发后台接口等等。'
     },
     {
       iconfont: 'icon-zuozhe',

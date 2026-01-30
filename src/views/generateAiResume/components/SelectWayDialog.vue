@@ -85,12 +85,15 @@
   // 提交
   const sureLoading = ref<boolean>(false);
   const submit = () => {
+    console.log('SelectWayDialog submit clicked, selectedOption:', selectedOption.value);
     if (selectedOption.value) {
       // 根据selectedOption.value执行不同操作
+      console.log('Emitting updateSuccess with:', selectedOption.value);
       emit('updateSuccess', selectedOption.value);
       sureLoading.value = false;
       selectedOption.value = null;
     } else {
+      console.warn('No option selected in SelectWayDialog');
       sureLoading.value = false;
       if (!selectedOption.value) {
         ElMessage.warning('请选择一种生成方式');

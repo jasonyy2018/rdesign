@@ -12,10 +12,13 @@
       <div v-for="(item, index) in ModuleTitleScreenShotList" :key="index" class="img-box">
         <!-- 选中标记 -->
         <div
-          v-if="item.cptName == module.customProps.ModuleTitleCpt"
+          v-if="module && module.customProps && item.cptName == module.customProps.ModuleTitleCpt"
           class="current-mark-bgc"
         ></div>
-        <div v-if="item.cptName == module.customProps.ModuleTitleCpt" class="current-mark">
+        <div
+          v-if="module && module.customProps && item.cptName == module.customProps.ModuleTitleCpt"
+          class="current-mark"
+        >
           <svg-icon icon-name="icon-duigou_kuai" color="#fff" size="12px"></svg-icon>
         </div>
         <img :src="getModuleTitleImagesFile(item.img)" alt="图片" lazy @click="selectPage(item)" />
@@ -78,6 +81,7 @@
   // 选择模版
   const isTitleIcon = ref<boolean>(false);
   const selectPage = (value: any) => {
+    if (!module.value) return;
     isTitleIcon.value = value.iconfont;
     module.value.customProps.ModuleTitleCpt = value.cptName;
     if (value.iconfont) {
@@ -95,6 +99,10 @@
   // 提交
   const submit = () => {
     const selectModule = useGetSelectedModule(selectedModuleId.value);
+    if (!selectModule || !module.value) {
+      cancle();
+      return;
+    }
 
     // 设置模块标题的自定义属性
     selectModule.customProps.ModuleTitleCpt = module.value.customProps.ModuleTitleCpt;

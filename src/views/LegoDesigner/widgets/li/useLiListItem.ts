@@ -51,7 +51,7 @@ export const useLiListItem = (iconItem: {
       borderStyle: 'solid'
     }, // 组件样式
     dataSource: {
-      liList: ['猫步简历', '猫步简历'] // 内容列表
+      liList: ['AI职升姬', 'AI职升姬'] // 内容列表
     }, // 组件单独数据
     customProps: {
       listStyleType: iconItem.listStyleType,

@@ -60,10 +60,10 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
             const extType = chunkInfo.name?.match(/\.(png|jpe?g|gif|svg)$/i)
               ? 'images'
               : chunkInfo.name?.match(/\.(woff2?|eot|ttf|otf)$/i)
-              ? 'fonts'
-              : chunkInfo.name?.match(/\.(mp4|webm|ogg|mp3|wav|flac|aac)$/i)
-              ? 'media'
-              : 'static';
+                ? 'fonts'
+                : chunkInfo.name?.match(/\.(mp4|webm|ogg|mp3|wav|flac|aac)$/i)
+                  ? 'media'
+                  : 'static';
             return `static/${extType}/[name]-[hash][extname]`;
           }
         },
@@ -262,7 +262,7 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
 
                 // 插入 native-events.js 脚本
                 const injectedScriptTag = '<script src="/static/native-events.js"></script>';
-                const title = `猫步简历 - ${idList[i].title}`;
+                const title = `AI职升姬 - ${idList[i].title}`;
                 const modifiedHtml = html
                   .replace(/<title>.*<\/title>/, `<title>${title}</title>`)
                   .replace('</body>', `${injectedScriptTag}</body>`);
@@ -335,10 +335,13 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
       open: true,
       hmr: true,
       proxy: {
-        '/api': {
-          target: 'your https address',
+        '/huajian': {
+          target: 'http://localhost:3000', // 开发环境代理至本地后台
           changeOrigin: true,
-          rewrite: (path: string) => path.replace(/^\/api/, '')
+        },
+        '/api': {
+          target: 'http://localhost:3000', // 开发环境代理至本地后台
+          changeOrigin: true,
         }
       }
     }

@@ -162,4 +162,40 @@
       }
     }
   }
+
+  /* 打印样式优化 */
+  @media print {
+    .page-wrapper {
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .lines {
+      display: none !important; /* 隐藏分页辅助线 */
+    }
+    :global(body) {
+      background: #fff !important;
+    }
+    :global(.nav-box),
+    :global(.design-nav-left),
+    :global(.nav-right),
+    :global(.el-dialog__wrapper),
+    :global(.el-message-box__wrapper),
+    :global(.page-eidtor-box),
+    :global(.left) {
+      display: none !important; /* 隐藏所有非简历 UI 元素 */
+    }
+    :global(.right) {
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+      overflow: visible !important;
+    }
+    :global(.resume-container) {
+      margin: 0 !important;
+      width: 100% !important;
+    }
+  }
 </style>

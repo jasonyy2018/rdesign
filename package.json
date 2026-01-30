@@ -1,8 +1,8 @@
 {
-  "name": "maobucv",
+  "name": "ai-zhishengji",
   "private": true,
   "version": "1.0.0",
-  "description": "A Vue 3 project with various tools and libraries.",
+  "description": "AI职升姬 - 专业AI简历制作与职场提升平台",
   "scripts": {
     "deploy": "npm install && npm run build",
     "dev": "vite",
@@ -27,6 +27,7 @@
     }
   },
   "dependencies": {
+    "@cerebras/cerebras_cloud_sdk": "^1.64.1",
     "@codemirror/lang-javascript": "^6.2.4",
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/theme-one-dark": "^6.1.3",
@@ -37,6 +38,7 @@
     "autoprefixer": "10.4.17",
     "axios": "^1.5.0",
     "c-scrollbar": "^1.0.2",
+    "codemirror": "6.x",
     "colorpicker-v3": "^2.10.2",
     "csv-parser": "^3.2.0",
     "default-passive-events": "^2.0.0",
@@ -122,9 +124,6 @@
     "vue-global-api": "^0.4.1",
     "vue-tsc": "^2.2.12",
     "vue-types": "4.1.0"
-  },
-  "peerDependencies": {
-    "codemirror": "6.x"
   },
   "resolutions": {
     "postcss": "8.5.6"

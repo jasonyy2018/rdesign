@@ -185,7 +185,7 @@
     password: [{ required: true, message: '请输入默认密码', trigger: 'change' }]
   });
   const ruleForm = reactive({
-    name: '猫步简历',
+    name: 'AI职升姬',
     email: '',
     password: 'maobucv123',
     valid: true,

@@ -15,7 +15,7 @@
       <div v-if="loading" class="loading-container">
         <el-icon class="is-loading"><Loading /></el-icon>
         <el-progress :percentage="progressPercent" :stroke-width="8" :format="progressFormat" />
-        <span>正在为您生成高清预览，可能需要10-30秒，请耐心等待...</span>
+        <span>{{ statusText }}</span>
         <p class="loading-tip">小贴士：PDF生成时间取决于简历复杂度和网络状况</p>
       </div>
 
@@ -36,7 +36,10 @@
           closable
           @close="error = ''"
         />
-        <el-button @click="handleOpen">重试</el-button>
+        <div class="error-actions">
+          <el-button @click="handleOpen">重试</el-button>
+          <el-button type="primary" @click="handleBrowserPrint">直接导出 (浏览器打印)</el-button>
+        </div>
       </div>
     </div>
   </el-dialog>
@@ -55,7 +58,7 @@
     dialogPreviewResumeVisible: boolean;
   }
 
-  withDefaults(defineProps<TDialog>(), {
+  const props = withDefaults(defineProps<TDialog>(), {
     dialogPreviewResumeVisible: false
   });
 
@@ -67,6 +70,11 @@
   const pageCount = ref(0);
   const progressPercent = ref(0);
   const progressInterval = ref<any>(null);
+
+  // 直接使用浏览器打印
+  const handleBrowserPrint = () => {
+    window.print();
+  };
 
   // 取消
   const cancle = () => {
@@ -83,6 +91,8 @@
     return `正在处理 ${progressPercent.value}%`;
   };
 
+  const statusText = ref('正在为您生成高清预览，可能需要10-30秒，请耐心等待...');
+
   // 打开弹窗时加载PDF
   const handleOpen = async () => {
     try {
@@ -91,13 +101,25 @@
       currentPage.value = 1;
       pageCount.value = 0;
       progressPercent.value = 0;
+      statusText.value = '正在为您生成高清预览，可能需要10-30秒，请耐心等待...';
 
-      // 启动模拟进度
+      // 启动改进后的模拟进度
       progressInterval.value = setInterval(() => {
-        if (progressPercent.value < 90) {
-          progressPercent.value += Math.floor(Math.random() * 5) + 1;
+        if (progressPercent.value < 85) {
+          // 前段：较快
+          progressPercent.value += Math.floor(Math.random() * 3) + 2;
+        } else if (progressPercent.value < 95) {
+          // 中段：逐渐减慢
+          progressPercent.value += 1;
+          statusText.value = '进度稍慢，服务器正在全力渲染中...';
+        } else if (progressPercent.value < 99) {
+          // 后段：极慢，暗示仍在工作中
+          if (Math.random() > 0.7) {
+            progressPercent.value += 1;
+          }
+          statusText.value = '即将完成，正在进行最后的高清校验...';
         }
-      }, 500);
+      }, 800);
 
       // 清理之前的PDF
       if (pdfUrl.value) {
@@ -105,26 +127,45 @@
         pdfUrl.value = '';
       }
 
-      // 获取PDF Blob
-      const data: any = await exportPdfPreview(route.params.id as string);
+      // 获取PDF Blob (增加 120s 超时控制)
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error('预览生成超时，可能是当前简历过于复杂或服务器繁忙。')),
+          120000
+        )
+      );
 
-      if (data.blob) {
+      const data: any = await Promise.race([
+        exportPdfPreview(route.params.id as string),
+        timeoutPromise
+      ]);
+
+      if (data && data.blob) {
         // 创建对象URL用于预览
         pdfUrl.value = URL.createObjectURL(data.blob);
         pageCount.value = data.pageCount;
       } else {
-        throw new Error('未能获取PDF内容');
+        throw new Error('未能获取PDF内容，请稍后重试');
       }
     } catch (err) {
       console.error('生成预览出错:', err);
       error.value = err instanceof Error ? err.message : String(err);
+      if (error.value.includes('超时')) {
+        error.value += ' 建议直接点击“导出”使用浏览器打印功能。';
+      }
     } finally {
       if (progressInterval.value) {
         clearInterval(progressInterval.value);
         progressInterval.value = null;
       }
-      progressPercent.value = 100;
-      loading.value = false;
+      if (!error.value) {
+        progressPercent.value = 100;
+        setTimeout(() => {
+          loading.value = false;
+        }, 300);
+      } else {
+        loading.value = false;
+      }
     }
   };
 </script>
@@ -206,6 +247,11 @@
 
         .el-alert {
           width: 100%;
+        }
+
+        .error-actions {
+          display: flex;
+          gap: 12px;
         }
       }
     }

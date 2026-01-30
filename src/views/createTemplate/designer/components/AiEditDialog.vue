@@ -194,7 +194,7 @@
 
   const dialogTitle = ref<string>('');
   const currentModule = ref<any>(null);
-  const placeholder = ref<string>('请输入关键词，如毕业于猫步简历大学、计算机专业、创作项目经历等');
+  const placeholder = ref<string>('请输入关键词，如毕业于 AI职升姬 大学、计算机专业、创作项目经历等');
   const aiPropmt = ref<string>('');
   const aiLoading = ref<boolean>(false);
   const aiEditContent = ref<string>('');

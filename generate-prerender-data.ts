@@ -7,7 +7,7 @@ import axios from 'axios'; // 需要安装 axios，或者改成你用的请求�
 // 兼容 ESModule 的 __dirname 获取
 const __dirname = path.resolve(); // ✅ 直接使用 Node.js 的 __dirname
 
-const API_BASE = 'https://maobucv.com'; // 请替换成你的接口基础URL
+const API_BASE = 'https://aizhishengji.example.com'; // 请替换成你的接口基础URL
 
 // 请求获取无需权限微信群列表
 async function getVXQunListUnauthAsync(params = { page: 1, limit: 100 }) {
@@ -243,12 +243,12 @@ const generateFooterHtml = (vxquns = [], links = []) => {
         </div>
         <div class="links">
           <h4>网站地图</h4>
-          <a class="site-map" href="https://maobucv.com/sitemap.xml">🗺️ 站点地图</a>
+          <a class="site-map" href="https://aizhishengji.example.com/sitemap.xml">🗺️ 站点地图</a>
         </div>
       </div>
       <div class="line"></div>
       <div class="copyright-notice">
-        <p>Copyright © 2026 猫步简历 All Rights Reserved.</p>
+        <p>Copyright © 2026 AI职升姬简历 All Rights Reserved.</p>
       </div>
       <div class="icp-record-number">
         <p><a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">蜀ICP备2020034752号</a></p>

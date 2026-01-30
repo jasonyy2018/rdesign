@@ -53,6 +53,7 @@
     generateResumeStreamAsync,
     getSerialNumberAsync
   } from '@/http/api/ai';
+  import { generateCerebrasResumeStream } from '@/http/api/cerebras'; // Cerebras SDK
   import AiLoading from '@/components/AiLoading/AiLoading.vue';
 
   const emit = defineEmits(['cancle', 'updateSuccess']);
@@ -190,46 +191,94 @@
     };
     str.value = '';
 
-    const controller = generateResumeStreamAsync(
-      params,
-      handleStreamData,
-      (error: any) => {
-        ElMessage.error(error.message || 'AI智能简历生成失败');
-        isAiLoading.value = false;
-      },
-      () => {
-        try {
-          const result = str.value.replace(/```json/g, '');
-          const resule2 = result.replace(/```/g, '');
-          console.log('转义结果', resule2);
-          console.log('JSON.parse后的数据', JSON.parse(resule2));
-          // 还原label
-          const resetLabel = restoreData(JSON.parse(resule2));
-          console.log('还原label后的数据', resetLabel);
-          // 彻底还原数据
-          const resetData = restoreDataId(cloneDeep(HJNewJsonStore.value), resetLabel);
-          console.log('彻底还原后的数据', resetData);
-          HJNewJsonStore.value = resetData;
-          ElMessage.success('AI简历生成成功');
-          emit('updateSuccess');
-          isAiLoading.value = false;
-          if (!modelObj.value.model_is_free) {
-            getUserIntegralTotal();
-          }
-        } catch (e) {
-          console.log('JSON 转换失败');
-          ElNotification.error({
-            title: '错误',
-            message: '简历结果已返回，但JSON处理失败'
-          });
-          aiFailAsync({
-            serialNumber: serialNumber.value,
-            errorMsg: 'JSON返回，但处理失败'
-          });
+    // 适配 Cerebras 模型
+    if (params.model.startsWith('Cerebras')) {
+      const messages = [
+        {
+          role: 'system',
+          content: `你是一位专业的简历专家。你的任务根据用户提供的【意向岗位】、【工作年限】和【其他关键词】，结合给定的【简历模板结构】，生成一份高质量的简历 JSON 数据。
+
+要求：
+1. 语言表达专业、简练，符合行业标准。
+2. 必须严格遵守提供的 JSON 模板结构，不要修改键名。
+3. 仅输出合法的 JSON 代码块，不要包含任何解释性文字。
+4. 确保输出的简历内容丰富且专业。
+5. 必须返回合法的 JSON 字符串。`
+        },
+        {
+          role: 'user',
+          content: `意向岗位：${params.keywords.intendedPositions}
+工作年限：${params.keywords.workService}年
+其他关键词：${params.keywords.otherKeywords}
+简历模板结构：${JSON.stringify(params.template)}`
         }
+      ];
+
+      generateCerebrasResumeStream(
+        { messages, model: 'qwen-3-235b-a22b-instruct-2507' },
+        handleStreamData,
+        (error: any) => {
+          ElMessage.error(error.message || 'Cerebras AI 智能简历生成失败');
+          isAiLoading.value = false;
+        },
+        () => {
+          handleGenerateComplete();
+        }
+      );
+    } else {
+      const controller = generateResumeStreamAsync(
+        params,
+        handleStreamData,
+        (error: any) => {
+          ElMessage.error(error.message || 'AI智能简历生成失败');
+          isAiLoading.value = false;
+        },
+        () => {
+          handleGenerateComplete();
+        }
+      );
+      streamController.value = controller;
+    }
+  };
+
+  // 生成完成后的逻辑处理
+  const handleGenerateComplete = () => {
+    try {
+      // 更加鲁棒的 JSON 提取逻辑
+      const jsonMatch = str.value.match(/\{[\s\S]*\}/);
+      const jsonStr = jsonMatch ? jsonMatch[0] : str.value;
+      console.log('提取到的 JSON 字符串', jsonStr);
+
+      const parsedData = JSON.parse(jsonStr);
+      console.log('JSON.parse 后的数据', parsedData);
+
+      // 还原 label
+      const resetLabel = restoreData(parsedData);
+      console.log('还原 label 后的数据', resetLabel);
+
+      // 彻底还原数据
+      const resetData = restoreDataId(cloneDeep(HJNewJsonStore.value), resetLabel);
+      console.log('彻底还原后的数据', resetData);
+
+      HJNewJsonStore.value = resetData;
+      ElMessage.success('AI简历生成成功');
+      emit('updateSuccess');
+      isAiLoading.value = false;
+      if (modelObj.value && !modelObj.value.model_is_free) {
+        getUserIntegralTotal();
       }
-    );
-    streamController.value = controller;
+    } catch (e) {
+      console.log('JSON 转换失败', e);
+      ElNotification.error({
+        title: '错误',
+        message: '简历结果已返回，但JSON处理失败'
+      });
+      aiFailAsync({
+        serialNumber: serialNumber.value,
+        errorMsg: 'JSON返回，但处理失败'
+      });
+      isAiLoading.value = false;
+    }
   };
   // 处理流式数据
   const handleStreamData = (chunk: string) => {

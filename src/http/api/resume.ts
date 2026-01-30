@@ -98,6 +98,7 @@ export const getResumePdfAsync: any = (params: any) => {
 
 // 获取预览PDF
 export const getPreviewPdfAsync = async (params: any) => {
+  console.log('Fetching preview PDF with params:', params);
   const response = await http.request({
     url: '/huajian/pdf/resumePreview',
     method: 'post',
@@ -109,6 +110,7 @@ export const getPreviewPdfAsync = async (params: any) => {
   const separatorIndex = response.indexOf(separator);
 
   if (separatorIndex === -1) {
+    console.error('Invalid response format. Response snippet:', response.substring(0, 100));
     throw new Error('Invalid response format');
   }
 
@@ -117,6 +119,7 @@ export const getPreviewPdfAsync = async (params: any) => {
 
   try {
     const metadata = JSON.parse(metadataStr);
+    console.log('Metadata received:', metadata);
     const pdfData = Uint8Array.from(atob(pdfBase64), (c) => c.charCodeAt(0));
 
     return {
@@ -124,7 +127,7 @@ export const getPreviewPdfAsync = async (params: any) => {
       pageCount: metadata.pageCount
     };
   } catch (e) {
-    console.error('Parsing error:', e);
+    console.error('Parsing error in getPreviewPdfAsync:', e);
     throw new Error('Failed to parse response data');
   }
 };

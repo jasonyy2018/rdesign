@@ -14,12 +14,13 @@
     </template>
   </el-sub-menu>
   <template v-else>
-    <el-menu-item v-if="item.isRouter === 1" :index="item.path">{{ item.title }}</el-menu-item>
-    <el-menu-item v-else @click="toOtherweb(item)">{{ item.title }}</el-menu-item>
+    <!-- 统一使用 @click 处理跳转，不依赖 el-menu 的 router 模式 -->
+    <el-menu-item :index="item.path" @click="handleMenuClick(item)">{{ item.title }}</el-menu-item>
   </template>
 </template>
 
 <script lang="ts" setup>
+  import { useRouter } from 'vue-router';
   import appStore from '@/store';
 
   interface MenuItem {
@@ -42,12 +43,16 @@
     }
   });
 
-  // 非路由跳转
-  const toOtherweb = (item: { path: string }) => {
+  const router = useRouter();
+
+  // 统一的菜单点击处理
+  const handleMenuClick = (item: { path: string; isRouter: number }) => {
+    console.log('Menu clicked:', item.path, 'isRouter:', item.isRouter);
+
+    // 外部链接
     if (item.path.includes('http')) {
-      // 职行AI
+      // 职行AI特殊处理
       if (item.path.includes('jobzx')) {
-        // 获取用户id
         const { token } = appStore.useTokenStore;
         let id = '';
         if (token) {
@@ -58,7 +63,8 @@
       }
       window.open(item.path, '_blank', 'noopener,noreferrer');
     } else {
-      window.open(`https://maobucv.com${item.path}`, '_blank', 'noopener,noreferrer');
+      // 本地路径使用 Vue Router 跳转
+      router.push(item.path);
     }
   };
 </script>

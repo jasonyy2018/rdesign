@@ -46,14 +46,14 @@ export const useWebsiteConfigStore = defineStore('websiteConfig', () => {
     websiteConfig.open_sign_in = websiteConfigData.open_sign_in;
     websiteConfig.open_business = websiteConfigData.open_business;
     websiteConfig.open_sponsor = websiteConfigData.open_sponsor;
-    websiteConfig.website_title = websiteConfigData.website_title;
+    websiteConfig.website_title = title; // 强制使用本地SEO标题，解决后台配置未更新问题
     websiteConfig.open_membership = websiteConfigData.open_membership;
     websiteConfig.open_homne_menu = websiteConfigData.open_homne_menu;
     websiteConfig.open_invite_register = websiteConfigData.open_invite_register;
     websiteConfig.open_jobzx = websiteConfigData.open_jobzx;
     websiteConfig.privacy_policy = websiteConfigData.privacy_policy;
     websiteConfig.service_agreement = websiteConfigData.service_agreement;
-    document.title = websiteConfig.website_title;
+    // document.title = websiteConfig.website_title;
   }
   // 查询网站配置信息
   async function getWebsiteConfig() {

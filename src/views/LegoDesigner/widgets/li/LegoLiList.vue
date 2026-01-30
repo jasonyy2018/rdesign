@@ -8,12 +8,13 @@
         size="18px"
         class-name="li-list-style-image"
       ></svg-icon>
-      猫步简历
+      AI职升姬
     </li>
   </ul>
 </template>
 <script lang="ts" setup>
   import { IWidget } from '@/views/LegoDesigner/types';
+  import { computed } from 'vue';
 
   interface IAvatar {
     widgetData: IWidget | null; // 模块数据

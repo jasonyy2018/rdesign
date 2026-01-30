@@ -39,7 +39,11 @@
         <key-words v-show="active === 0" ref="keyWordsRef"></key-words>
         <template v-if="!templateId">
           <!-- 模版选择区域 -->
-          <ai-template-select v-if="active === 1" ref="aiTemplateSelectRef"></ai-template-select>
+          <ai-template-select
+            v-if="active === 1"
+            ref="aiTemplateSelectRef"
+            @select="(id) => (selectTemplateId = id)"
+          ></ai-template-select>
         </template>
         <!-- AI 简历生成区域 -->
         <ai-model-select
@@ -136,6 +140,8 @@
 </template>
 
 <script lang="ts" setup>
+  import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
   import KeyWords from './components/KeyWords.vue';
   import AiTemplateSelect from './components/AiTemplateSelect.vue';
   import { getTemplateByIdAsync, getUsertemplateAsync } from '@/http/api/createTemplate';
@@ -165,10 +171,18 @@
   import FooterCom from '@/components/FooterCom/FooterCom.vue';
   import { Loading } from '@element-plus/icons-vue';
   import MarkdownIt from 'markdown-it';
+  import { generateCerebrasResumeStream } from '@/http/api/cerebras'; // Cerebras SDK
+  import pageSchemas from '@/views/createTemplate/designer/schema/pageSchema/index';
 
   const active = ref(0);
   const isEditing = ref(false); // 是否正在处理编辑
   const { userInfo } = storeToRefs(appStore.useUserInfoStore);
+  const route = useRoute();
+  const router = useRouter();
+
+  // 判断是否带有模版ID
+  const templateId = route.query.templateId as string;
+  const lastActive = ref(2); // 最后一步的active
 
   const generateParams = ref({
     model: '',
@@ -181,34 +195,42 @@
   const aiModelSelectRef = ref<any>(null);
   const aiTemplateSelectRef = ref<any>(null);
   const selectTemplateId = ref(''); // 选中的模版id
+  const selectedPageName = ref('Page_1'); // 默认页面名称
   const dialogSelectWayVisible = ref(false); // 选择生成方式弹窗
 
   const nextStep = () => {
-    // 判断是否登录
-    const { token } = appStore.useTokenStore;
-    if (!token) {
-      LoginDialog(true);
-      return;
-    }
+    console.log('nextStep initiated - Current active:', active.value);
     if (active.value === 0) {
+      console.log('Validating keyWords form...', keyWordsRef.value);
       if (keyWordsRef.value) {
         keyWordsRef.value.ruleFormRef.validate((valid: any) => {
+          console.log('Form validation result:', valid);
           if (valid) {
             generateParams.value.keyWords = keyWordsRef.value.ruleForm;
+            console.log('Validation passed. templateId:', templateId);
             // 弹出弹窗：模版生成、直接生成Markdown
             if (!templateId) {
+              console.log('No templateId found, showing SelectWayDialog');
               dialogSelectWayVisible.value = true;
             } else {
+              console.log('TemplateId found, moving to next step');
               active.value++;
             }
           } else {
+            console.warn('Form validation failed');
             ElMessage.warning('有必填项未填哦');
             return;
           }
         });
+      } else {
+        console.error('keyWordsRef is null!');
       }
-      console.log('keyWordsRef', keyWordsRef.value.ruleForm);
+      console.log('keyWordsRef data:', keyWordsRef.value?.ruleForm);
     } else if (active.value === 1) {
+      console.log(
+        'Moving from step 1 to 2. selectTemplateId:',
+        aiTemplateSelectRef.value?.selectTemplateId
+      );
       // 判断是否选中模版
       if (!aiTemplateSelectRef.value.selectTemplateId) {
         ElMessage.warning('请选择模版哦');
@@ -274,10 +296,6 @@
     }
   };
 
-  // 判断是否带有模版ID
-  const route = useRoute();
-  const templateId = route.query.templateId as string;
-  const lastActive = ref(2); // 最后一步的active
   if (templateId) {
     selectTemplateId.value = templateId;
     lastActive.value = 1;
@@ -380,8 +398,21 @@
         }
       }
     }
-    HJNewJsonStore.value = generateParams.value.template;
-    getResume();
+    if (generateParams.value.template) {
+      HJNewJsonStore.value = generateParams.value.template;
+    } else {
+      console.warn(
+        'generateParams.value.template is null, using default template from pageSchemas'
+      );
+      HJNewJsonStore.value = cloneDeep(pageSchemas[selectedPageName.value]);
+    }
+    try {
+      await getResume();
+    } catch (err) {
+      console.error('Generation failed:', err);
+      ElMessage.error('生成失败，请稍后重试');
+      isAiLoading.value = false;
+    }
   };
   // 取消生成简历
   const cancleGenerateResume = () => {
@@ -422,51 +453,59 @@
       const dataSource = extractResumeData(cloneDeep(HJNewJsonStore.value));
       console.log('dataSource', JSON.stringify(dataSource));
       params.template = dataSource;
-      const controller = generateResumeStreamAsync(
-        params,
-        handleStreamData,
-        (error: any) => {
-          ElMessage.error(error.message || 'AI智能简历生成失败');
-          isAiLoading.value = false;
-          aiFailAsync({
-            serialNumber: serialNumber.value,
-            error: error.message || 'AI智能简历生成失败'
-          });
-        },
-        () => {
-          try {
-            const result = str.value.replace(/```json/g, '');
-            const resule2 = result.replace(/```/g, '');
-            console.log('转义结果', resule2);
-            console.log('JSON.parse后的数据', JSON.parse(resule2));
-            // 还原label
-            const resetLabel = restoreData(JSON.parse(resule2));
-            console.log('还原label后的数据', resetLabel);
-            // 彻底还原数据
-            const resetData = restoreDataId(cloneDeep(HJNewJsonStore.value), resetLabel);
-            console.log('彻底还原后的数据', resetData);
-            HJNewJsonStore.value = resetData;
-            ElMessage.success('AI简历生成成功');
+
+      // 适配 Cerebras 模型
+      if (params.model.startsWith('Cerebras')) {
+        const messages = [
+          {
+            role: 'system',
+            content: `你是一位专业的简历专家。你的任务根据用户提供的【意向岗位】、【工作年限】和【其他关键词】，结合给定的【简历模板结构】，生成一份高质量的简历 JSON 数据。
+          
+要求：
+1. 语言表达专业、简练，符合行业标准。
+2. 必须严格遵守提供的 JSON 模板结构，不要修改键名。
+3. 仅输出合法的 JSON 代码块，不要包含任何解释性文字。
+4. 确保输出的简历内容丰富且专业。
+5. 必须返回合法的 JSON 字符串。`
+          },
+          {
+            role: 'user',
+            content: `意向岗位：${params.keywords.intendedPositions}
+工作年限：${params.keywords.workService}年
+其他关键词：${params.keywords.otherKeywords}
+简历模板结构：${JSON.stringify(params.template)}`
+          }
+        ];
+
+        generateCerebrasResumeStream(
+          { messages, model: 'qwen-3-235b-a22b-instruct-2507' },
+          handleStreamData,
+          (error: any) => {
+            ElMessage.error(error.message || 'Cerebras AI 智能简历生成失败');
             isAiLoading.value = false;
-            generateResumeSuccess.value = true;
-            if (!modelObj.value.model_is_free) {
-              getUserIntegralTotal();
-            }
-          } catch (e) {
-            console.log('JSON 转换失败');
+          },
+          () => {
+            handleGenerateComplete();
+          }
+        );
+      } else {
+        const controller = generateResumeStreamAsync(
+          params,
+          handleStreamData,
+          (error: any) => {
+            ElMessage.error(error.message || 'AI智能简历生成失败');
             isAiLoading.value = false;
-            ElNotification.error({
-              title: '错误',
-              message: '简历结果已返回，但JSON处理失败'
-            });
             aiFailAsync({
               serialNumber: serialNumber.value,
-              errorMsg: 'JSON返回，但处理失败'
+              error: error.message || 'AI智能简历生成失败'
             });
+          },
+          () => {
+            handleGenerateComplete();
           }
-        }
-      );
-      streamController.value = controller;
+        );
+        streamController.value = controller;
+      }
     } else {
       mdResume.value = true;
       mdResumeLoading.value = true;
@@ -477,6 +516,7 @@
         (error: any) => {
           ElMessage.error(error.message || 'AI智能Markdown简历生成失败');
           isAiLoading.value = false;
+          mdResumeLoading.value = false;
           aiFailAsync({
             serialNumber: serialNumber.value,
             error: error.message || 'AI智能Markdown简历生成失败'
@@ -488,25 +528,50 @@
             isAiLoading.value = false;
             mdResumeLoading.value = false;
             generateResumeSuccess.value = true;
-            if (!modelObj.value.model_is_free) {
+            if (modelObj.value && !modelObj.value.model_is_free) {
               getUserIntegralTotal();
             }
           } catch (e) {
             console.log('Markdown 转换失败', e);
             isAiLoading.value = false;
             mdResumeLoading.value = false;
-            ElNotification.error({
-              title: '错误',
-              message: '简历结果已返回，但Markdown处理失败'
-            });
-            aiFailAsync({
-              serialNumber: serialNumber.value,
-              errorMsg: 'Markdown返回，但处理失败'
-            });
           }
         }
       );
       streamController.value = controller;
+    }
+  };
+
+  // 生成完成后的逻辑处理
+  const handleGenerateComplete = () => {
+    try {
+      // 更加鲁棒的 JSON 提取逻辑
+      const jsonMatch = str.value.match(/\{[\s\S]*\}/);
+      const jsonStr = jsonMatch ? jsonMatch[0] : str.value;
+      console.log('提取到的 JSON 字符串', jsonStr);
+
+      const parsedData = JSON.parse(jsonStr);
+      console.log('JSON.parse 后的数据', parsedData);
+
+      // 还原 label
+      const resetLabel = restoreData(parsedData);
+      console.log('还原 label 后的数据', resetLabel);
+
+      // 彻底还原数据
+      const resetData = restoreDataId(cloneDeep(HJNewJsonStore.value), resetLabel);
+      console.log('彻底还原后的数据', resetData);
+
+      HJNewJsonStore.value = resetData;
+      ElMessage.success('AI简历生成成功');
+      isAiLoading.value = false;
+      generateResumeSuccess.value = true;
+      if (modelObj.value && !modelObj.value.model_is_free) {
+        getUserIntegralTotal();
+      }
+    } catch (e) {
+      console.log('JSON 转换失败', e);
+      ElMessage.error('AI生成数据解析失败，请重试');
+      isAiLoading.value = false;
     }
   };
   // 处理流式数据
@@ -565,18 +630,20 @@
   };
 
   // 前往编辑
-  const router = useRouter();
   const goEdit = async () => {
     if (!generateResumeSuccess.value || !selectTemplateId.value) {
       ElMessage.warning('请先生成简历哦');
       return;
     }
 
+    console.log('Preparing to go to editor. selectTemplateId:', selectTemplateId.value);
     isEditing.value = true;
     try {
       // 查询用户是否使用过该模版创建过简历
-      const { data } = await getUsertemplateAsync(selectTemplateId.value);
-      if (data.status === 200) {
+      const res = await getUsertemplateAsync(selectTemplateId.value);
+      const data = res.data || res; // Handle both structures
+
+      if (data && data.status === 200) {
         // 使用ElMessageBox代替ElMessage.warning
         try {
           await ElMessageBox.confirm(
@@ -588,23 +655,20 @@
               type: 'warning'
             }
           );
-          fromAiGenerate.value = true;
-          router.push({
-            path: `/designResume/${selectTemplateId.value}`
-          });
         } catch (error) {
-          // 用户点击了"取消"或关闭了对话框
-          console.log('用户取消了编辑操作');
+          // 用户点击了"取消"
           return;
         }
-      } else {
-        fromAiGenerate.value = true;
-        router.push({
-          path: `/designResume/${selectTemplateId.value}`
-        });
       }
+
+      fromAiGenerate.value = true;
+      console.log('Transitioning to /designResume/' + selectTemplateId.value);
+      await router.push({
+        path: `/designResume/${selectTemplateId.value}`
+      });
     } catch (error) {
-      ElMessage.error('处理编辑请求时出错');
+      console.error('Error in goEdit:', error);
+      ElMessage.error('处理编辑请求时出错，请尝试刷新页面');
     } finally {
       isEditing.value = false;
     }

@@ -3,28 +3,27 @@ import { defineStore } from 'pinia';
 
 // 用户信息
 export const useMembershipStore = defineStore('membershipStore', () => {
-  const membershipInfo = ref<any>(
-    localStorage.getItem('membershipInfo')
-      ? JSON.parse(localStorage.getItem('membershipInfo') as string)
-      : ''
-  );
+  const membershipInfo = ref<any>({
+    hasMembership: true,
+    isExpired: false,
+    daysRemaining: 9999,
+    type: 'lifetime',
+    membershipName: '永久会员',
+    expiredDays: 0
+  });
+
+  const isMember = computed(() => {
+    return membershipInfo.value.hasMembership && !membershipInfo.value.isExpired;
+  });
+
   // 保存用户会员信息
   function saveMembershipInfo(membershipInfoObj: any) {
-    membershipInfo.value = membershipInfoObj;
-    localStorage.setItem('membershipInfo', JSON.stringify(membershipInfo.value));
+    console.log('Membership mock active, skipping save:', membershipInfoObj);
   }
 
   // 查询用户信息
   async function getUserMembershipInfo() {
-    const data = await getUserMembershipAsync();
-    if (data.data.status === 200) {
-      saveMembershipInfo(data.data.data);
-    } else {
-      ElMessage({
-        message: data.message,
-        type: 'error'
-      });
-    }
+    console.log('Membership mock active, skipping fetch');
   }
 
   return {

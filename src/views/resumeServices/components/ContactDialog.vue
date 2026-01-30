@@ -11,11 +11,13 @@
     <div v-viewer class="resume-contact-dialog-box">
       <div class="left">
         <img :src="props.vxQun" alt="微信交流群" title="微信交流群" loading="lazy" />
-        <h2>猫步简历交流群</h2>
+        <h2>AI职升姬 交流群</h2>
       </div>
-      <div class="right">
-        <img :src="props.wx" alt="个人微信" title="个人微信" loading="lazy" />
-        <h2>添加微信（备注：猫步简历）</h2>
+      <div class="vx-box">
+        <div class="vx-item">
+          <img src="@/assets/images/vx-qun.jpg" alt="微信群" />
+        </div>
+        <h2>添加微信（备注：AI职升姬）</h2>
       </div>
     </div>
   </el-dialog>

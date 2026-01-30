@@ -32,6 +32,8 @@
   import TemplateCard from './TemplateCard.vue';
   import NoDataVue from '@/components/NoData/NoData.vue';
 
+  const emit = defineEmits(['select']);
+
   const loading = ref<boolean>(true);
   // 选中的模版的id
   const selectTemplateId = ref<string>('');
@@ -67,12 +69,14 @@
   const selectTemplate = (id: any) => {
     selectTemplateId.value = id;
     ElMessage.success('已选择模版');
+    emit('select', id);
   };
 
   // 取消选中模版
   const cancleSelect = () => {
     selectTemplateId.value = '';
     ElMessage.success('已取消选择模版');
+    emit('select', '');
   };
 
   // 改变页码时

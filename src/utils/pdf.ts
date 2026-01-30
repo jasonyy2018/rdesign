@@ -105,26 +105,28 @@ export const exportPNGNew = async (id?: string) => {
 // 返回预览PDF
 export const exportPdfPreview = (id?: string) => {
   const { pageCount } = appStore.useCreateTemplateStore;
-  return new Promise(async (resolve) => {
-    const params = {
-      url: `${location.origin}/resumePreview?type=page&id=${id}`,
-      printBackground: true,
-      timezone: '',
-      margin: '',
-      filename: '',
-      format: 'A4',
-      integralPayGoodsId: id,
-      pageCount: pageCount
-    };
+  return new Promise(async (resolve, reject) => {
+    try {
+      const params = {
+        url: `${location.origin}/resumePreview?type=page&id=${id}`,
+        printBackground: true,
+        timezone: '',
+        margin: '',
+        filename: '',
+        format: 'A4',
+        integralPayGoodsId: id,
+        pageCount: pageCount
+      };
 
-    const { blob } = await getPreviewPdfAsync(params);
-    if (!blob) {
-      ElMessage.error('网络过慢，请求超时，请重新尝试导出');
-      resolve(null);
-      return;
-    } else {
-      resolve({ blob, pageCount });
-      return { blob, pageCount };
+      const result = await getPreviewPdfAsync(params);
+      if (!result || !result.blob) {
+        resolve(null);
+        return;
+      }
+      resolve({ blob: result.blob, pageCount: result.pageCount });
+    } catch (error) {
+      console.error('exportPdfPreview error:', error);
+      reject(error);
     }
   });
 };

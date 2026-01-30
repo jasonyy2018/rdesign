@@ -8,14 +8,13 @@
         class="el-menu-demo"
         mode="horizontal"
         :ellipsis="false"
-        router
         :popper-offset="10"
       >
         <template v-for="(item, index) in indexMenuList" :key="index">
           <!-- 只显示启用中的 -->
           <index-menu-item v-if="item.status === 1" :item="item" :key-index="item.name + index" />
         </template>
-        <!-- <el-menu-item @click="toArticles">求职攻略</el-menu-item> -->
+        <el-menu-item @click="toSeoArticles">求职百科</el-menu-item>
       </el-menu>
     </div>
     <!-- GitHub -->
@@ -38,15 +37,15 @@
       </div>
       <!-- 全站免费用户则不显示 -->
       <template v-if="!userInfo.isAllFree">
-        <!-- 开通会员 -->
-        <div v-config:open_membership class="membership-box" @click="toMembership">
+        <!-- 会员功能已隐藏 -->
+        <div v-if="false" class="membership-box" @click="toMembership">
           <template v-if="!membershipInfo.hasMembership">
             <el-popover popper-class="create-membership-popper">
               <template #reference>
                 <div class="content-box not-membership">
                   <img
                     src="@/assets/images/membership.svg"
-                    alt="猫步会员"
+                    alt="会员"
                     title="会员"
                     width="20"
                   />
@@ -76,7 +75,7 @@
                     <div :class="['goods-name', `name-${item.value}`]">
                       <img
                         src="@/assets/images/membership.svg"
-                        alt="猫步会员"
+                        alt="会员"
                         title="会员"
                         width="20"
                       />
@@ -85,19 +84,19 @@
                     <!-- 权益 -->
                     <div v-if="item.value === 'monthly'" class="goods-tips">
                       <p>31天会员权益</p>
-                      <p>4份简历存储</p>
+                      <p>4份个人存储</p>
                       <p>无限制导出</p>
                       <p>无限制使用AI</p>
                     </div>
                     <div v-else-if="item.value === 'yearly'" class="goods-tips">
                       <p>365天会员权益</p>
-                      <p>8份简历存储</p>
+                      <p>8份个人存储</p>
                       <p>无限制导出</p>
                       <p>无限制使用AI</p>
                     </div>
                     <div v-else-if="item.value === 'lifetime'" class="goods-tips">
                       <p>永久会员权益</p>
-                      <p>无限制简历存储</p>
+                      <p>无限制存储</p>
                       <p>无限制导出</p>
                       <p>无限制使用AI</p>
                     </div>
@@ -124,8 +123,8 @@
             <span>已过期{{ membershipInfo.expiredDays }}天</span>
           </div>
         </div>
-        <!-- 简币 -->
-        <div v-config:open_get_source_code class="jb-num-box" @click="toMyIntegral">
+        <!-- 简币功能已隐藏 -->
+        <div v-if="false" class="jb-num-box" @click="toMyIntegral">
           <div class="content">
             <img
               width="18"
@@ -214,6 +213,8 @@
   ></attendance-dialog>
 </template>
 <script setup lang="ts">
+  import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
   import appStore from '@/store';
   import LoginDialog from '@/components/LoginDialog/LoginDialog';
   import { getTodayAttendancePersonTotalAsync } from '@/http/api/integral';
@@ -308,6 +309,11 @@
     saveMembershipInfo(''); // 清除会员信息
     setUuid(); // 全局刷新
     router.push('/');
+  };
+
+  // 跳转至SEO文章页
+  const toSeoArticles = () => {
+    router.push('/seo-articles');
   };
 
   // 签到

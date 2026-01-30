@@ -9,16 +9,10 @@ const http = new Request({
       config.validateStatus = (status) => {
         switch (status) {
           case 401:
-            ElMessage.error('用户信息过期或无权限，请重新登录');
-            const { saveToken } = appStore.useTokenStore;
-            const { saveUserInfo } = appStore.useUserInfoStore;
-            const { setUuid } = appStore.useRefreshStore;
-            const router = useRouter();
-            saveToken(''); // 清除token
-            saveUserInfo(''); // 清除用户信息
-            setUuid(); // 全局刷新
-            router.push('/');
-            break;
+            console.warn('Suppressing 401 ElMessage in custom.ts due to guest access.');
+          // ElMessage.error('用户信息过期或无权限，请重新登录');
+          // const { saveToken } = appStore.useTokenStore;
+          // ...
           default:
             break;
         }

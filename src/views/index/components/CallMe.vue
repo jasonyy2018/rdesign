@@ -93,13 +93,14 @@
   };
 
   // 查询微信微信群列表
+  const placeholder = ref<string>('请输入关键词，如毕业于 AI职升姬 大学、计算机专业、创作项目经历等');
   const vxQunList = ref<any>([]);
   const getVXQunListUnauth = async () => {
     vxQunList.value = [];
     const data = await getVXQunListUnauthAsync();
     if (data.status === 200) {
       data.data.map((item: { name: string }) => {
-        if (item.name === '猫步简历微信交流群') {
+        if (item.name === 'AI职升姬 微信交流群' || item.name.includes('交流群')) {
           vxQunList.value.push(item);
         }
       });

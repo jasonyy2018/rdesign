@@ -155,7 +155,7 @@
       String(now.getMinutes()).padStart(2, '0')
     ].join('-');
     const { HJNewJsonStore } = appStore.useCreateTemplateStore;
-    return `${HJNewJsonStore.props.title}_${dateStr}_${timeStr}.md`;
+    return `${HJNewJsonStore.config.title}_${dateStr}_${timeStr}.md`;
   };
 
   // 关闭弹窗

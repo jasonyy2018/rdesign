@@ -1,10 +1,6 @@
 <template>
   <div id="logo" class="logo" @click="toHome">
-    <img
-      src="@/assets/images/logo-maobu.png"
-      alt="猫步简历 - 专业简历制作平台"
-      title="猫步简历 - 打造完美简历"
-    />
+    <span class="logo-text">AI职升姬</span>
   </div>
 </template>
 <script lang="ts" setup>
@@ -22,6 +18,12 @@
     user-select: none;
     img {
       height: 100%;
+    }
+    .logo-text {
+      font-size: 24px;
+      font-weight: bold;
+      color: #2faf5a;
+      letter-spacing: 1px;
     }
   }
 </style>

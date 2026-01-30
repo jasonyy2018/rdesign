@@ -20,7 +20,7 @@ export const HJNewSchema: IHJNewSchema = {
   }, // 全局范围的css样式
   customCss: [],
   config: {
-    title: '猫步简历', // 页面标题
+    title: 'AI职升姬', // 页面标题
     layout: {
       children: []
     }

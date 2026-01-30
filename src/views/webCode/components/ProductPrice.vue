@@ -44,7 +44,7 @@
       </div>
       <div class="pay-tips">
         <p>支付成功后，添加作者微信，凭支付记录获取相关权限和代码！</p>
-        <p class="vx">作者微信：LHQfighting（备注“猫步简历”）</p>
+        <p class="vx">作者微信：LHQfighting（备注“AI职升姬”）</p>
       </div>
     </el-dialog>
   </div>
@@ -63,15 +63,15 @@
         window.open('https://github.com/Hacker233/resume-design', '_blank');
         break;
       case '基础版':
-        imgSrc.value = 'https://maobucv.com:9000/resume/logo/vx-pay1.jpg';
+        imgSrc.value = ''; // 移除外链图片
         dialogVisible.value = true;
         break;
       case '升级版':
-        imgSrc.value = 'https://maobucv.com:9000/resume/logo/vx-pay399.jpg';
+        imgSrc.value = ''; // 移除外链图片
         dialogVisible.value = true;
         break;
       case '永久更新版':
-        imgSrc.value = 'https://maobucv.com:9000/resume/logo/zsxq.jpg';
+        imgSrc.value = ''; // 移除外链图片
         dialogVisible.value = true;
         break;
       default:

@@ -18,6 +18,21 @@
         >此操作AI会将您的简历内容翻译为对应语种，无法确保完全正确，请你最好留有数据备份！</p
       >
       <el-form size="default">
+        <el-form-item label="选择AI模型:">
+          <el-select
+            v-model="selectedModel"
+            placeholder="请选择AI模型"
+            size="default"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="item in modelList"
+              :key="item._id"
+              :label="item.model_name"
+              :value="item.model_name"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="选择目标语种:">
           <el-select v-model="language" placeholder="请选择语种" size="default" style="width: 100%">
             <el-option
@@ -45,7 +60,8 @@
   import {
     cancleAiTranslateTextAsync,
     getSerialNumberAsync,
-    translateTextAsync
+    translateTextAsync,
+    aiModelListAsync // Import model list
   } from '@/http/api/ai';
   import { ElNotification } from 'element-plus';
   import { extractValues, parseJSON, restoreValues } from '@/utils/jsonUtils';
@@ -61,13 +77,39 @@
     id: ''
   });
 
+  const selectedModel = ref<string>('');
+  const modelList = ref<any>([]);
+
+  // 获取模型列表
+  const getModelList = async () => {
+    const res = await aiModelListAsync();
+    if (res.data.status === 200) {
+      modelList.value = res.data.data;
+      // 增加 Cerebras 选项
+      modelList.value.unshift({
+        _id: 'cerebras-qwen-translate',
+        model_name: 'Cerebras-Qwen-Translate',
+        model_is_free: 1
+      });
+      if (modelList.value.length > 0) {
+        selectedModel.value = modelList.value[0].model_name;
+      }
+    }
+  };
+
   watch(
     () => props.dialogTranslateVisible,
     async (newVal) => {
       if (newVal) {
         aiLoading.value = false;
         const module = useGetSelectedModule(props.id);
+        if (!module) {
+          console.error('Module not found for id:', props.id);
+          aiEditContent.value = null;
+          return;
+        }
         aiEditContent.value = module;
+        getModelList();
       }
     }
   );
@@ -106,6 +148,10 @@
   const aiEditContent = ref<any>('');
   const serialNumber = ref<string>('');
   const submit = async () => {
+    if (!selectedModel.value) {
+      ElMessage.warning('请先选择AI模型');
+      return;
+    }
     // 先获取流水号
     const serialNumberResult = await getSerialNumberAsync();
     if (serialNumberResult.data.status == 200) {
@@ -115,6 +161,10 @@
       return;
     }
     if (aiLoading.value) return;
+    if (!aiEditContent.value) {
+      ElMessage.error('无法获取模块数据');
+      return;
+    }
     let message: any = {
       title: {}
     };
@@ -125,12 +175,10 @@
     console.log('需要翻译的内容', JSON.stringify(message));
     const extractValue = extractValues(message); // 提取value
     console.log('提取出的value', JSON.stringify(extractValue));
-    // const restoreJsonValue = restoreValues(message, extractValue); // 将翻译结果还原为原数据
-    // console.log('还原的数据', JSON.stringify(restoreJsonValue));
-    // debugger;
+
     // 点击AI
     let params = {
-      model: 'glm-4-flash',
+      model: selectedModel.value,
       text: JSON.stringify(extractValue),
       languages: language.value,
       serialNumber: serialNumber.value
@@ -151,9 +199,13 @@
         console.log('还原的数据', restoreJsonValue);
         // 更新JSON
         const module = useGetSelectedModule(props.id);
-        module.title = restoreJsonValue['title'].value;
-        module.dataSource = restoreJsonValue['dataSource'];
-        ElMessage.success('语种切换成功~~');
+        if (module) {
+          module.title = restoreJsonValue['title'].value;
+          module.dataSource = restoreJsonValue['dataSource'];
+          ElMessage.success('语种切换成功~~');
+        } else {
+          ElMessage.error('无法更新模块，找不到目标模块');
+        }
         cancle();
       } catch (error) {
         ElNotification({
