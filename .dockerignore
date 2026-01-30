@@ -9,7 +9,7 @@ dist-ssr
 docker-compose*.yml
 Dockerfile*
 .env*.local
-build
+
 doc
 
 rebrand_docker.js
