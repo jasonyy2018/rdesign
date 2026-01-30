@@ -8,7 +8,6 @@ import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 import path from 'path';
 import chrome from 'puppeteer';
 import express from 'express';
-// import serveStatic from 'serve-static';
 
 import templates from './public/static/templates.json';
 
@@ -132,17 +131,12 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
         name: 'puppeteer-prerender',
         closeBundle: async () => {
           if (!isBuild) return;
-          console.log('process.env.VITE_BUILD_MODE', process.env.VITE_BUILD_MODE);
           const buildMode = process.env.VITE_BUILD_MODE;
           if (buildMode !== 'ssr') return;
 
           const app = express();
           const staticDir = path.resolve(__dirname, VITE_OUTPUT_DIR);
-
-          // 先设置静态文件服务
           app.use(express.static(staticDir));
-
-          // 然后设置SPA回退路由（修正后的写法）
           app.get(/^\/(?!api).*/, (req, res) => {
             res.sendFile(path.join(staticDir, 'index.html'));
           });
@@ -151,17 +145,14 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
             console.log('Prerender server running at http://localhost:5137');
           });
 
-          console.log('Starting Puppeteer prerender for templates...');
+          console.log('Starting Puppeteer prerender...');
           let browser;
           let retryCount = 0;
           const maxRetries = 3;
 
           while (retryCount < maxRetries) {
             try {
-              console.log(
-                `Attempting to launch browser (attempt ${retryCount + 1}/${maxRetries})...`
-              );
-
+              console.log(`Launching browser (attempt ${retryCount + 1}/${maxRetries})...`);
               browser = await chrome.launch({
                 headless: true,
                 args: [
@@ -170,22 +161,12 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
                   '--disable-dev-shm-usage',
                   '--disable-gpu',
                   '--disable-software-rasterizer',
-                  '--disable-extensions',
-                  '--disable-default-apps',
-                  '--disable-background-timer-throttling',
-                  '--disable-backgrounding-occluded-windows',
-                  '--disable-renderer-backgrounding',
-                  '--disable-breakpad',
-                  '--disable-component-update',
                   '--no-zygote',
-                  '--single-process',
                   '--disable-blink-features=AutomationControlled',
                   '--disable-web-security',
                   '--disable-features=IsolateOrigins,site-per-process',
-                  '--disable-site-isolation-trials',
                   '--disable-ipc-flooding-protection'
                 ],
-                dumpio: true,
                 timeout: 300000,
                 protocolTimeout: 300000
               });
@@ -193,251 +174,87 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
               break;
             } catch (err) {
               retryCount++;
-              console.error(`Browser launch attempt ${retryCount} failed:`, err);
-              if (retryCount >= maxRetries) {
-                throw new Error(`Failed to launch browser after ${maxRetries} attempts: ${err}`);
-              }
-              console.log('Retrying in 5 seconds...');
-              await new Promise((resolve) => setTimeout(resolve, 5000));
+              console.error(`Launch attempt ${retryCount} failed:`, err);
+              if (retryCount >= maxRetries) throw err;
+              await new Promise((r) => setTimeout(r, 10000));
             }
           }
 
           try {
             const outputPath = path.resolve(__dirname, VITE_OUTPUT_DIR);
             const templateDir = path.join(outputPath, 'template');
+            if (!fs.existsSync(templateDir)) fs.mkdirSync(templateDir, { recursive: true });
 
-            if (!fs.existsSync(templateDir)) {
-              fs.mkdirSync(templateDir, { recursive: true });
-            }
-
-            // 加载预渲染数据
             const prerenderDataPath = path.resolve(__dirname, '.temp/prerender-data.json');
             let footerHtml = '';
             if (fs.existsSync(prerenderDataPath)) {
               try {
-                const prerenderData = JSON.parse(fs.readFileSync(prerenderDataPath, 'utf-8'));
-                footerHtml = prerenderData.FOOTER_HTML || '';
-              } catch (err) {
-                console.warn('⚠️ 解析 prerender-data.json 失败:', err);
-              }
+                const data = JSON.parse(fs.readFileSync(prerenderDataPath, 'utf-8'));
+                footerHtml = data.FOOTER_HTML || '';
+              } catch (e) {}
             }
 
-            // 预渲染首页（包含footer HTML注入）
-            console.log('Prerendering home page with footer...');
-            const homePage = await browser.newPage();
-            await homePage.setRequestInterception(true);
-            homePage.on('request', (request) => {
-              if (request.url().includes('iconfont.js')) {
-                request.abort();
-              } else {
-                request.continue();
-              }
-            });
-            await homePage.setViewport({
-              width: 1920,
-              height: 1080,
-              deviceScaleFactor: 1,
-              isMobile: false,
-              hasTouch: false,
-              isLandscape: false
-            });
-
-            try {
-              await homePage.goto('http://localhost:5137/', {
-                waitUntil: 'networkidle0',
-                timeout: 180000
-              });
-
-              let homeHtml = await homePage.evaluate(() => document.documentElement.outerHTML);
-
-              if (footerHtml) {
-                homeHtml = homeHtml.replace('<div id="footer"></div>', footerHtml);
-              }
-
-              const homeInjectedScriptTag = '<script src="/static/native-events.js"></script>';
-              homeHtml = homeHtml.replace('</body>', `${homeInjectedScriptTag}</body>`);
-
-              fs.writeFileSync(path.join(outputPath, 'index.html'), homeHtml, {
-                encoding: 'utf-8'
-              });
-              console.log('✅ Home page prerendered successfully');
-            } catch (err) {
-              console.error('Error prerendering home page:', err);
-            } finally {
-              await homePage.close();
-            }
-
-            // ============= 新增的sitemap预渲染部分 =============
-            console.log('Prerendering sitemap page...');
-            const sitemapPage = await browser.newPage();
-
-            await sitemapPage.setRequestInterception(true);
-            sitemapPage.on('request', (request) => {
-              if (request.url().includes('iconfont.js')) {
-                request.abort();
-              } else {
-                request.continue();
-              }
-            });
-
-            await sitemapPage.setViewport({
-              width: 1920,
-              height: 1080,
-              deviceScaleFactor: 1,
-              isMobile: false,
-              hasTouch: false,
-              isLandscape: false
-            });
-
-            try {
-              await sitemapPage.goto('http://localhost:5137/sitemap', {
-                waitUntil: 'networkidle0',
-                timeout: 180000
-              });
-
-              let sitemapHtml = await sitemapPage.evaluate(
-                () => document.documentElement.outerHTML
-              );
-
-              const sitemapInjectedScriptTag = '<script src="/static/native-events.js"></script>';
-              sitemapHtml = sitemapHtml.replace('</body>', `${sitemapInjectedScriptTag}</body>`);
-
-              fs.writeFileSync(path.join(outputPath, 'sitemap.html'), sitemapHtml, {
-                encoding: 'utf-8'
-              });
-              console.log('✅ Sitemap prerendered successfully');
-            } catch (err) {
-              console.error('Error prerendering sitemap:', err);
-            } finally {
-              await sitemapPage.close();
-            }
-            // ============= 新增部分结束 =============
-
-            // 在线制作模版预渲染
-            const idList = templates;
-            console.log('idList', idList);
-
-            const maxConcurrentPages = 2;
-            const chunkedTemplates = [];
-            for (let i = 0; i < idList.length; i += maxConcurrentPages) {
-              chunkedTemplates.push(idList.slice(i, i + maxConcurrentPages));
-            }
-
-            for (const chunk of chunkedTemplates) {
-              for (let i = 0; i < chunk.length; i++) {
-                const id = chunk[i].id;
-                const pageName = chunk[i].page;
-
-                const page = await browser.newPage();
-
-                // 设置拦截规则
-                await page.setRequestInterception(true);
-                page.on('request', (request) => {
-                  if (request.url().includes('iconfont.js')) {
-                    request.abort();
-                  } else {
-                    request.continue();
-                  }
-                });
-
-                console.log(`Prerendering template for id: ${id}`);
-
-                // 设置视口为常见的桌面端尺寸（推荐）
-                await page.setViewport({
-                  width: 1920,
-                  height: 1080,
-                  deviceScaleFactor: 1,
-                  isMobile: false,
-                  hasTouch: false,
-                  isLandscape: false
-                });
-
-                try {
-                  // 方法1：直接访问动态路由
-                  await page.goto(`http://localhost:5137/resumedetail/${id}`, {
-                    waitUntil: 'networkidle0',
-                    timeout: 180000
-                  });
-
-                  // 获取处理后的HTML
-                  const html = await page.evaluate(() => document.documentElement.outerHTML);
-
-                  // 插入 native-events.js 脚本
-                  const injectedScriptTag = '<script src="/static/native-events.js"></script>';
-                  const title = `AI职升姬 - ${chunk[i].title}`;
-                  const modifiedHtml = html
-                    .replace(/<title>.*<\/title>/, `<title>${title}</title>`)
-                    .replace('</body>', `${injectedScriptTag}</body>`);
-
-                  // 保存文件
-                  fs.writeFileSync(path.join(templateDir, pageName), modifiedHtml, {
-                    encoding: 'utf-8'
-                  });
-
-                  console.log(`Template ${i + 1} prerendered successfully`);
-                } catch (err) {
-                  console.error(`Error prerendering id ${id}:`, err);
-                } finally {
-                  await page.close();
+            const renderPage = async (url, savePath, customTitle = '') => {
+              const page = await browser.newPage();
+              await page.setDefaultNavigationTimeout(180000);
+              await page.setDefaultTimeout(180000);
+              await page.setRequestInterception(true);
+              page.on('request', (req) => {
+                const type = req.resourceType();
+                if (
+                  ['image', 'media', 'font'].includes(type) ||
+                  req.url().includes('iconfont.js')
+                ) {
+                  req.abort();
+                } else {
+                  req.continue();
                 }
+              });
+              await page.setViewport({ width: 1920, height: 1080 });
+
+              try {
+                await page.goto(url, { waitUntil: 'networkidle0', timeout: 180000 });
+                let html = await page.evaluate(() => document.documentElement.outerHTML);
+                if (footerHtml && url.endsWith(':5137/')) {
+                  html = html.replace('<div id="footer"></div>', footerHtml);
+                }
+                const injectedScript = '<script src="/static/native-events.js"></script>';
+                if (customTitle) {
+                  html = html.replace(/<title>.*<\/title>/, `<title>${customTitle}</title>`);
+                }
+                html = html.replace('</body>', `${injectedScript}</body>`);
+                fs.writeFileSync(savePath, html, 'utf-8');
+                console.log(`✅ Rendered: ${url}`);
+              } catch (e) {
+                console.error(`❌ Failed: ${url}`, e.message);
+              } finally {
+                await page.close();
               }
+            };
+
+            // 1. Home
+            await renderPage('http://localhost:5137/', path.join(outputPath, 'index.html'));
+            // 2. Sitemap
+            await renderPage(
+              'http://localhost:5137/sitemap',
+              path.join(outputPath, 'sitemap.html')
+            );
+            // 3. Templates (Sequential to save memory)
+            for (const item of templates) {
+              await renderPage(
+                `http://localhost:5137/resumedetail/${item.id}`,
+                path.join(templateDir, item.page),
+                `AI职升姬 - ${item.title}`
+              );
             }
           } catch (err) {
             console.error('Prerender failed:', err);
           } finally {
-            await browser.close();
-            server.close(() => {
-              console.log('Prerender server closed');
-            });
+            if (browser) await browser.close();
+            server.close();
           }
         }
       }
-      // ✅ 禁用 vite-plugin-prerender，使用自定义的 puppeteer-prerender
-      // prerender({
-      //   renderer: new prerender.PuppeteerRenderer({
-      //     args: [
-      //       '--no-sandbox',
-      //       '--disable-setuid-sandbox',
-      //       '--disable-gpu',
-      //       '--disable-software-rasterizer',
-      //       '--no-first-run',
-      //       '--disable-accelerated-2d-canvas',
-      //       '--disable-gl-drawing-for-tests'
-      //     ],
-      //     dumpio: true,
-      //     timeout: 120000,
-      //     protocolTimeout: 120000,
-      //     maxConcurrentRoutes: 1
-      //   }),
-      //   staticDir: path.resolve(__dirname, VITE_OUTPUT_DIR),
-      //   routes: ['/'],
-      //   postProcess: (context) => {
-      //     const dataPath = path.resolve(__dirname, '.temp/prerender-data.json');
-      //     if (!context || !context.html) {
-      //       console.warn('⚠️ context.html 不存在，可能未正确渲染');
-      //       return context;
-      //     }
-      //     if (context.route === '/') {
-      //       if (fs.existsSync(dataPath)) {
-      //         try {
-      //           const data = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
-      //           context.html = context.html.replace(
-      //             '<div id="footer"></div>',
-      //             `${data.FOOTER_HTML}`
-      //           );
-      //           return context;
-      //         } catch (err) {
-      //           console.error('❌ 解析 prerender-data.json 失败:', err);
-      //           return context;
-      //         }
-      //       } else {
-      //         console.warn('⚠️ prerender-data.json 不存在于 .temp/，请检查是否成功生成');
-      //         return context;
-      //       }
-      //     }
-      //     return context;
-      //   }
-      // })
     ],
     esbuild: {
       logOverride: { 'this-is-undefined-in-esm': 'silent' }
@@ -449,11 +266,11 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
       hmr: true,
       proxy: {
         '/huajian': {
-          target: 'http://localhost:3000', // 开发环境代理至本地后台
+          target: 'http://localhost:3000',
           changeOrigin: true
         },
         '/api': {
-          target: 'http://localhost:3000', // 开发环境代理至本地后台
+          target: 'http://localhost:3000',
           changeOrigin: true
         }
       }

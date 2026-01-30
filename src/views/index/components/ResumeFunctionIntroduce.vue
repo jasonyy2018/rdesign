@@ -53,7 +53,7 @@
         </div>
         <div class="card">
           <img
-            src="../../../assets/images/resumeFunctionIntro/aiedit.svg"
+            src="../../../assets/images/resumeFunctionIntro/AIedit.svg"
             alt="AI润色"
             title="AI帮改简历、提高专业性"
             loading="lazy"
