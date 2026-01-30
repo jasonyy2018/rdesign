@@ -84,11 +84,15 @@ FROM nginx:stable-alpine
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 # Ensure template directory permissions
-RUN chmod -R 755 /usr/share/nginx/html/template
+RUN chmod -R 755 /usr/share/nginx/html/template && \
+    chmod -R 755 /usr/share/nginx/html/template/*
 
 # Expose ports
 EXPOSE 80
 EXPOSE 443
+
+# Copy custom nginx config (if needed)
+# COPY nginx.conf /etc/nginx/nginx.conf
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]

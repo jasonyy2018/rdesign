@@ -9,7 +9,7 @@ import path from 'path';
 import chrome from 'puppeteer';
 import express from 'express';
 // import serveStatic from 'serve-static';
-import prerender from 'vite-plugin-prerender';
+
 import templates from './public/static/templates.json';
 
 const fs = require('fs');
@@ -93,15 +93,16 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
         plugins: [
           autoprefixer({
             overrideBrowserslist: [
-              'Android 4.1',
-              'iOS 7.1',
-              'Chrome > 31',
-              'ff > 31',
-              'ie >= 8',
+              'Android >= 4.4',
+              'iOS >= 9',
+              'Chrome >= 49',
+              'Firefox >= 45',
+              'Safari >= 9',
               'last 2 versions',
-              'not IE <= 11'
+              'not dead'
             ],
-            grid: true
+            grid: true,
+            flexbox: 'no-2009'
           })
         ]
       }
@@ -171,11 +172,67 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
               fs.mkdirSync(templateDir, { recursive: true });
             }
 
+            // 加载预渲染数据
+            const prerenderDataPath = path.resolve(__dirname, '.temp/prerender-data.json');
+            let footerHtml = '';
+            if (fs.existsSync(prerenderDataPath)) {
+              try {
+                const prerenderData = JSON.parse(fs.readFileSync(prerenderDataPath, 'utf-8'));
+                footerHtml = prerenderData.FOOTER_HTML || '';
+              } catch (err) {
+                console.warn('⚠️ 解析 prerender-data.json 失败:', err);
+              }
+            }
+
+            // 预渲染首页（包含footer HTML注入）
+            console.log('Prerendering home page with footer...');
+            const homePage = await browser.newPage();
+            await homePage.setRequestInterception(true);
+            homePage.on('request', (request) => {
+              if (request.url().includes('iconfont.js')) {
+                request.abort();
+              } else {
+                request.continue();
+              }
+            });
+            await homePage.setViewport({
+              width: 1920,
+              height: 1080,
+              deviceScaleFactor: 1,
+              isMobile: false,
+              hasTouch: false,
+              isLandscape: false
+            });
+
+            try {
+              await homePage.goto('http://localhost:5137/', {
+                waitUntil: 'networkidle0',
+                timeout: 60000
+              });
+
+              let homeHtml = await homePage.evaluate(() => document.documentElement.outerHTML);
+
+              if (footerHtml) {
+                homeHtml = homeHtml.replace('<div id="footer"></div>', footerHtml);
+              }
+
+              const homeInjectedScriptTag = '<script src="/static/native-events.js"></script>';
+              homeHtml = homeHtml.replace('</body>', `${homeInjectedScriptTag}</body>`);
+
+              fs.writeFileSync(path.join(outputPath, 'index.html'), homeHtml, {
+                encoding: 'utf-8'
+              });
+              console.log('✅ Home page prerendered successfully');
+            } catch (err) {
+              console.error('Error prerendering home page:', err);
+            } finally {
+              await homePage.close();
+            }
+
             // ============= 新增的sitemap预渲染部分 =============
             console.log('Prerendering sitemap page...');
             const sitemapPage = await browser.newPage();
 
-            // 设置拦截规则（与现有逻辑一致）
             await sitemapPage.setRequestInterception(true);
             sitemapPage.on('request', (request) => {
               if (request.url().includes('iconfont.js')) {
@@ -185,7 +242,6 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
               }
             });
 
-            // 设置视口（与现有逻辑一致）
             await sitemapPage.setViewport({
               width: 1920,
               height: 1080,
@@ -196,30 +252,22 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
             });
 
             try {
-              // 访问sitemap路由
               await sitemapPage.goto('http://localhost:5137/sitemap', {
                 waitUntil: 'networkidle0',
                 timeout: 60000
               });
 
-              // 获取处理后的HTML
-              const sitemapHtml = await sitemapPage.evaluate(
+              let sitemapHtml = await sitemapPage.evaluate(
                 () => document.documentElement.outerHTML
               );
 
-              // 插入 native-events.js 脚本
               const sitemapInjectedScriptTag = '<script src="/static/native-events.js"></script>';
-              const sitemapModifiedHtml = sitemapHtml.replace(
-                '</body>',
-                `${sitemapInjectedScriptTag}</body>`
-              );
+              sitemapHtml = sitemapHtml.replace('</body>', `${sitemapInjectedScriptTag}</body>`);
 
-              // 保存到dist根目录
-              fs.writeFileSync(path.join(outputPath, 'sitemap.html'), sitemapModifiedHtml, {
+              fs.writeFileSync(path.join(outputPath, 'sitemap.html'), sitemapHtml, {
                 encoding: 'utf-8'
               });
-
-              console.log('Sitemap prerendered successfully');
+              console.log('✅ Sitemap prerendered successfully');
             } catch (err) {
               console.error('Error prerendering sitemap:', err);
             } finally {
@@ -297,58 +345,53 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
             });
           }
         }
-      },
-      // ✅ prerender 插件
-      prerender({
-        renderer: new prerender.PuppeteerRenderer({
-          args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-gpu',
-            '--disable-software-rasterizer',
-            '--no-first-run',
-            '--disable-accelerated-2d-canvas',
-            '--disable-gl-drawing-for-tests'
-          ],
-          dumpio: true,
-          timeout: 120000,
-          protocolTimeout: 120000,
-          maxConcurrentRoutes: 1 // Reduce concurrency to save resources
-        }),
-        staticDir: path.resolve(__dirname, VITE_OUTPUT_DIR),
-        routes: ['/'],
-        postProcess: (context) => {
-          const dataPath = path.resolve(__dirname, '.temp/prerender-data.json');
-
-          if (!context || !context.html) {
-            console.warn('⚠️ context.html 不存在，可能未正确渲染');
-            return context;
-          }
-
-          // 只对根路由 / 进行替换
-          if (context.route === '/') {
-            if (fs.existsSync(dataPath)) {
-              try {
-                const data = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
-                context.html = context.html.replace(
-                  '<div id="footer"></div>',
-                  `${data.FOOTER_HTML}`
-                );
-                return context;
-              } catch (err) {
-                console.error('❌ 解析 prerender-data.json 失败:', err);
-                return context;
-              }
-            } else {
-              console.warn('⚠️ prerender-data.json 不存在于 .temp/，请检查是否成功生成');
-              return context;
-            }
-          }
-
-          // 非根路由，原样返回不做处理
-          return context;
-        }
-      })
+      }
+      // ✅ 禁用 vite-plugin-prerender，使用自定义的 puppeteer-prerender
+      // prerender({
+      //   renderer: new prerender.PuppeteerRenderer({
+      //     args: [
+      //       '--no-sandbox',
+      //       '--disable-setuid-sandbox',
+      //       '--disable-gpu',
+      //       '--disable-software-rasterizer',
+      //       '--no-first-run',
+      //       '--disable-accelerated-2d-canvas',
+      //       '--disable-gl-drawing-for-tests'
+      //     ],
+      //     dumpio: true,
+      //     timeout: 120000,
+      //     protocolTimeout: 120000,
+      //     maxConcurrentRoutes: 1
+      //   }),
+      //   staticDir: path.resolve(__dirname, VITE_OUTPUT_DIR),
+      //   routes: ['/'],
+      //   postProcess: (context) => {
+      //     const dataPath = path.resolve(__dirname, '.temp/prerender-data.json');
+      //     if (!context || !context.html) {
+      //       console.warn('⚠️ context.html 不存在，可能未正确渲染');
+      //       return context;
+      //     }
+      //     if (context.route === '/') {
+      //       if (fs.existsSync(dataPath)) {
+      //         try {
+      //           const data = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+      //           context.html = context.html.replace(
+      //             '<div id="footer"></div>',
+      //             `${data.FOOTER_HTML}`
+      //           );
+      //           return context;
+      //         } catch (err) {
+      //           console.error('❌ 解析 prerender-data.json 失败:', err);
+      //           return context;
+      //         }
+      //       } else {
+      //         console.warn('⚠️ prerender-data.json 不存在于 .temp/，请检查是否成功生成');
+      //         return context;
+      //       }
+      //     }
+      //     return context;
+      //   }
+      // })
     ],
     esbuild: {
       logOverride: { 'this-is-undefined-in-esm': 'silent' }

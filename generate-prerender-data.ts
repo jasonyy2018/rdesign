@@ -7,28 +7,57 @@ import axios from 'axios'; // 需要安装 axios，或者改成你用的请求�
 // 兼容 ESModule 的 __dirname 获取
 const __dirname = path.resolve(); // ✅ 直接使用 Node.js 的 __dirname
 
-const API_BASE = 'https://aizhishengji.example.com'; // 请替换成你的接口基础URL
+const API_BASE = process.env.VITE_SERVER_ADDRESS || 'https://aizhishengji.example.com';
 
 // 请求获取无需权限微信群列表
 async function getVXQunListUnauthAsync(params = { page: 1, limit: 100 }) {
   try {
-    const res = await axios.get(`${API_BASE}/huajian/common/getVXQunListUnauth`, { params });
+    const res = await axios.get(`${API_BASE}/huajian/common/getVXQunListUnauth`, {
+      params,
+      timeout: 5000
+    });
     return res.data;
   } catch (error) {
-    console.error('请求微信群列表失败:', error);
-    return { data: [] };
+    console.warn('⚠️ 请求微信群列表失败，使用默认数据，原因:', error.message);
+    return { data: getDefaultVxQuns() };
   }
 }
 
 // 请求获取友链列表
 async function getLinksListAsync(params = { page: 1, limit: 100 }) {
   try {
-    const res = await axios.get(`${API_BASE}/huajian/common/getLinksList`, { params });
+    const res = await axios.get(`${API_BASE}/huajian/common/getLinksList`, {
+      params,
+      timeout: 5000
+    });
     return res.data;
   } catch (error) {
-    console.error('请求友链列表失败:', error);
-    return { data: { list: [] } };
+    console.warn('⚠️ 请求友链列表失败，使用默认数据，原因:', error.message);
+    return { data: { list: getDefaultLinks() } };
   }
+}
+
+function getDefaultVxQuns() {
+  return [
+    {
+      id: '1',
+      name: 'AI职升姬交流群',
+      qr_code: '/static/images/default-qrcode.png',
+      qrcode: '/static/images/default-qrcode.png'
+    }
+  ];
+}
+
+function getDefaultLinks() {
+  return [
+    {
+      id: '1',
+      name: 'AI职升姬官网',
+      link: 'https://aizhishengji.com',
+      url: 'https://aizhishengji.com',
+      audit: 1
+    }
+  ];
 }
 
 const writeDataToFile = (data: any) => {
