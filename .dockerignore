@@ -11,6 +11,6 @@ Dockerfile*
 .env*.local
 build
 doc
-ssr-data
+
 rebrand_docker.js
 fix_deployment.js
