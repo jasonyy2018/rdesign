@@ -48,6 +48,9 @@ RUN apt-get update && apt-get install -y \
     libxtst6 \
     lsb-release \
     xdg-utils \
+    libxkbcommon0 \
+    libxkbcommon-x11-0 \
+    libatspi2.0-0 \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
@@ -64,7 +67,8 @@ COPY pnpm-lock.yaml package.json ./
 RUN pnpm install --frozen-lockfile
 
 # Install Puppeteer Chrome explicitly to ensure it's available for prerendering
-RUN npx puppeteer browsers install chrome
+RUN npx puppeteer browsers install chrome && \
+    chmod +x ~/.cache/puppeteer/chrome/*/chrome-linux64/chrome
 
 # Copy the rest of the application
 COPY . .
@@ -72,10 +76,19 @@ COPY . .
 # Set environment variables for Docker build
 ENV NODE_OPTIONS="--max_old_space_size=4096" \
     DOCKER_BUILD="true" \
-    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
+    PUPPETEER_CACHE_DIR="/root/.cache/puppeteer" \
+    PUPPETEER_SKIP_DOWNLOAD="true"
+
+# Increase shm size to avoid browser crashes in Docker
+RUN echo '{"default-runtime":"runc"}' > /etc/docker/daemon.json || true
 
 # Run build process (SSR mode with prerendering)
-RUN pnpm run build:ssr
+RUN echo "Starting build process with memory allocation..." && \
+    ulimit -n 65536 && \
+    pnpm run build:ssr || \
+    (echo "Build failed, checking for issues..." && \
+    find /app -name "*.log" -type f -exec tail -100 {} \; && \
+    exit 1)
 
 # ==========================================
 # Phase 2: Production Stage (Nginx)

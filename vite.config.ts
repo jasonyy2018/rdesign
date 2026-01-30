@@ -152,28 +152,55 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
           });
 
           console.log('Starting Puppeteer prerender for templates...');
-          const browser = await chrome.launch({
-            headless: true,
-            args: [
-              '--no-sandbox',
-              '--disable-setuid-sandbox',
-              '--disable-dev-shm-usage',
-              '--disable-gpu',
-              '--disable-software-rasterizer',
-              '--disable-extensions',
-              '--disable-default-apps',
-              '--disable-background-timer-throttling',
-              '--disable-backgrounding-occluded-windows',
-              '--disable-renderer-backgrounding',
-              '--disable-breakpad',
-              '--disable-component-update',
-              '--no-zygote',
-              '--single-process'
-            ],
-            dumpio: false,
-            timeout: 180000,
-            protocolTimeout: 180000
-          });
+          let browser;
+          let retryCount = 0;
+          const maxRetries = 3;
+
+          while (retryCount < maxRetries) {
+            try {
+              console.log(
+                `Attempting to launch browser (attempt ${retryCount + 1}/${maxRetries})...`
+              );
+
+              browser = await chrome.launch({
+                headless: true,
+                args: [
+                  '--no-sandbox',
+                  '--disable-setuid-sandbox',
+                  '--disable-dev-shm-usage',
+                  '--disable-gpu',
+                  '--disable-software-rasterizer',
+                  '--disable-extensions',
+                  '--disable-default-apps',
+                  '--disable-background-timer-throttling',
+                  '--disable-backgrounding-occluded-windows',
+                  '--disable-renderer-backgrounding',
+                  '--disable-breakpad',
+                  '--disable-component-update',
+                  '--no-zygote',
+                  '--single-process',
+                  '--disable-blink-features=AutomationControlled',
+                  '--disable-web-security',
+                  '--disable-features=IsolateOrigins,site-per-process',
+                  '--disable-site-isolation-trials',
+                  '--disable-ipc-flooding-protection'
+                ],
+                dumpio: true,
+                timeout: 300000,
+                protocolTimeout: 300000
+              });
+              console.log('Browser launched successfully');
+              break;
+            } catch (err) {
+              retryCount++;
+              console.error(`Browser launch attempt ${retryCount} failed:`, err);
+              if (retryCount >= maxRetries) {
+                throw new Error(`Failed to launch browser after ${maxRetries} attempts: ${err}`);
+              }
+              console.log('Retrying in 5 seconds...');
+              await new Promise((resolve) => setTimeout(resolve, 5000));
+            }
+          }
 
           try {
             const outputPath = path.resolve(__dirname, VITE_OUTPUT_DIR);
@@ -290,61 +317,69 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
             const idList = templates;
             console.log('idList', idList);
 
-            for (let i = 0; i < idList.length; i++) {
-              const id = idList[i].id;
-              const pageName = idList[i].page;
+            const maxConcurrentPages = 2;
+            const chunkedTemplates = [];
+            for (let i = 0; i < idList.length; i += maxConcurrentPages) {
+              chunkedTemplates.push(idList.slice(i, i + maxConcurrentPages));
+            }
 
-              const page = await browser.newPage();
+            for (const chunk of chunkedTemplates) {
+              for (let i = 0; i < chunk.length; i++) {
+                const id = chunk[i].id;
+                const pageName = chunk[i].page;
 
-              // 设置拦截规则
-              await page.setRequestInterception(true);
-              page.on('request', (request) => {
-                if (request.url().includes('iconfont.js')) {
-                  request.abort();
-                } else {
-                  request.continue();
+                const page = await browser.newPage();
+
+                // 设置拦截规则
+                await page.setRequestInterception(true);
+                page.on('request', (request) => {
+                  if (request.url().includes('iconfont.js')) {
+                    request.abort();
+                  } else {
+                    request.continue();
+                  }
+                });
+
+                console.log(`Prerendering template for id: ${id}`);
+
+                // 设置视口为常见的桌面端尺寸（推荐）
+                await page.setViewport({
+                  width: 1920,
+                  height: 1080,
+                  deviceScaleFactor: 1,
+                  isMobile: false,
+                  hasTouch: false,
+                  isLandscape: false
+                });
+
+                try {
+                  // 方法1：直接访问动态路由
+                  await page.goto(`http://localhost:5137/resumedetail/${id}`, {
+                    waitUntil: 'networkidle0',
+                    timeout: 180000
+                  });
+
+                  // 获取处理后的HTML
+                  const html = await page.evaluate(() => document.documentElement.outerHTML);
+
+                  // 插入 native-events.js 脚本
+                  const injectedScriptTag = '<script src="/static/native-events.js"></script>';
+                  const title = `AI职升姬 - ${chunk[i].title}`;
+                  const modifiedHtml = html
+                    .replace(/<title>.*<\/title>/, `<title>${title}</title>`)
+                    .replace('</body>', `${injectedScriptTag}</body>`);
+
+                  // 保存文件
+                  fs.writeFileSync(path.join(templateDir, pageName), modifiedHtml, {
+                    encoding: 'utf-8'
+                  });
+
+                  console.log(`Template ${i + 1} prerendered successfully`);
+                } catch (err) {
+                  console.error(`Error prerendering id ${id}:`, err);
+                } finally {
+                  await page.close();
                 }
-              });
-
-              console.log(`Prerendering template for id: ${id}`);
-
-              // 设置视口为常见的桌面端尺寸（推荐）
-              await page.setViewport({
-                width: 1920,
-                height: 1080,
-                deviceScaleFactor: 1,
-                isMobile: false,
-                hasTouch: false,
-                isLandscape: false
-              });
-
-              try {
-                // 方法1：直接访问动态路由
-                await page.goto(`http://localhost:5137/resumedetail/${id}`, {
-                  waitUntil: 'networkidle0',
-                  timeout: 180000
-                });
-
-                // 获取处理后的HTML
-                const html = await page.evaluate(() => document.documentElement.outerHTML);
-
-                // 插入 native-events.js 脚本
-                const injectedScriptTag = '<script src="/static/native-events.js"></script>';
-                const title = `AI职升姬 - ${idList[i].title}`;
-                const modifiedHtml = html
-                  .replace(/<title>.*<\/title>/, `<title>${title}</title>`)
-                  .replace('</body>', `${injectedScriptTag}</body>`);
-
-                // 保存文件
-                fs.writeFileSync(path.join(templateDir, pageName), modifiedHtml, {
-                  encoding: 'utf-8'
-                });
-
-                console.log(`Template ${i + 1} prerendered successfully`);
-              } catch (err) {
-                console.error(`Error prerendering id ${id}:`, err);
-              } finally {
-                await page.close();
               }
             }
           } catch (err) {
