@@ -7,6 +7,8 @@ FROM node:20-slim AS build-stage
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
+    dbus \
+    dbus-x11 \
     ca-certificates \
     fonts-liberation \
     libasound2 \
