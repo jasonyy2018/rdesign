@@ -158,7 +158,9 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
               '--disable-setuid-sandbox',
               '--disable-dev-shm-usage',
               '--disable-gpu'
-            ]
+            ],
+            dumpio: true,
+            timeout: 60000
           });
 
           try {
@@ -304,7 +306,9 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
             '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
             '--disable-gpu'
-          ]
+          ],
+          dumpio: true,
+          timeout: 60000
         }),
         staticDir: path.resolve(__dirname, VITE_OUTPUT_DIR),
         routes: ['/'],
