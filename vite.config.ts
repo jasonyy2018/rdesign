@@ -304,13 +304,11 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
           args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
             '--disable-gpu',
-            '--disable-software-rasterizer', // Prevent software rasterizer issues
+            '--disable-software-rasterizer',
             '--no-first-run',
-            '--no-zygote',
-            '--single-process' // Use single process to avoid zombie processes
+            '--disable-accelerated-2d-canvas',
+            '--disable-gl-drawing-for-tests'
           ],
           dumpio: true,
           timeout: 120000,
