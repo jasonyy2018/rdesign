@@ -145,7 +145,7 @@
   import KeyWords from './components/KeyWords.vue';
   import AiTemplateSelect from './components/AiTemplateSelect.vue';
   import { getTemplateByIdAsync, getUsertemplateAsync } from '@/http/api/createTemplate';
-  import AiModelSelect from './components/AiModel/AiModelSelect.vue';
+  import AiModelSelect from './components/AiModelSelect.vue';
   import SelectWayDialog from './components/SelectWayDialog.vue';
   import {
     extractResumeData,
