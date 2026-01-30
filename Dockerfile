@@ -58,6 +58,9 @@ COPY pnpm-lock.yaml package.json ./
 # Install dependencies (including devDependencies for build)
 RUN pnpm install --frozen-lockfile
 
+# Install Puppeteer Chrome explicitly to ensure it's available for prerendering
+RUN npx puppeteer browsers install chrome
+
 # Copy the rest of the application
 COPY . .
 
