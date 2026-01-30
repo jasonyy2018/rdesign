@@ -8,6 +8,7 @@ import axios from 'axios'; // 需要安装 axios，或者改成你用的请求�
 const __dirname = path.resolve(); // ✅ 直接使用 Node.js 的 __dirname
 
 const API_BASE = process.env.VITE_SERVER_ADDRESS || 'https://aizhishengji.example.com';
+const isDockerBuild = process.env.DOCKER_BUILD === 'true' || !process.env.VITE_SERVER_ADDRESS;
 
 // 请求获取无需权限微信群列表
 async function getVXQunListUnauthAsync(params = { page: 1, limit: 100 }) {
@@ -288,15 +289,23 @@ const generateFooterHtml = (vxquns = [], links = []) => {
 
 (async () => {
   try {
-    // 获取微信群和友链数据
-    const [vxqunRes, linksRes] = await Promise.all([
-      getVXQunListUnauthAsync(),
-      getLinksListAsync({ page: 1, limit: 100 })
-    ]);
+    let vxquns = [];
+    let links = [];
 
-    // 取出数据主体，根据接口结构调整
-    const vxquns = vxqunRes?.data || [];
-    const links = linksRes?.data?.list || [];
+    if (isDockerBuild) {
+      console.log('📦 Docker build detected: using default data for prerender');
+      vxquns = getDefaultVxQuns();
+      links = getDefaultLinks();
+    } else {
+      console.log(`🌐 Fetching data from API: ${API_BASE}`);
+      const [vxqunRes, linksRes] = await Promise.all([
+        getVXQunListUnauthAsync(),
+        getLinksListAsync({ page: 1, limit: 100 })
+      ]);
+
+      vxquns = vxqunRes?.data || getDefaultVxQuns();
+      links = linksRes?.data?.list || getDefaultLinks();
+    }
 
     // 生成完整footer html字符串
     const footerHtml = generateFooterHtml(vxquns, links);

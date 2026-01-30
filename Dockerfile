@@ -69,10 +69,12 @@ RUN npx puppeteer browsers install chrome
 # Copy the rest of the application
 COPY . .
 
-# Set environment variable for memory limit
-ENV NODE_OPTIONS="--max_old_space_size=4096"
+# Set environment variables for Docker build
+ENV NODE_OPTIONS="--max_old_space_size=4096" \
+    DOCKER_BUILD="true" \
+    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"
 
-# Run the build process (SSR mode with prerendering)
+# Run build process (SSR mode with prerendering)
 RUN pnpm run build:ssr
 
 # ==========================================

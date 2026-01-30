@@ -158,10 +158,21 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
               '--no-sandbox',
               '--disable-setuid-sandbox',
               '--disable-dev-shm-usage',
-              '--disable-gpu'
+              '--disable-gpu',
+              '--disable-software-rasterizer',
+              '--disable-extensions',
+              '--disable-default-apps',
+              '--disable-background-timer-throttling',
+              '--disable-backgrounding-occluded-windows',
+              '--disable-renderer-backgrounding',
+              '--disable-breakpad',
+              '--disable-component-update',
+              '--no-zygote',
+              '--single-process'
             ],
-            dumpio: true,
-            timeout: 60000
+            dumpio: false,
+            timeout: 180000,
+            protocolTimeout: 180000
           });
 
           try {
@@ -207,7 +218,7 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
             try {
               await homePage.goto('http://localhost:5137/', {
                 waitUntil: 'networkidle0',
-                timeout: 60000
+                timeout: 180000
               });
 
               let homeHtml = await homePage.evaluate(() => document.documentElement.outerHTML);
@@ -254,7 +265,7 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
             try {
               await sitemapPage.goto('http://localhost:5137/sitemap', {
                 waitUntil: 'networkidle0',
-                timeout: 60000
+                timeout: 180000
               });
 
               let sitemapHtml = await sitemapPage.evaluate(
@@ -311,7 +322,7 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
                 // 方法1：直接访问动态路由
                 await page.goto(`http://localhost:5137/resumedetail/${id}`, {
                   waitUntil: 'networkidle0',
-                  timeout: 60000
+                  timeout: 180000
                 });
 
                 // 获取处理后的HTML
