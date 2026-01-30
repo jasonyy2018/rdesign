@@ -24,6 +24,8 @@ RUN apt-get update && apt-get install -y \
     libgdk-pixbuf2.0-0 \
     libglib2.0-0 \
     libgtk-3-0 \
+    libnss3 \
+    libdrm2 \
     libnspr4 \
     libpango-1.0-0 \
     libpangocairo-1.0-0 \
