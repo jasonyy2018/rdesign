@@ -92,7 +92,7 @@ app.config.globalProperties.$loadIcons = loadIconfont;
 
 // 挂载实例，如果访问的是静态html，则不挂载
 
-const isTemplatePage = location.pathname.endsWith('.html')
+const isTemplatePage = location.pathname.endsWith('.html');
 
 if (!isTemplatePage) {
   app.mount('#app');

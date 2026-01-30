@@ -43,12 +43,7 @@
             <el-popover popper-class="create-membership-popper">
               <template #reference>
                 <div class="content-box not-membership">
-                  <img
-                    src="@/assets/images/membership.svg"
-                    alt="会员"
-                    title="会员"
-                    width="20"
-                  />
+                  <img src="@/assets/images/membership.svg" alt="会员" title="会员" width="20" />
                   <span>开通会员</span>
                 </div>
               </template>
@@ -213,7 +208,7 @@
   ></attendance-dialog>
 </template>
 <script setup lang="ts">
-  import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+  import { computed, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import appStore from '@/store';
   import LoginDialog from '@/components/LoginDialog/LoginDialog';
@@ -261,7 +256,7 @@
 
   // 打开登录弹窗
   const openLoginDialog = () => {
-    LoginDialog(true);
+    LoginDialog();
   };
 
   const router = useRouter();
@@ -303,9 +298,9 @@
   const { saveIntegralInfo } = appStore.useUserInfoStore;
   const { saveMembershipInfo } = appStore.useMembershipStore;
   const loginout = () => {
-    saveToken(''); // 清除token
-    saveUserInfo(''); // 清除用户信息
-    saveIntegralInfo(''); // 清除用户简币信息
+    saveToken(); // 清除token
+    saveUserInfo(); // 清除用户信息
+    saveIntegralInfo(); // 清除用户简币信息
     saveMembershipInfo(''); // 清除会员信息
     setUuid(); // 全局刷新
     router.push('/');

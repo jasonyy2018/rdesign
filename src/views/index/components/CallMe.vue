@@ -93,7 +93,6 @@
   };
 
   // 查询微信微信群列表
-  const placeholder = ref<string>('请输入关键词，如毕业于 AI职升姬 大学、计算机专业、创作项目经历等');
   const vxQunList = ref<any>([]);
   const getVXQunListUnauth = async () => {
     vxQunList.value = [];

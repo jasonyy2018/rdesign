@@ -1,0 +1,102 @@
+﻿
+C:\Users\jason\Documents\projects\rdesign\src\components\ApplyLinksDialog\ApplyLinksDialog.vue
+  55:9  error  'props' is assigned a value but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  55:9  error  'props' is assigned a value but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\components\FooterCom\FooterCom.vue
+  54:9  error  'applyLinks' is assigned a value but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  54:9  error  'applyLinks' is assigned a value but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\components\LoginDialog\LoginDialog.ts
+  1:23  error  'isLogin' is assigned a value but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  1:23  error  'isLogin' is assigned a value but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+  1:40  error  'to' is assigned a value but never used. Allowed unused vars must match /^h$/u       @typescript-eslint/no-unused-vars
+  1:40  error  'to' is assigned a value but never used. Allowed unused vars must match /^h$/u       no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\components\NavBar\NavBar.vue
+  211:27  error  'onMounted' is defined but never used. Allowed unused vars must match /^h$/u        @typescript-eslint/no-unused-vars
+  211:27  error  'onMounted' is defined but never used. Allowed unused vars must match /^h$/u        no-unused-vars
+  211:38  error  'onBeforeUnmount' is defined but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  211:38  error  'onBeforeUnmount' is defined but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\hooks\useUsrIsPayGoods.ts
+  1:10  error  'getUserIsPayGoodsAsync' is defined but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  1:10  error  'getUserIsPayGoodsAsync' is defined but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\http\custom.ts
+  3:8  error  'appStore' is defined but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  3:8  error  'appStore' is defined but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\http\request.ts
+  5:8  error  'LoginDialog' is defined but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  5:8  error  'LoginDialog' is defined but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\router\index.ts
+  2:8   error  'LoginDialog' is defined but never used. Allowed unused vars must match /^h$/u                 @typescript-eslint/no-unused-vars
+  2:8   error  'LoginDialog' is defined but never used. Allowed unused vars must match /^h$/u                 no-unused-vars
+  3:10  error  'closeGlobalLoading' is defined but never used. Allowed unused vars must match /^h$/u          @typescript-eslint/no-unused-vars
+  3:10  error  'closeGlobalLoading' is defined but never used. Allowed unused vars must match /^h$/u          no-unused-vars
+  4:8   error  'CONFIG' is defined but never used. Allowed unused vars must match /^h$/u                      @typescript-eslint/no-unused-vars
+  4:8   error  'CONFIG' is defined but never used. Allowed unused vars must match /^h$/u                      no-unused-vars
+  5:10  error  'getOrgAdminPermissionAsync' is defined but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  5:10  error  'getOrgAdminPermissionAsync' is defined but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+  5:38  error  'getUserPermissionAsync' is defined but never used. Allowed unused vars must match /^h$/u      @typescript-eslint/no-unused-vars
+  5:38  error  'getUserPermissionAsync' is defined but never used. Allowed unused vars must match /^h$/u      no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\store\membership.ts
+   1:10  error  'getUserMembershipAsync' is defined but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+   1:10  error  'getUserMembershipAsync' is defined but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+  15:9   error  'isMember' is assigned a value but never used. Allowed unused vars must match /^h$/u       @typescript-eslint/no-unused-vars
+  15:9   error  'isMember' is assigned a value but never used. Allowed unused vars must match /^h$/u       no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\store\token.ts
+  6:22  error  'tokenStr' is defined but never used. Allowed unused args must match /^h$/u  @typescript-eslint/no-unused-vars
+  6:22  error  'tokenStr' is defined but never used. Allowed unused args must match /^h$/u  no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\store\user.ts
+   1:10  error  'getUserIntegralTotalAsync' is defined but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+   1:10  error  'getUserIntegralTotalAsync' is defined but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+   2:10  error  'getUserInfoAsync' is defined but never used. Allowed unused vars must match /^h$/u           @typescript-eslint/no-unused-vars
+   2:10  error  'getUserInfoAsync' is defined but never used. Allowed unused vars must match /^h$/u           no-unused-vars
+   4:8   error  'appStore' is defined but never used. Allowed unused vars must match /^h$/u                   @typescript-eslint/no-unused-vars
+   4:8   error  'appStore' is defined but never used. Allowed unused vars must match /^h$/u                   no-unused-vars
+  27:25  error  'userInfoObj' is defined but never used. Allowed unused args must match /^h$/u                @typescript-eslint/no-unused-vars
+  27:25  error  'userInfoObj' is defined but never used. Allowed unused args must match /^h$/u                no-unused-vars
+  31:29  error  'integalInfo' is defined but never used. Allowed unused args must match /^h$/u                @typescript-eslint/no-unused-vars
+  31:29  error  'integalInfo' is defined but never used. Allowed unused args must match /^h$/u                no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\views\designerResume\components\PreviewResumeDialog.vue
+  61:9  error  'props' is assigned a value but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  61:9  error  'props' is assigned a value but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\views\generateAiResume\index.vue
+  143:17  error  'reactive' is defined but never used. Allowed unused vars must match /^h$/u     @typescript-eslint/no-unused-vars
+  143:17  error  'reactive' is defined but never used. Allowed unused vars must match /^h$/u     no-unused-vars
+  143:37  error  'onMounted' is defined but never used. Allowed unused vars must match /^h$/u    @typescript-eslint/no-unused-vars
+  143:37  error  'onMounted' is defined but never used. Allowed unused vars must match /^h$/u    no-unused-vars
+  143:48  error  'onUnmounted' is defined but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  143:48  error  'onUnmounted' is defined but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+  143:61  error  'watch' is defined but never used. Allowed unused vars must match /^h$/u        @typescript-eslint/no-unused-vars
+  143:61  error  'watch' is defined but never used. Allowed unused vars must match /^h$/u        no-unused-vars
+  143:68  error  'nextTick' is defined but never used. Allowed unused vars must match /^h$/u     @typescript-eslint/no-unused-vars
+  143:68  error  'nextTick' is defined but never used. Allowed unused vars must match /^h$/u     no-unused-vars
+  170:10  error  'LoginDialog' is defined but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  170:10  error  'LoginDialog' is defined but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\views\index\components\CallMe.vue
+  96:9  error  'placeholder' is assigned a value but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  96:9  error  'placeholder' is assigned a value but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\views\orgSettled\components\ContactDialog.vue
+  24:4  error  Parsing error: Unexpected closing tag "el-dialog". It may happen when the tag has already been closed by another tag. For more info see https://www.w3.org/TR/html5/syntax.html#closing-elements-that-have-implied-end-tags  prettier/prettier
+
+C:\Users\jason\Documents\projects\rdesign\src\views\person\index.vue
+  28:9  error  'placeholder' is assigned a value but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  28:9  error  'placeholder' is assigned a value but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\views\sitemap\index.vue
+  76:10  error  'templatesJSON' is defined but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  76:10  error  'templatesJSON' is defined but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+
+鉁?65 problems (65 errors, 0 warnings)
+

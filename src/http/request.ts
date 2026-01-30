@@ -2,7 +2,7 @@ import Request from './index';
 import { AxiosResponse } from 'axios';
 import CONFIG from '@/config/index';
 import appStore from '@/store';
-import LoginDialog from '@/components/LoginDialog/LoginDialog';
+
 import { ElMessage } from 'element-plus';
 
 const handleUnauthorized = () => {

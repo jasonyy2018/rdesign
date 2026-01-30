@@ -90,9 +90,7 @@
                   /></div>
                 </div>
                 <div class="bottom">
-                  <p class="content-desc"
-                    >给项目点赞支持，联系客服凭截图和注册邮箱获取+20简币</p
-                  >
+                  <p class="content-desc">给项目点赞支持，联系客服凭截图和注册邮箱获取+20简币</p>
                   <div class="attendance-box" @click="toGithub">
                     <div class="button"> 前去点赞 </div>
                   </div>

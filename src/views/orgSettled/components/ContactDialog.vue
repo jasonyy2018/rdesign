@@ -12,6 +12,7 @@
       <div class="left">
         <img :src="props.vxQun" alt="微信交流群" title="微信交流群" loading="lazy" />
         <h2>AI职升姬 交流群</h2>
+      </div>
       <div class="right">
         <div class="vx-box">
           <div class="vx-item">

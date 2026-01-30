@@ -140,12 +140,12 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
+  import { ref, computed } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import KeyWords from './components/KeyWords.vue';
   import AiTemplateSelect from './components/AiTemplateSelect.vue';
   import { getTemplateByIdAsync, getUsertemplateAsync } from '@/http/api/createTemplate';
-  import AiModelSelect from './components/AiModelSelect.vue';
+  import AiModelSelect from './components/AiModel/AiModelSelect.vue';
   import SelectWayDialog from './components/SelectWayDialog.vue';
   import {
     extractResumeData,
@@ -167,7 +167,7 @@
   import ResumePreview from './components/ResumePreview.vue';
   import { ElNotification, ElMessage, ElMessageBox } from 'element-plus';
   import jianBImage from '@/assets/images/jianB.png';
-  import LoginDialog from '@/components/LoginDialog/LoginDialog';
+
   import FooterCom from '@/components/FooterCom/FooterCom.vue';
   import { Loading } from '@element-plus/icons-vue';
   import MarkdownIt from 'markdown-it';

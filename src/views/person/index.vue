@@ -25,7 +25,6 @@
   import RightContentVue from './components/RightContent.vue';
 
   const { userInfo } = appStore.useUserInfoStore;
-  const placeholder = ref<string>('请输入关键词，如毕业于 AI职升姬 大学、计算机专业、创作项目经历等');
 </script>
 
 <style lang="scss" scoped>

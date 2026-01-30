@@ -8,7 +8,12 @@
       </header>
 
       <div class="articles-grid">
-        <el-card v-for="article in SEO_ARTICLES" :key="article.id" class="article-card" shadow="hover">
+        <el-card
+          v-for="article in SEO_ARTICLES"
+          :key="article.id"
+          class="article-card"
+          shadow="hover"
+        >
           <template #header>
             <div class="card-header">
               <span class="title">{{ article.title }}</span>
@@ -17,7 +22,9 @@
           </template>
           <p class="summary">{{ article.summary }}</p>
           <div class="tags">
-            <el-tag v-for="tag in article.tags" :key="tag" size="small" class="tag">{{ tag }}</el-tag>
+            <el-tag v-for="tag in article.tags" :key="tag" size="small" class="tag">{{
+              tag
+            }}</el-tag>
           </div>
           <el-button type="primary" link @click="showContent(article)">阅读全文</el-button>
         </el-card>
@@ -43,99 +50,99 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { SEO_ARTICLES } from './articlesData';
-import NavBarVue from '@/components/NavBar/NavBar.vue';
-import FooterComVue from '@/components/FooterCom/FooterCom.vue';
+  import { ref } from 'vue';
+  import { SEO_ARTICLES } from './articlesData';
+  import NavBarVue from '@/components/NavBar/NavBar.vue';
+  import FooterComVue from '@/components/FooterCom/FooterCom.vue';
 
-const dialogVisible = ref(false);
-const currentArticle = ref<any>({});
+  const dialogVisible = ref(false);
+  const currentArticle = ref<any>({});
 
-const showContent = (article: any) => {
-  currentArticle.value = article;
-  dialogVisible.value = true;
-};
+  const showContent = (article: any) => {
+    currentArticle.value = article;
+    dialogVisible.value = true;
+  };
 </script>
 
 <style scoped lang="scss">
-.seo-articles-container {
-  background-color: #f5f7fa;
-  min-height: 100vh;
+  .seo-articles-container {
+    background-color: #f5f7fa;
+    min-height: 100vh;
 
-  .content-wrapper {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 20px;
+    .content-wrapper {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
 
-    .header {
-      text-align: center;
-      margin-bottom: 50px;
-      h1 {
-        font-size: 32px;
-        color: #303133;
-        margin-bottom: 10px;
-      }
-      p {
-        color: #606266;
-        font-size: 16px;
-      }
-    }
-
-    .articles-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: 25px;
-      margin-bottom: 50px;
-
-      .article-card {
-        .card-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          .title {
-            font-weight: bold;
-            font-size: 16px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: 70%;
-          }
+      .header {
+        text-align: center;
+        margin-bottom: 50px;
+        h1 {
+          font-size: 32px;
+          color: #303133;
+          margin-bottom: 10px;
         }
-        .summary {
-          font-size: 14px;
+        p {
           color: #606266;
-          line-height: 1.6;
-          margin-bottom: 15px;
-          display: -webkit-box;
-          -webkit-line-clamp: 3;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
+          font-size: 16px;
         }
-        .tags {
-          margin-bottom: 15px;
-          .tag {
-            margin-right: 8px;
+      }
+
+      .articles-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+        margin-bottom: 50px;
+
+        .article-card {
+          .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .title {
+              font-weight: bold;
+              font-size: 16px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              max-width: 70%;
+            }
+          }
+          .summary {
+            font-size: 14px;
+            color: #606266;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+          .tags {
+            margin-bottom: 15px;
+            .tag {
+              margin-right: 8px;
+            }
           }
         }
       }
     }
-  }
 
-  .article-detail {
-    .meta {
-      margin-bottom: 20px;
-      color: #909399;
-      font-size: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .main-content {
-      line-height: 1.8;
-      font-size: 15px;
-      color: #303133;
-      white-space: pre-wrap;
+    .article-detail {
+      .meta {
+        margin-bottom: 20px;
+        color: #909399;
+        font-size: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .main-content {
+        line-height: 1.8;
+        font-size: 15px;
+        color: #303133;
+        white-space: pre-wrap;
+      }
     }
   }
-}
 </style>

@@ -1,7 +1,4 @@
-import { getUserIntegralTotalAsync } from '@/http/api/integral';
-import { getUserInfoAsync } from '@/http/api/user';
 import { defineStore } from 'pinia';
-import appStore from './index';
 
 // 用户信息
 export const useUserInfoStore = defineStore('userInfoStore', () => {
@@ -24,13 +21,13 @@ export const useUserInfoStore = defineStore('userInfoStore', () => {
     isattendance: true
   });
 
-  function saveUserInfo(userInfoObj: any) {
-    console.log('User mock active, skipping save');
-  }
-
-  function saveIntegralInfo(integalInfo: any) {
-    console.log('Integral mock active, skipping save');
-  }
+  // 改为不传递参数
+  const saveUserInfo = () => {
+    // userInfo.value = userInfoObj;
+  };
+  const saveIntegralInfo = () => {
+    // userIntegral.value = integalInfo;
+  };
 
   // 查询用户信息
   async function getAndUpdateUserInfo() {

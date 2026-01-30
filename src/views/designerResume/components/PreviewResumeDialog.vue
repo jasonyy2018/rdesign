@@ -58,7 +58,7 @@
     dialogPreviewResumeVisible: boolean;
   }
 
-  const props = withDefaults(defineProps<TDialog>(), {
+  withDefaults(defineProps<TDialog>(), {
     dialogPreviewResumeVisible: false
   });
 

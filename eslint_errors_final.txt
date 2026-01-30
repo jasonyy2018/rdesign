@@ -1,0 +1,18 @@
+﻿
+C:\Users\jason\Documents\projects\rdesign\src\components\FooterCom\FooterCom.vue
+  54:9  error  'applyLinks' is assigned a value but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  54:9  error  'applyLinks' is assigned a value but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\components\NavBar\NavBar.vue
+  211:27  error  'watch' is defined but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  211:27  error  'watch' is defined but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+
+C:\Users\jason\Documents\projects\rdesign\src\store\token.ts
+  15:0  error  Parsing error: Unterminated template literal
+
+C:\Users\jason\Documents\projects\rdesign\src\views\sitemap\index.vue
+  76:10  error  'templatesJSON' is defined but never used. Allowed unused vars must match /^h$/u  @typescript-eslint/no-unused-vars
+  76:10  error  'templatesJSON' is defined but never used. Allowed unused vars must match /^h$/u  no-unused-vars
+
+鉁?7 problems (7 errors, 0 warnings)
+

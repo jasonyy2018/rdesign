@@ -40,13 +40,7 @@
         </div>
       </div>
       <div class="bottom-right">
-        <img
-          :src="
-            articleInfo.article_cover || ''
-          "
-          alt=""
-          srcset=""
-        />
+        <img :src="articleInfo.article_cover || ''" alt="" srcset="" />
       </div>
     </div>
   </div>

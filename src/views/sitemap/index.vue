@@ -13,11 +13,7 @@
         <h2>页面导航</h2>
         <div class="link-grid">
           <div v-for="(link, index) in sitePages" :key="index" class="link-item">
-            <router-link
-              :to="link.url"
-              class="link-item"
-              :title="`AI职升姬 - ${link.title}`"
-            >
+            <router-link :to="link.url" class="link-item" :title="`AI职升姬 - ${link.title}`">
               <span class="link-text">{{ link.title }}</span>
             </router-link>
           </div>
@@ -77,7 +73,6 @@
 </template>
 
 <script setup lang="ts">
-  import templatesJSON from '@/static/templates';
   import wordsJSON from '@/static/words';
   import pptJSON from '@/static/ppt';
 
@@ -88,7 +83,8 @@
     meta: [
       {
         name: 'description',
-        content: 'AI职升姬 全站导航页面，提供简历制作、Word模板下载、PPT模板下载等服务的快速访问入口'
+        content:
+          'AI职升姬 全站导航页面，提供简历制作、Word模板下载、PPT模板下载等服务的快速访问入口'
       },
       { name: 'keywords', content: 'AI职升姬,全站导航,简历制作,简历模板,求职攻略' }
     ]
@@ -125,7 +121,6 @@
 
   // PPT模板数据
   const pptTemplates = ref(pptJSON);
-
 
   // 是否预渲染
   const isPrerender = computed(() => {

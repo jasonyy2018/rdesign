@@ -1,5 +1,3 @@
-import { getUserIsPayGoodsAsync } from '@/http/api/integral';
-
 /**
  * @description 返回用户是否支付该资源
  */

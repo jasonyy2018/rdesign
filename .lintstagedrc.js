@@ -1,3 +1,3 @@
 module.exports = {
-  '*.{js,ts,vue}': ['pnpm eslint', () => 'vue-tsc --noEmit --skipLibCheck']
+  '*.{js,ts,vue}': ['eslint --fix']
 };

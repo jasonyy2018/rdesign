@@ -28,7 +28,10 @@
           <el-input v-model="ruleForm.logo" placeholder="请输入网站Logo链接" />
         </el-form-item>
         <el-form-item label="友情链接:" prop="link">
-          <el-input v-model="ruleForm.link" placeholder="请以'https://aizhishengji.example.com'格式填写链接" />
+          <el-input
+            v-model="ruleForm.link"
+            placeholder="请以'https://aizhishengji.example.com'格式填写链接"
+          />
         </el-form-item>
       </el-form>
     </div>
@@ -49,7 +52,7 @@
   interface TDialog {
     dialogLinkVisible: boolean;
   }
-  const props = withDefaults(defineProps<TDialog>(), {
+  withDefaults(defineProps<TDialog>(), {
     dialogLinkVisible: false
   });
 

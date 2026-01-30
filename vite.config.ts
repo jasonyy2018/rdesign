@@ -60,10 +60,10 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
             const extType = chunkInfo.name?.match(/\.(png|jpe?g|gif|svg)$/i)
               ? 'images'
               : chunkInfo.name?.match(/\.(woff2?|eot|ttf|otf)$/i)
-                ? 'fonts'
-                : chunkInfo.name?.match(/\.(mp4|webm|ogg|mp3|wav|flac|aac)$/i)
-                  ? 'media'
-                  : 'static';
+              ? 'fonts'
+              : chunkInfo.name?.match(/\.(mp4|webm|ogg|mp3|wav|flac|aac)$/i)
+              ? 'media'
+              : 'static';
             return `static/${extType}/[name]-[hash][extname]`;
           }
         },
@@ -202,8 +202,10 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
 
               // 插入 native-events.js 脚本
               const sitemapInjectedScriptTag = '<script src="/static/native-events.js"></script>';
-              const sitemapModifiedHtml = sitemapHtml
-                .replace('</body>', `${sitemapInjectedScriptTag}</body>`);
+              const sitemapModifiedHtml = sitemapHtml.replace(
+                '</body>',
+                `${sitemapInjectedScriptTag}</body>`
+              );
 
               // 保存到dist根目录
               fs.writeFileSync(path.join(outputPath, 'sitemap.html'), sitemapModifiedHtml, {
@@ -337,11 +339,11 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
       proxy: {
         '/huajian': {
           target: 'http://localhost:3000', // 开发环境代理至本地后台
-          changeOrigin: true,
+          changeOrigin: true
         },
         '/api': {
           target: 'http://localhost:3000', // 开发环境代理至本地后台
-          changeOrigin: true,
+          changeOrigin: true
         }
       }
     }

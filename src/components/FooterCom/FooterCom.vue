@@ -7,13 +7,6 @@
         <p>Copyright © 2026 AI职升姬 All Rights Reserved.</p>
       </div>
     </div>
-
-    <!-- 申请友链弹窗 -->
-    <apply-links-dialog
-      :dialog-apply-links-visible="dialogApplyLinksVisible"
-      @cancle="cancleApplyLinks"
-      @update-success="updateApplyLinksSuccess"
-    ></apply-links-dialog>
   </footer>
 </template>
 
@@ -47,22 +40,6 @@
     }
   };
   getLinksList();
-
-  // 申请友链弹窗
-  const router = useRouter();
-  const dialogApplyLinksVisible = ref(false);
-  const applyLinks = () => {
-    // dialogApplyLinksVisible.value = true;
-    router.push({
-      path: '/linksApply'
-    });
-  };
-  const cancleApplyLinks = () => {
-    dialogApplyLinksVisible.value = false;
-  };
-  const updateApplyLinksSuccess = () => {
-    dialogApplyLinksVisible.value = false;
-  };
 
   defineExpose({
     vxQunList,

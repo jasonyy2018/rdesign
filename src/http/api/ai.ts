@@ -58,7 +58,7 @@ export const translateTextAsync = async (data: any) => {
     const messages = [
       {
         role: 'system',
-        content: `你是一位精通多国语言的专业翻译官。`
+        content: '你是一位精通多国语言的专业翻译官。'
       },
       { role: 'user', content: data.text }
     ];
@@ -168,7 +168,7 @@ export const polishTextStreamAsync = (
     const messages = [
       {
         role: 'system',
-        content: `你是一位专业的简历润色专家。`
+        content: '你是一位专业的简历润色专家。'
       },
       { role: 'user', content: data.text }
     ];
@@ -192,7 +192,7 @@ export const createTextStreamAsync = (
     const messages = [
       {
         role: 'system',
-        content: `你是一位精通简历撰写的专家。`
+        content: '你是一位精通简历撰写的专家。'
       },
       { role: 'user', content: data.text }
     ];

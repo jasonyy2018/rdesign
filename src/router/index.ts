@@ -1,8 +1,4 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import LoginDialog from '@/components/LoginDialog/LoginDialog';
-import { closeGlobalLoading } from '@/utils/common';
-import CONFIG from '@/config';
-import { getOrgAdminPermissionAsync, getUserPermissionAsync } from '@/http/api/user';
 import { title, description, keywords } from '@/config/seo';
 import { useHead } from '@vueuse/head';
 

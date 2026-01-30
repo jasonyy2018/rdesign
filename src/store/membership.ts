@@ -1,4 +1,3 @@
-import { getUserMembershipAsync } from '@/http/api/membership';
 import { defineStore } from 'pinia';
 
 // 用户信息
@@ -10,10 +9,6 @@ export const useMembershipStore = defineStore('membershipStore', () => {
     type: 'lifetime',
     membershipName: '永久会员',
     expiredDays: 0
-  });
-
-  const isMember = computed(() => {
-    return membershipInfo.value.hasMembership && !membershipInfo.value.isExpired;
   });
 
   // 保存用户会员信息

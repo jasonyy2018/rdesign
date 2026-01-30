@@ -1,6 +1,5 @@
 import Request from './index';
 import { AxiosResponse } from 'axios';
-import appStore from '@/store';
 const http = new Request({
   timeout: 1000 * 60 * 5,
   interceptors: {
