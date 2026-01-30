@@ -153,7 +153,12 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
           console.log('Starting Puppeteer prerender for templates...');
           const browser = await chrome.launch({
             headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            args: [
+              '--no-sandbox',
+              '--disable-setuid-sandbox',
+              '--disable-dev-shm-usage',
+              '--disable-gpu'
+            ]
           });
 
           try {
@@ -293,6 +298,14 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
       },
       // ✅ prerender 插件
       prerender({
+        renderer: new prerender.PuppeteerRenderer({
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu'
+          ]
+        }),
         staticDir: path.resolve(__dirname, VITE_OUTPUT_DIR),
         routes: ['/'],
         postProcess: (context) => {
