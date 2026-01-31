@@ -2,15 +2,27 @@ const express = require('express');
 const path = require('path');
 const compression = require('compression');
 const serveStatic = require('serve-static');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 const port = process.env.PORT || 8080;
+const backendUrl = process.env.BACKEND_URL || 'https://rdes.togomol.com';
 
 // 启用 Gzip 压缩
 app.use(compression());
 
 // 设置静态文件目录
 const distPath = path.join(__dirname, 'dist');
+
+// 代理配置：将 /huajian 和 /api 请求代理到后端服务器
+const proxyOptions = {
+  target: backendUrl,
+  changeOrigin: true,
+  secure: false // 如果后端是 self-signed certificate 可以设为 false
+};
+
+app.use('/huajian', createProxyMiddleware(proxyOptions));
+app.use('/api', createProxyMiddleware(proxyOptions));
 
 // 缓存控制：为哈希资源设置强缓存，为 HTML 设置协商缓存
 const staticOptions = {
@@ -30,11 +42,12 @@ const staticOptions = {
 app.use(serveStatic(distPath, staticOptions));
 
 // SPA 路由回退：所有不匹配的路由都返回 index.html
-app.get('*path', (req, res) => {
+app.get('*', (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Production server is running at http://0.0.0.0:${port}`);
+  console.log(`Proxying /huajian and /api to: ${backendUrl}`);
   console.log(`Serving static files from: ${distPath}`);
 });

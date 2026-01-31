@@ -240,12 +240,23 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
               'http://localhost:5137/sitemap',
               path.join(outputPath, 'sitemap.html')
             );
-            // 3. Templates (Sequential to save memory)
-            for (const item of templates) {
-              await renderPage(
-                `http://localhost:5137/resumedetail/${item.id}`,
-                path.join(templateDir, item.page),
-                `AI职升姬 - ${item.title}`
+            // 3. Templates (Parallel batches to save memory and speed up)
+            const BATCH_SIZE = 10;
+            for (let i = 0; i < templates.length; i += BATCH_SIZE) {
+              const batch = templates.slice(i, i + BATCH_SIZE);
+              console.log(
+                `Rendering batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(
+                  templates.length / BATCH_SIZE
+                )}...`
+              );
+              await Promise.all(
+                batch.map((item) =>
+                  renderPage(
+                    `http://localhost:5137/resumedetail/${item.id}`,
+                    path.join(templateDir, item.page),
+                    `AI职升姬 - ${item.title}`
+                  )
+                )
               );
             }
           } catch (err) {

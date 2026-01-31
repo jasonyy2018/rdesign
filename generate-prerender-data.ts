@@ -7,7 +7,7 @@ import axios from 'axios'; // 需要安装 axios，或者改成你用的请求�
 // 兼容 ESModule 的 __dirname 获取
 const __dirname = path.resolve(); // ✅ 直接使用 Node.js 的 __dirname
 
-const API_BASE = process.env.VITE_SERVER_ADDRESS || 'https://aizhishengji.example.com';
+const API_BASE = process.env.VITE_SERVER_ADDRESS || 'https://rdes.togomol.com';
 const isDockerBuild = process.env.DOCKER_BUILD === 'true' || !process.env.VITE_SERVER_ADDRESS;
 
 // 请求获取无需权限微信群列表
