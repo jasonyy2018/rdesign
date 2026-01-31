@@ -58,8 +58,8 @@ WORKDIR /app
 # Copy lockfile and package.json for better caching
 COPY pnpm-lock.yaml package.json ./
 
-# Install dependencies (allow lockfile update since we modified package.json)
-RUN pnpm install --no-frozen-lockfile
+# Install dependencies (including devDependencies for build)
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Install Puppeteer Chrome explicitly
 RUN npx puppeteer browsers install chrome
