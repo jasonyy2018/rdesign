@@ -17,7 +17,7 @@ const staticOptions = {
   maxAge: '1y',
   setHeaders: (res, filePath) => {
     // 如果是 HTML 文件，禁用强缓存，改用协商缓存
-    if (serveStatic.mime.lookup(filePath) === 'text/html') {
+    if (path.extname(filePath) === '.html') {
       res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
     } else if (filePath.includes('static/')) {
       // 所有的静态资源（js/css/images/fonts）都在 static 目录下，且带有 hash
