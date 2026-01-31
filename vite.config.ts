@@ -214,7 +214,7 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
               await page.setViewport({ width: 1920, height: 1080 });
 
               try {
-                await page.goto(url, { waitUntil: 'networkidle0', timeout: 180000 });
+                await page.goto(url, { waitUntil: 'networkidle2', timeout: 180000 });
                 let html = await page.evaluate(() => document.documentElement.outerHTML);
                 if (footerHtml && url.endsWith(':5137/')) {
                   html = html.replace('<div id="footer"></div>', footerHtml);
@@ -241,7 +241,7 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
               path.join(outputPath, 'sitemap.html')
             );
             // 3. Templates (Parallel batches to save memory and speed up)
-            const BATCH_SIZE = 10;
+            const BATCH_SIZE = 5;
             for (let i = 0; i < templates.length; i += BATCH_SIZE) {
               const batch = templates.slice(i, i + BATCH_SIZE);
               console.log(

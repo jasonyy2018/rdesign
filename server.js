@@ -42,7 +42,7 @@ const staticOptions = {
 app.use(serveStatic(distPath, staticOptions));
 
 // SPA 路由回退：所有不匹配的路由都返回 index.html
-app.get('(.*)', (req, res) => {
+app.get('/(.*)', (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
 

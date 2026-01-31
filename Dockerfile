@@ -58,7 +58,8 @@ WORKDIR /app
 COPY pnpm-lock.yaml package.json ./
 
 # Install ALL dependencies (including devDependencies for build/prerender)
-RUN pnpm install --no-frozen-lockfile --ignore-scripts
+RUN pnpm config set store-dir /pnpm/store
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --no-frozen-lockfile --ignore-scripts
 
 # Install Puppeteer Chrome explicitly
 RUN npx puppeteer browsers install chrome
@@ -86,7 +87,8 @@ COPY package.json pnpm-lock.yaml ./
 
 # Install pnpm and production dependencies only
 RUN npm install -g pnpm && \
-    pnpm install --prod --no-frozen-lockfile
+    pnpm config set store-dir /pnpm/store
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --no-frozen-lockfile
 
 # ==========================================
 # Phase 3: Final Production Stage (Minimal)
