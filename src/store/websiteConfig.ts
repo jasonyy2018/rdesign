@@ -1,6 +1,6 @@
-import { getWebsiteConfigAsync } from '@/http/api/websiteConfig';
+import { getWebsiteConfigAsync } from '../http/api/websiteConfig';
 import { defineStore } from 'pinia';
-import { title } from '@/config/seo';
+import { title } from '../config/seo';
 
 export const useWebsiteConfigStore = defineStore('websiteConfig', () => {
   const websiteConfig = reactive<{

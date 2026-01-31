@@ -51,12 +51,6 @@
     :dialog-notice-visible="dialogNoticeVisible"
     @cancle="noticeCancle"
   ></notice-dialog>
-  <!-- 签到弹窗 -->
-  <attendance-dialog
-    :dialog-attendance-visible="dialogAttendanceVisible"
-    @close="closeAttendanceDialog"
-  ></attendance-dialog>
-
   <!-- 客服组件 -->
   <customer-service></customer-service>
 </template>
@@ -65,14 +59,9 @@
   import ProjectIntroduce from './components/IndexProduct.vue';
   import TemplateSelect from './components/TemplateSelect.vue';
   import JobzxProduct from './components/JobzxProduct.vue';
-  // import CustomTemplateVue from './components/CustomTemplate.vue';
-  // import SponsorComVue from './components/SponsorCom.vue';
   import FooterCom from '@/components/FooterCom/FooterCom.vue';
-  // import LegoDesignIntroduceVue from './components/LegoDesignIntroduce.vue';
-  // import CallMe from './components/CallMe.vue';
   import { onBeforeUnmount, onMounted, ref } from 'vue';
   import { throttle } from 'lodash';
-  // import GithubCard from '@/components/GihubCard/GithubCard.vue';
   import WebData from './components/WebData.vue';
   import NoticeDialog from '@/components/NoticeDialog/NoticeDialog.vue';
   import SelectTemplateByUse from './components/SelectTemplateByUse.vue';
@@ -84,6 +73,7 @@
   import appStore from '@/store';
   import { title } from '@/config/seo';
   import MoreFunction from './components/MoreFunction.vue';
+  import { useRouter } from 'vue-router';
 
   const { websiteConfig } = storeToRefs(appStore.useWebsiteConfigStore);
 
@@ -151,21 +141,6 @@
   const router = useRouter();
   const webcode = () => {
     router.push('/webcode');
-  };
-
-  // 签到弹窗
-  const dialogAttendanceVisible = ref<boolean>(false);
-  const { token } = appStore.useTokenStore;
-
-  // 每日弹窗控制
-  const lastPopupDate = localStorage.getItem('lastPopupDate');
-  const currentDate = new Date().toLocaleDateString();
-  if (lastPopupDate !== currentDate && token) {
-    dialogAttendanceVisible.value = true;
-    localStorage.setItem('lastPopupDate', currentDate);
-  }
-  const closeAttendanceDialog = () => {
-    dialogAttendanceVisible.value = false;
   };
 </script>
 <style lang="scss" scoped>

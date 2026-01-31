@@ -11,16 +11,16 @@
               v-for="(item, index) in wordInfo.previewUrl"
               :key="index"
               :class="['img-item-box', { active: currentIndex === index }]"
-              @click="selectPreUrl(item, index)"
+              @click="selectPreUrl(item, index as number)"
             >
-              <el-image style="width: 150px; height: 200px" :src="item.url" fit />
+              <el-image style="width: 150px; height: 200px" :src="item.url" :fit="'cover'" />
             </div>
           </c-scrollbar>
         </div>
         <!-- 图片大图展示 -->
         <div class="img-big-preview">
           <div class="big-img-box">
-            <el-image style="width: 400px; height: 550px" :src="bigPreviewUrl" fit />
+            <el-image style="width: 400px; height: 550px" :src="bigPreviewUrl" :fit="'cover'" />
           </div>
         </div>
       </div>
@@ -31,16 +31,6 @@
           <h1>{{ wordInfo.name }}</h1>
           <div class="download-btn">
             <div class="button" @click="download">
-              <!-- 判断该用户是否全站免费 -->
-              <template v-if="!userInfo.isAllFree">
-                <!-- 先判断是否是会员 -->
-                <template v-if="!membershipInfo.hasMembership || membershipInfo.isExpired">
-                  <div v-if="!isPay" class="how-much"
-                    >{{ Math.abs(wordInfo.payValue) || ''
-                    }}<img width="20" src="@/assets/images/jianB.png" alt="简币"
-                  /></div>
-                </template>
-              </template>
               <span>立即下载</span>
             </div>
           </div>
@@ -91,27 +81,15 @@
     <comment-com
       v-config:open_comment
       width="1200px"
-      :comment-type-id="id"
+      :comment-type-id="(id as string)"
       comment-type="resumeTemplate"
     ></comment-com>
-
-    <!-- 下载警告弹窗 -->
-    <pay-integral-dialog
-      :dialog-get-integral-visible="dialogGetIntegralVisible"
-      :title="`确定消费简币下载模板？只需一次支付，即可多次下载！`"
-      btn-text="确认下载"
-      :confirm-disabled="confirmDisabled"
-      :confirm-tip="confirmTip"
-      @cancle="cancleDialog"
-      @confirm="confirmDialog"
-    ></pay-integral-dialog>
 
     <!-- 回到顶部 -->
     <el-backtop :right="50" :bottom="80" />
   </div>
 </template>
 <script lang="ts" setup>
-  import LoginDialog from '@/components/LoginDialog/LoginDialog';
   import WordCarousel from './components/WordCarousel.vue';
   import {
     getWordCategoryListAsync,
@@ -119,17 +97,8 @@
     wordDownloadUrl
   } from '@/http/api/wordTemplate';
   import { downloadFileUtil } from '@/utils/common';
-  import appStore from '@/store';
-  import { useUserIsPayGoods } from '@/hooks/useUsrIsPayGoods';
-  import { storeToRefs } from 'pinia';
   import { title } from '@/config/seo';
   import { useHead } from '@vueuse/head';
-
-  // 获取用户会员信息
-  const { membershipInfo } = storeToRefs(appStore.useMembershipStore);
-
-  // 获取用户信息
-  const { userInfo } = storeToRefs(appStore.useUserInfoStore);
 
   // 获取word模板id
   const route = useRoute();
@@ -137,7 +106,7 @@
   const currentIndex = ref<number>(-1); // 选中哪一张预览图
 
   // 查询模板详细信息
-  const wordInfo = ref<any>([]);
+  const wordInfo = ref<any>({});
   const getWordTemplateInfo = async () => {
     const data = await getWordTemplateInfoAsync(id);
     if (data.status === 200) {
@@ -185,61 +154,8 @@
     currentIndex.value = index;
   };
 
-  // 查询用户是否消费过该资源
-  const isPay = ref<any>(false);
-  onMounted(async () => {
-    isPay.value = await useUserIsPayGoods(id);
-  });
-
   // 点击立即下载
-  const dialogGetIntegralVisible = ref<boolean>(false);
-  const confirmDisabled = ref<boolean>(false);
-  const confirmTip = ref<string>('');
   const download = async () => {
-    let token = localStorage.getItem('token');
-    if (!token) {
-      LoginDialog(true);
-      LoginDialog(true, '', async () => {
-        isPay.value = await useUserIsPayGoods(id);
-      });
-    } else {
-      // 全站免费直接下载
-      if (userInfo.value.isAllFree) {
-        downloadTemplate();
-        return;
-      }
-      // 会员直接下载
-      if (membershipInfo.value.hasMembership && !membershipInfo.value.isExpired) {
-        downloadTemplate();
-        return;
-      }
-      // 判断用户是否支付过
-      if (isPay.value) {
-        downloadTemplate();
-      } else {
-        // 判断当前用户简币是否充足
-        const userIntegralTotal = appStore.useUserInfoStore.userIntegralInfo.integralTotal;
-        if (userIntegralTotal < Math.abs(wordInfo.value.payValue)) {
-          confirmDisabled.value = true;
-          dialogGetIntegralVisible.value = true;
-          confirmTip.value = '您的简币数量不足！';
-          return;
-        } else {
-          confirmTip.value = '';
-          dialogGetIntegralVisible.value = true;
-        }
-      }
-    }
-  };
-
-  // 关闭弹窗
-  const cancleDialog = () => {
-    dialogGetIntegralVisible.value = false;
-  };
-
-  // 下载弹窗确认
-  const confirmDialog = () => {
-    dialogGetIntegralVisible.value = false;
     downloadTemplate();
   };
 
@@ -250,7 +166,6 @@
       ElMessage.success('即将开始下载');
       let url = JSON.parse(data.data.data.fileUrl)[0].url;
       downloadFileUtil(url);
-      isPay.value = await useUserIsPayGoods(id); // 更新用户是否支付过的状态
     } else {
       ElMessage.error(data.data.message);
     }

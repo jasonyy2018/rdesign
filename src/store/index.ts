@@ -8,7 +8,7 @@ import { useRefreshStore } from './refresh';
 import { useLegoJsonStore, useLegoSelectWidgetStore, useUndoAndRedoStore } from './lego';
 import { useIndexMenuStore } from './menu';
 import { useWebsiteConfigStore } from './websiteConfig';
-import { useMembershipStore } from './membership';
+// Membership store removed
 import { useCreateTemplateStore } from './createTemplate';
 
 export interface IAppStore {
@@ -24,7 +24,6 @@ export interface IAppStore {
   useUndoAndRedoStore: ReturnType<typeof useUndoAndRedoStore>;
   useIndexMenuStore: ReturnType<typeof useIndexMenuStore>;
   useWebsiteConfigStore: ReturnType<typeof useWebsiteConfigStore>;
-  useMembershipStore: ReturnType<typeof useMembershipStore>;
   useCreateTemplateStore: ReturnType<typeof useCreateTemplateStore>;
 }
 
@@ -46,7 +45,7 @@ export const registerStore = () => {
   appStore.useUndoAndRedoStore = useUndoAndRedoStore();
   appStore.useIndexMenuStore = useIndexMenuStore();
   appStore.useWebsiteConfigStore = useWebsiteConfigStore();
-  appStore.useMembershipStore = useMembershipStore();
+  // useMembershipStore removed
   appStore.useCreateTemplateStore = useCreateTemplateStore();
   // 重写reset方法
   initResetFun(appStore);

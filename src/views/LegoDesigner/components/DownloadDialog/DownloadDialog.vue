@@ -12,142 +12,39 @@
       <div class="content-down-btn">
         <!-- 下载为图片 -->
         <div class="download-img-box">
-          <el-tooltip :disabled="isCanDownloadImg" content="简币数量不足！">
-            <div
-              :class="['download-com-box img-box', { 'download-disabled': !isCanDownloadImg }]"
-              @click="downloadDialog('img')"
-            >
-              <svg-icon icon-name="icon-tupian" color="#fff" size="26px"></svg-icon>
-              <span>下载图片</span>
-            </div>
-          </el-tooltip>
-          <div class="price">
-            <!-- 先判断是否是会员 -->
-            <template v-if="!membershipInfo.hasMembership || membershipInfo.isExpired">
-              <div class="how-much">
-                （价格：{{ Math.abs(exportImgPayIntegral) || 0 }}
-                <img width="20" src="@/assets/images/jianB.png" alt="简币" />）</div
-              >
-            </template>
-            <template v-else>
-              <div class="how-much"> 免费下载 </div>
-            </template>
+          <div class="download-com-box img-box" @click="downloadDialog('img')">
+            <svg-icon icon-name="icon-tupian" color="#fff" size="26px"></svg-icon>
+            <span>下载图片</span>
           </div>
           <p>适合微信、QQ发送</p>
         </div>
         <!-- 下载PDF -->
         <div class="download-pdf-box">
-          <el-tooltip :disabled="isCanDownloadPDF" content="简币数量不足！">
-            <div
-              :class="['download-com-box pdf-box', { 'download-disabled': !isCanDownloadPDF }]"
-              @click="downloadDialog('pdf')"
-            >
-              <svg-icon icon-name="icon-pdf" color="#fff" size="26px"></svg-icon>
-              <span>下载PDF</span>
-            </div>
-          </el-tooltip>
-          <div class="price">
-            <!-- 先判断是否是会员 -->
-            <template v-if="!membershipInfo.hasMembership || membershipInfo.isExpired">
-              <div class="how-much"
-                >（价格：{{ Math.abs(exportPdfPayIntegral) || 0
-                }}<img width="20" src="@/assets/images/jianB.png" alt="简币" />）</div
-              >
-            </template>
-            <template v-else>
-              <div class="how-much"> 免费下载 </div>
-            </template>
+          <div class="download-com-box pdf-box" @click="downloadDialog('pdf')">
+            <svg-icon icon-name="icon-pdf" color="#fff" size="26px"></svg-icon>
+            <span>下载PDF</span>
           </div>
-          <p> 适合打印、在线投递等(<span>推荐</span>)</p>
+          <p>适合打印、在线投递等(<span>推荐</span>)</p>
         </div>
       </div>
-      <div class="get-bi-method" @click="openGetDialog">获取简币</div>
     </div>
   </el-dialog>
-
-  <!-- 警告弹窗 -->
-  <pay-integral-dialog
-    :title="title"
-    :dialog-get-integral-visible="dialogGetIntegralVisible"
-    :pay-number="-Math.abs(exportPdfPayIntegral) || 0"
-    :confirm-disabled="downloadType === 'img' ? !isCanDownloadImg : !isCanDownloadPDF"
-    placeholder="下载该创作"
-    @cancle="handleCancleDialog"
-    @confirm="handleConfirmDialog"
-  ></pay-integral-dialog>
 </template>
 
 <script lang="ts" setup>
-  import appStore from '@/store';
-  import { storeToRefs } from 'pinia';
-
-  // 获取用户会员信息
-  const { membershipInfo } = storeToRefs(appStore.useMembershipStore);
-
   const emit = defineEmits(['closeDownloadDialog', 'downloadFile']);
   interface TDialog {
     dialogDownloadVisible: boolean;
-    exportPdfPayIntegral: number;
-    exportImgPayIntegral: number;
   }
-  const props = withDefaults(defineProps<TDialog>(), {
-    dialogDownloadVisible: false,
-    exportPdfPayIntegral: 0,
-    exportImgPayIntegral: 0
-  });
+  defineProps<TDialog>();
 
-  const userIntegralTotal = storeToRefs(appStore.useUserInfoStore);
-  // 简币是否足够导出图片
-  const isCanDownloadImg = computed(() => {
-    return (
-      Number(userIntegralTotal.userIntegralInfo.value.integralTotal) >=
-        Math.abs(props.exportImgPayIntegral) || membershipInfo.value.hasMembership
-    );
-  });
-  // 简币是否足够导出PDF
-  const isCanDownloadPDF = computed(() => {
-    return (
-      Number(userIntegralTotal.userIntegralInfo.value.integralTotal) >=
-      Math.abs(props.exportPdfPayIntegral)
-    );
-  });
-
-  // 打开警告弹窗
-  const downloadType = ref<string>('');
-  const dialogGetIntegralVisible = ref<boolean>(false);
   const downloadDialog = async (type: string) => {
-    downloadType.value = type;
-    // 会员直接下载
-    if (membershipInfo.value.hasMembership && !membershipInfo.value.isExpired) {
-      emit('downloadFile', downloadType.value);
-      return;
-    }
-    if (downloadType.value === 'img' && !isCanDownloadImg) return;
-    if (downloadType.value === 'pdf' && !isCanDownloadPDF) return;
-    dialogGetIntegralVisible.value = true;
-  };
-
-  // 取消警告弹窗
-  const handleCancleDialog = () => {
-    dialogGetIntegralVisible.value = false;
-  };
-
-  // 确定警告弹窗
-  const handleConfirmDialog = () => {
-    dialogGetIntegralVisible.value = false;
-    emit('downloadFile', downloadType.value);
+    emit('downloadFile', type);
   };
 
   // 取消
   const handleClose = () => {
     emit('closeDownloadDialog');
-  };
-
-  // 打开获取简币弹窗
-  const title = ref<string>('');
-  const openGetDialog = () => {
-    title.value = '如何获取简币';
-    dialogGetIntegralVisible.value = true;
   };
 </script>
 <style lang="scss" scoped>

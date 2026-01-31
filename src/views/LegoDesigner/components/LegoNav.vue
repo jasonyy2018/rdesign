@@ -16,60 +16,49 @@
           <span class="icon-tips">预览</span>
         </div>
       </el-tooltip>
-      <el-tooltip effect="dark" content="保存为草稿" placement="bottom">
-        <div class="icon-box" @click="saveDraft">
-          <svg-icon icon-name="icon-caogaoxiang1" color="#555" size="17px"></svg-icon>
-          <span class="icon-tips">保存</span>
-        </div>
-      </el-tooltip>
-      <el-tooltip effect="dark" content="重置所有设置" placement="bottom">
-        <div class="icon-box" @click="reset">
-          <svg-icon icon-name="icon-zhongzhi" color="#555" size="17px"></svg-icon>
-          <span class="icon-tips">重置</span>
-        </div>
-      </el-tooltip>
-      <el-tooltip effect="dark" content="导出为JSON数据" placement="bottom">
-        <div class="icon-box" @click="exportJSON">
-          <svg-icon icon-name="icon-xiazai" color="#555" size="17px"></svg-icon>
-          <span class="icon-tips">JSON</span>
-        </div>
-      </el-tooltip>
-      <el-tooltip effect="dark" content="将你的简历分享给别人" placement="bottom">
-        <div class="icon-box" @click="publishOnlineResume">
-          <svg-icon icon-name="icon-fenxiang" color="#555" size="17px"></svg-icon>
-          <span class="icon-tips">分享</span>
-        </div>
-      </el-tooltip>
-      <el-tooltip
-        v-if="templateId && templateInfo"
-        effect="dark"
-        content="快来一起参与评论吧！"
-        placement="bottom"
-      >
-        <div class="icon-box" @click="publishComment">
-          <svg-icon icon-name="icon-pinglun" color="#555" size="18px"></svg-icon>
-          <span class="icon-tips">评论({{ templateInfo.commentCount }})</span>
-        </div>
-      </el-tooltip>
-      <el-tooltip
-        v-if="!templateId"
-        effect="dark"
-        content="发布为模板供他人使用"
-        placement="bottom"
-      >
-        <div class="icon-box icon-download" @click="publishTemplate">
-          <svg-icon icon-name="icon-fabu1" color="#fff" size="17px"></svg-icon>
-          <span class="icon-tips">{{ postWorkInfo ? '更新作品' : '发布作品' }}</span>
-        </div>
-      </el-tooltip>
+      <div class="nav-right">
+        <el-tooltip effect="dark" content="下载到本地" placement="bottom">
+          <div class="icon-box icon-download" @click="downloadResume">
+            <svg-icon icon-name="icon-xiazai" color="#fff" size="17px"></svg-icon>
+            <span class="icon-tips">导出</span>
+          </div>
+        </el-tooltip>
+        <el-tooltip effect="dark" content="预览简历" placement="bottom">
+          <div class="icon-box" @click="previewResume">
+            <svg-icon icon-name="icon-yulan1" color="#555" size="19px"></svg-icon>
+            <span class="icon-tips">预览</span>
+          </div>
+        </el-tooltip>
+        <el-tooltip effect="dark" content="重置所有设置" placement="bottom">
+          <div class="icon-box" @click="reset">
+            <svg-icon icon-name="icon-zhongzhi" color="#555" size="17px"></svg-icon>
+            <span class="icon-tips">重置</span>
+          </div>
+        </el-tooltip>
+        <el-tooltip effect="dark" content="导出为JSON数据" placement="bottom">
+          <div class="icon-box" @click="exportJSON">
+            <svg-icon icon-name="icon-xiazai" color="#555" size="17px"></svg-icon>
+            <span class="icon-tips">JSON</span>
+          </div>
+        </el-tooltip>
+        <el-tooltip
+          v-if="templateId && templateInfo"
+          effect="dark"
+          content="快来一起参与评论吧！"
+          placement="bottom"
+        >
+          <div class="icon-box" @click="publishComment">
+            <svg-icon icon-name="icon-pinglun" color="#555" size="18px"></svg-icon>
+            <span class="icon-tips">评论({{ templateInfo.commentCount }})</span>
+          </div>
+        </el-tooltip>
+      </div>
     </div>
   </div>
 
   <!-- 下载弹窗 -->
   <download-dialog
     :dialog-download-visible="dialogDownloadVisible"
-    :export-pdf-pay-integral="exportPdfPayIntegral"
-    :export-img-pay-integral="exportImgPayIntegral"
     @close-download-dialog="closeDownloadDialog"
     @download-file="downloadResumeFile"
   ></download-dialog>
@@ -78,14 +67,6 @@
   <preview-image v-show="dialogPreviewVisible" @close="closePreview">
     <render-page></render-page>
   </preview-image>
-
-  <!-- 发布作品弹窗 -->
-  <post-work-dialog
-    :dialog-post-work-visible="dialogPostWorkVisible"
-    :post-work-info="postWorkInfo"
-    @cancle="canclePostWork"
-    @update-success="handlePostWorkSuccess"
-  ></post-work-dialog>
 
   <!-- 导出pdf进度弹窗 -->
   <process-bar-dialog
@@ -105,7 +86,7 @@
   >
     <comment-com
       v-config:open_comment
-      :comment-type-id="templateId"
+      :comment-type-id="(templateId as string)"
       comment-type="legoTemplate"
       width="100%"
     ></comment-com>
@@ -120,36 +101,20 @@
   import DownloadDialog from './DownloadDialog/DownloadDialog.vue';
   import PreviewImage from '../render/PreviewImage/PreviewImage.vue';
   import RenderPage from '../render/index.vue';
-  import { CONFIG } from '../config/lego';
-  import moment from 'moment';
-  import { getImgBase64URL } from '../utils/html2img';
-  import { legoUserResumeAsync } from '@/http/api/lego';
-  import PostWorkDialog from './PostWorkDialog/PostWorkDialog.vue';
   import { exportLegoPNG, exportLegoPdf } from '../utils/pdf';
   import ProcessBarDialog from '@/components/ProcessBarDialog/ProcessBarDialog.vue';
-  import { onBeforeRouteLeave } from 'vue-router';
-  import { getIntegralPayNumber } from '../utils/common';
 
   const { HJSchemaJsonStore, draftTips } = storeToRefs(appStore.useLegoJsonStore);
   const { resetHJSchemaJsonData } = appStore.useLegoJsonStore;
   const { setUuid } = appStore.useRefreshStore;
   const { resetSelectWidget } = appStore.useLegoSelectWidgetStore;
-  const { templateId, category } = useRoute().query;
+  const route = useRoute();
+  const { templateId } = route.query;
 
-  const props = defineProps<{
+  defineProps<{
     pagesRefs: any;
-    postWorkInfo: any;
     templateInfo: any;
   }>();
-
-  // 查询导出为pdf需要的简币数
-  const exportPdfPayIntegral = ref<number>(0);
-  // 查询导出为图片需要的简币数
-  const exportImgPayIntegral = ref<number>(0);
-  onMounted(async () => {
-    exportImgPayIntegral.value = Number(await getIntegralPayNumber('6'));
-    exportPdfPayIntegral.value = Number(await getIntegralPayNumber('5'));
-  });
 
   // 导出JSON
   const exportJSON = () => {
@@ -172,8 +137,6 @@
 
   // 点击下载
   const downloadResumeFile = async (type: string) => {
-    // 先保存草稿
-    await saveDraft();
     generateReport(type); // 导出
   };
 
@@ -191,9 +154,9 @@
       }
     }, 500);
     if (type === 'pdf') {
-      await exportLegoPdf(_id.value);
+      await exportLegoPdf(templateId as string);
     } else {
-      await exportLegoPNG(_id.value);
+      await exportLegoPNG(templateId as string);
     }
 
     clearInterval(timer);
@@ -217,71 +180,6 @@
     dialogPreviewVisible.value = false;
   };
 
-  // 发布作品
-  const dialogPostWorkVisible = ref<boolean>(false);
-  const publishTemplate = () => {
-    dialogPostWorkVisible.value = true;
-  };
-
-  // 取消发布弹窗
-  const canclePostWork = () => {
-    dialogPostWorkVisible.value = false;
-  };
-
-  // 发布或更新作品成功
-  const router = useRouter();
-  const handlePostWorkSuccess = async () => {
-    router.push({
-      path: '/postWorkSuccess'
-    });
-  };
-
-  // 保存草稿
-  const imgUrl = ref<string>('');
-  const isCanSave = ref<boolean>(true);
-  const _id = ref<string>('');
-  const saveDraft = async () => {
-    if (CONFIG.SAVE_LOCAL) {
-      // 保存本地
-      let LeogLocal = localStorage.getItem('LegoLogo');
-      if (LeogLocal) {
-        const temp = JSON.parse(LeogLocal);
-        temp[HJSchemaJsonStore.value.id] = HJSchemaJsonStore.value;
-        localStorage.setItem('LegoLogo', JSON.stringify(temp));
-      } else {
-        const temp: { [propName: string]: any } = {};
-        temp[HJSchemaJsonStore.value.id] = HJSchemaJsonStore.value;
-        localStorage.setItem('LegoLogo', JSON.stringify(temp));
-      }
-      const time = moment(new Date()).format('YYYY.MM.DD HH:mm:ss');
-      draftTips.value = `已保存草稿  ${time}`;
-      ElMessage.success('保存成功');
-    } else {
-      if (isCanSave.value) {
-        isCanSave.value = false;
-        draftTips.value = '保存中......';
-        imgUrl.value = await getImgBase64URL(props.pagesRefs[0]);
-        const params = {
-          previewUrl: imgUrl.value,
-          category: category,
-          lego_json: HJSchemaJsonStore.value
-        };
-        const data = await legoUserResumeAsync(params);
-        if (data.data.status === 200) {
-          const time = moment(new Date()).format('YYYY.MM.DD HH:mm:ss');
-          draftTips.value = `已保存草稿  ${time}`;
-          _id.value = data.data.data._id;
-          ElMessage.success('保存成功');
-        } else {
-          ElMessage.error(data.data.message);
-        }
-        isCanSave.value = true;
-      } else {
-        return;
-      }
-    }
-  };
-
   // 重置
   const reset = () => {
     ElMessageBox.confirm('此操作会重置画布至初始状态，是否继续?', '警告', {
@@ -301,9 +199,6 @@
       .catch(() => {});
   };
 
-  // 发布公开简历
-  const publishOnlineResume = () => {};
-
   // 离开页面之前
   onBeforeUnmount(async () => {
     draftTips.value = '';
@@ -319,43 +214,6 @@
   const publishComment = () => {
     commentDrawer.value = true;
   };
-
-  // 监听路由离开
-  onBeforeRouteLeave((to, from, next) => {
-    if (to.path === '/postWorkSuccess') {
-      next();
-      return true;
-    }
-    // 编辑状态离开时
-    ElMessageBox.confirm('离开前请确保您编辑的内容已保存草稿！', '警告', {
-      confirmButtonText: '保存草稿并离开',
-      cancelButtonText: '直接离开',
-      showCancelButton: true,
-      closeOnClickModal: false,
-      closeOnPressEscape: false,
-      distinguishCancelAndClose: true,
-      type: 'warning',
-      beforeClose: async (action, instance, done) => {
-        if (action === 'confirm') {
-          instance.confirmButtonLoading = true;
-          // 保存草稿并离开
-          await saveDraft();
-          instance.confirmButtonLoading = false;
-          done();
-        } else if (action === 'close') {
-          done();
-          return;
-        } else {
-          done();
-          next();
-        }
-      }
-    })
-      .then(async () => {
-        next();
-      })
-      .catch(() => {});
-  });
 </script>
 <style lang="scss" scoped>
   .lego-nav-box {

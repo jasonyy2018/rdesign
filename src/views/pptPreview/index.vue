@@ -7,7 +7,7 @@
         <!-- 图片大图展示 -->
         <div class="img-big-preview">
           <div class="big-img-box">
-            <el-image style="width: 100%; height: 440px" :src="bigPreviewUrl" fit />
+            <el-image style="width: 100%; height: 440px" :src="bigPreviewUrl" :fit="'cover'" />
           </div>
         </div>
         <!-- 图片列表 -->
@@ -17,9 +17,9 @@
               v-for="(item, index) in pptInfo.previewUrl"
               :key="index"
               :class="['img-item-box', { active: currentIndex === index }]"
-              @click="selectPreUrl($event, item, index)"
+              @click="selectPreUrl($event, item, index as number)"
             >
-              <el-image style="width: 160px; height: 90px" :src="item.url" fit />
+              <el-image style="width: 160px; height: 90px" :src="item.url" :fit="'cover'" />
             </div>
           </c-scrollbar>
         </div>
@@ -31,16 +31,6 @@
           <h1>{{ pptInfo.name }}</h1>
           <div class="download-btn">
             <div class="button" @click="download">
-              <!-- 判断该用户是否全站免费 -->
-              <template v-if="!userInfo.isAllFree">
-                <!-- 先判断是否是会员 -->
-                <template v-if="!membershipInfo.hasMembership || membershipInfo.isExpired">
-                  <div v-if="!isPay" class="how-much"
-                    >{{ Math.abs(pptInfo.payValue) || ''
-                    }}<img width="20" src="@/assets/images/jianB.png" alt="简币"
-                  /></div>
-                </template>
-              </template>
               <span>立即下载</span>
             </div>
           </div>
@@ -102,24 +92,12 @@
     <comment-com
       v-config:open_comment
       width="1200px"
-      :comment-type-id="id"
+      :comment-type-id="(id as string)"
       comment-type="pptTemplate"
     ></comment-com>
-
-    <!-- 下载警告弹窗 -->
-    <pay-integral-dialog
-      :dialog-get-integral-visible="dialogGetIntegralVisible"
-      :title="`确定消费简币下载模板？只需一次支付，即可多次下载！`"
-      btn-text="确认下载"
-      :confirm-disabled="confirmDisabled"
-      :confirm-tip="confirmTip"
-      @cancle="cancleDialog"
-      @confirm="confirmDialog"
-    ></pay-integral-dialog>
   </div>
 </template>
 <script lang="ts" setup>
-  import LoginDialog from '@/components/LoginDialog/LoginDialog';
   import PptCarousel from './components/PptCarousel.vue';
   import { downloadFileUtil } from '@/utils/common';
   import 'element-plus/es/components/message-box/style/index';
@@ -128,17 +106,8 @@
     getPPTTemplateInfoAsync,
     pptDownloadUrl
   } from '@/http/api/pptTemplate';
-  import appStore from '@/store';
-  import { useUserIsPayGoods } from '@/hooks/useUsrIsPayGoods';
-  import { storeToRefs } from 'pinia';
   import { useHead } from '@vueuse/head';
   import { title } from '@/config/seo';
-
-  // 获取用户会员信息
-  const { membershipInfo } = storeToRefs(appStore.useMembershipStore);
-
-  // 获取用户信息
-  const { userInfo } = storeToRefs(appStore.useUserInfoStore);
 
   // 获取ppt模板id
   const route = useRoute();
@@ -195,60 +164,8 @@
     console.log(e);
   };
 
-  // 查询用户是否消费过该资源
-  const isPay = ref<any>(false);
-  onMounted(async () => {
-    isPay.value = await useUserIsPayGoods(id);
-  });
-
   // 点击立即下载
-  const dialogGetIntegralVisible = ref<boolean>(false);
-  const confirmDisabled = ref<boolean>(false);
-  const confirmTip = ref<string>('');
   const download = async () => {
-    let token = localStorage.getItem('token');
-    if (!token) {
-      LoginDialog(true, '', async () => {
-        isPay.value = await useUserIsPayGoods(id);
-      });
-    } else {
-      // 全站免费直接下载
-      if (userInfo.value.isAllFree) {
-        downloadTemplate();
-        return;
-      }
-      // 会员直接下载
-      if (membershipInfo.value.hasMembership && !membershipInfo.value.isExpired) {
-        downloadTemplate();
-        return;
-      }
-      // 判断用户是否支付过
-      if (isPay.value) {
-        downloadTemplate();
-      } else {
-        // 判断当前用户简币是否充足
-        const userIntegralTotal = appStore.useUserInfoStore.userIntegralInfo.integralTotal;
-        if (userIntegralTotal < Math.abs(pptInfo.value.payValue)) {
-          confirmDisabled.value = true;
-          dialogGetIntegralVisible.value = true;
-          confirmTip.value = '您的简币数量不足！';
-          return;
-        } else {
-          confirmTip.value = '';
-          dialogGetIntegralVisible.value = true;
-        }
-      }
-    }
-  };
-
-  // 关闭弹窗
-  const cancleDialog = () => {
-    dialogGetIntegralVisible.value = false;
-  };
-
-  // 下载弹窗确认
-  const confirmDialog = () => {
-    dialogGetIntegralVisible.value = false;
     downloadTemplate();
   };
 
@@ -259,7 +176,6 @@
       ElMessage.success('即将开始下载');
       let url = JSON.parse(data.data.data.fileUrl)[0].url;
       downloadFileUtil(url);
-      isPay.value = await useUserIsPayGoods(id); // 更新用户是否支付过的状态
     } else {
       ElMessage.error(data.data.message);
     }

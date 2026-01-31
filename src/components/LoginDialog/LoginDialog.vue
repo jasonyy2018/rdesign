@@ -84,15 +84,7 @@
                 >
               </div>
             </el-form-item>
-            <!-- 注册邀请码 -->
-            <el-form-item v-if="websiteConfig.open_invite_register">
-              <el-input
-                v-model.trim="registerForm.inviteCode"
-                class="forms_field-input"
-                placeholder="邀请码（非必填）"
-                @keyup.enter="register(registerRuleFormRef)"
-              />
-            </el-form-item>
+
             <!-- 隐私协议、服务条款 -->
             <el-form-item>
               <div
@@ -391,7 +383,7 @@
   // 是否已经点过获取验证码了
   const isDisabled = ref<boolean>(false);
   const countdown = ref<number>(0); // 倒计时时间
-  let timer: number | null = null; // 定时器
+  let timer: any = null; // 定时器
   // 获取验证码
   const getEmailCode = async () => {
     if (isDisabled.value) return; // 如果按钮已经禁用，直接返回
@@ -429,42 +421,41 @@
   const { setUuid } = appStore.useRefreshStore;
   const { saveToken } = appStore.useTokenStore;
   const { saveUserInfo } = appStore.useUserInfoStore;
-  const { getUserIntegralTotal } = appStore.useUserInfoStore;
+
   const isLoginLoading = ref<boolean>(false);
   const router = useRouter();
   const loginRuleFormRef = ref<FormInstance>();
   const login = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
-    await formEl.validate(async (valid, fields) => {
-      if (valid) {
-        isLoginLoading.value = true;
-        const data = await loginAsync(loginForm);
-        if (data.status === 200) {
-          isLoginLoading.value = false;
-          setUuid(); // 无感刷新页面
-          saveToken('Bearer ' + data.data.token.access_token); // 存储token到本地
-          saveUserInfo(data.data.user); // 存储用户信息
-          getUserIntegralTotal(); // 查询简币信息
-          ElMessage({
-            message: '登录成功',
-            type: 'success'
-          });
-          show.value = false;
-          // 查询和更新用户信息
-          const { getAndUpdateUserInfo } = appStore.useUserInfoStore;
-          getAndUpdateUserInfo();
-          props.confirm();
-        } else {
-          isLoginLoading.value = false;
-          ElMessage({
-            message: data.message,
-            type: 'error'
-          });
-        }
+    try {
+      await formEl.validate();
+      isLoginLoading.value = true;
+      const data = await loginAsync(loginForm);
+      if (data.status === 200) {
+        isLoginLoading.value = false;
+        setUuid(); // 无感刷新页面
+        saveToken('Bearer ' + data.data.token.access_token); // 存储token到本地
+        saveUserInfo(data.data.user); // 存储用户信息
+
+        ElMessage({
+          message: '登录成功',
+          type: 'success'
+        });
+        show.value = false;
+        // 查询和更新用户信息
+        const { getAndUpdateUserInfo } = appStore.useUserInfoStore;
+        getAndUpdateUserInfo();
+        props.confirm();
       } else {
-        console.log('error submit!', fields);
+        isLoginLoading.value = false;
+        ElMessage({
+          message: data.message,
+          type: 'error'
+        });
       }
-    });
+    } catch (fields: any) {
+      console.log('error submit!', fields);
+    }
   };
 
   // 注册
@@ -472,43 +463,41 @@
   const isRegisterLoading = ref<boolean>(false);
   const register = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
-    await formEl.validate(async (valid, fields) => {
-      if (valid) {
-        // 判断是否勾选隐私协议
-        if (!selectedPrivateService.value) {
-          ElMessage({
-            message: '请勾选隐私协议和服务条款！',
-            type: 'error'
-          });
-          return;
-        }
-        isRegisterLoading.value = true;
-        let params = {
-          name: registerForm.name,
-          email: registerForm.email,
-          password: registerForm.password,
-          verificationCode: registerForm.verificationCode,
-          inviteCode: registerForm.inviteCode
-        };
-        const data = await registerAsync(params);
-        if (data.status === 200) {
-          isRegisterLoading.value = false;
-          isSignUp.value = false;
-          ElMessage({
-            message: '注册成功',
-            type: 'success'
-          });
-        } else {
-          isRegisterLoading.value = false;
-          ElMessage({
-            message: data.message,
-            type: 'error'
-          });
-        }
-      } else {
-        console.log('error submit!', fields);
+    try {
+      await formEl.validate();
+      // 判断是否勾选隐私协议
+      if (!selectedPrivateService.value) {
+        ElMessage({
+          message: '请勾选隐私协议和服务条款！',
+          type: 'error'
+        });
+        return;
       }
-    });
+      isRegisterLoading.value = true;
+      let params = {
+        name: registerForm.name,
+        email: registerForm.email,
+        password: registerForm.password,
+        verificationCode: registerForm.verificationCode
+      };
+      const data = await registerAsync(params);
+      if (data.status === 200) {
+        isRegisterLoading.value = false;
+        isSignUp.value = false;
+        ElMessage({
+          message: '注册成功',
+          type: 'success'
+        });
+      } else {
+        isRegisterLoading.value = false;
+        ElMessage({
+          message: data.message,
+          type: 'error'
+        });
+      }
+    } catch (fields: any) {
+      console.log('error submit!', fields);
+    }
   };
 
   // 忘记密码
@@ -559,36 +548,35 @@
   const companyLoginFormRef = ref<FormInstance>();
   const companyLogin = async (formEl: FormInstance | undefined) => {
     if (!formEl) return;
-    await formEl.validate(async (valid, fields) => {
-      if (valid) {
-        isLoginLoading.value = true;
-        const data = await companyLoginAsync(companyLoginForm);
-        if (data.status === 200) {
-          isLoginLoading.value = false;
-          setUuid(); // 无感刷新页面
-          saveToken('Bearer ' + data.data.token.access_token); // 存储token到本地
-          saveUserInfo(data.data.user); // 存储用户信息
-          getUserIntegralTotal(); // 查询简币信息
-          ElMessage({
-            message: '登录成功',
-            type: 'success'
-          });
-          show.value = false;
-          // 查询和更新用户信息
-          const { getAndUpdateUserInfo } = appStore.useUserInfoStore;
-          getAndUpdateUserInfo();
-          props.confirm();
-        } else {
-          isLoginLoading.value = false;
-          ElMessage({
-            message: data.message,
-            type: 'error'
-          });
-        }
+    try {
+      await formEl.validate();
+      isLoginLoading.value = true;
+      const data = await companyLoginAsync(companyLoginForm);
+      if (data.status === 200) {
+        isLoginLoading.value = false;
+        setUuid(); // 无感刷新页面
+        saveToken('Bearer ' + data.data.token.access_token); // 存储token到本地
+        saveUserInfo(data.data.user); // 存储用户信息
+
+        ElMessage({
+          message: '登录成功',
+          type: 'success'
+        });
+        show.value = false;
+        // 查询和更新用户信息
+        const { getAndUpdateUserInfo } = appStore.useUserInfoStore;
+        getAndUpdateUserInfo();
+        props.confirm();
       } else {
-        console.log('error submit!', fields);
+        isLoginLoading.value = false;
+        ElMessage({
+          message: data.message,
+          type: 'error'
+        });
       }
-    });
+    } catch (fields: any) {
+      console.log('error submit!', fields);
+    }
   };
 </script>
 <style lang="scss" scoped>

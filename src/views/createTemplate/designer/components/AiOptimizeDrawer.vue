@@ -15,13 +15,6 @@
           <img src="@/assets/images/ai-translate.webp" width="24" height="24" />
           <span class="header-title">AI诊断结果</span>
         </div>
-        <!-- 剩余简币 -->
-        <div class="content-box">
-          <p class="jb-num">
-            {{ formattedIntegral }}
-            <img width="18" src="@/assets/images/jianB.png" alt="简币" />
-          </p>
-        </div>
       </div>
     </template>
     <div
@@ -41,7 +34,6 @@
     optimizeResumeStreamAsync
   } from '@/http/api/ai';
   import appStore from '@/store';
-  import { formatNumberWithCommas } from '@/utils/common';
   import { ElNotification, ElMessage } from 'element-plus';
   import { storeToRefs } from 'pinia';
   import MarkdownIt from 'markdown-it';
@@ -72,15 +64,9 @@
     emit('closeAiOptimizeDrawer');
   };
 
-  // 计算属性
-  const formattedIntegral = computed(() => {
-    return formatNumberWithCommas(appStore.useUserInfoStore.userIntegralInfo.integralTotal);
-  });
-
   // 是否等待
   const isLoading = ref(false);
 
-  const { getAndUpdateUserInfo } = appStore.useUserInfoStore;
   const streamController = ref<AbortController | null>(null); // 流式请求控制器
   const aiContent = ref('');
   const renderedContent = computed(() => {
@@ -120,9 +106,6 @@
     isLoading.value = true;
     // 获取简历数据
     const { HJNewJsonStore } = storeToRefs(appStore.useCreateTemplateStore);
-    // 提取 dataSource 数据
-    // const dataSource = extractResumeData(HJNewJsonStore.value, true);
-    // console.log('dataSource', JSON.stringify(dataSource));
     // 诊断使用markdown数据
     const dataSource = resumeJsonToMarkdown(HJNewJsonStore.value);
     const params = {
@@ -145,12 +128,6 @@
         });
       },
       () => {
-        getAndUpdateUserInfo();
-        if (!props.modelInfoObj.modelObj.model_is_free) {
-          // 手动更新用户简币数量
-          appStore.useUserInfoStore.userIntegralInfo.integralTotal =
-            appStore.useUserInfoStore.userIntegralInfo.integralTotal + props.modelInfoObj.payValue;
-        }
         isLoading.value = false;
         ElMessage.success('AI诊断成功');
       }
@@ -208,36 +185,6 @@
         align-items: center;
         .header-title {
           margin: 0 10px;
-        }
-      }
-
-      .content-box {
-        font-size: 12px;
-        color: #777777;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        border-bottom: none;
-        margin-right: 15px;
-        p {
-          height: 40px;
-          font-size: 14px;
-          display: flex;
-          align-items: center;
-          color: #fb8444;
-          img {
-            margin-left: 5px;
-            margin-bottom: 1px;
-          }
-        }
-        .jb-num {
-          font-size: 16px;
-          font-weight: 600;
-          background: -webkit-linear-gradient(top, #ff0000, #00ff00); /*设置线性渐变*/
-          /*为了支持更多的浏览器*/
-          background-clip: text; /*背景被裁剪到文字*/
-          -webkit-text-fill-color: transparent; /*设置文字的填充颜色*/
-          letter-spacing: 1px;
         }
       }
     }

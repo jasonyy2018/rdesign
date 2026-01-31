@@ -2,8 +2,8 @@ import {
   getAdminMenuListAsync,
   getIndexMenuListAsync,
   getOrgAdminMenuListAsync
-} from '@/http/api/menu';
-import { buildTree } from '@/utils/common';
+} from '../http/api/menu';
+import { buildTree } from '../utils/common';
 import { defineStore } from 'pinia';
 
 // 用户信息
@@ -33,7 +33,7 @@ export const useIndexMenuStore = defineStore('indexMenuStore', () => {
       saveIndexMenu(treeData);
     } else {
       ElMessage({
-        message: data.message,
+        message: data.message || data.data?.message || '获取导航菜单失败',
         type: 'error'
       });
     }

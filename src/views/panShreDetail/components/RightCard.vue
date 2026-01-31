@@ -20,13 +20,6 @@
           class="button"
           @click="toDownload(item.name)"
         >
-          <!-- 先判断是否是会员 -->
-          <template v-if="!membershipInfo.hasMembership || membershipInfo.isExpired">
-            <div v-if="!isPay" class="how-much"
-              >{{ Math.abs(content.pan_source_price) || '' }}
-              <img width="20" src="@/assets/images/jianB.png" alt="简币"
-            /></div>
-          </template>
           {{ item.name }}
           <span v-if="item.pass">{{ `(提取码:${item.pass})` }}</span>
         </div>
@@ -65,43 +58,19 @@
         <p>③群：961251875</p>
       </div>
     </div>
-
-    <!-- 获取简币弹窗 -->
-    <get-integral-dialog
-      :dialog-get-integral-visible="dialogGetIntegralVisible"
-      @cancle="cancleDialog"
-    ></get-integral-dialog>
   </div>
 </template>
 <script lang="ts" setup>
   import LoginDialog from '@/components/LoginDialog/LoginDialog';
-  import appStore from '@/store';
-  import { ElMessageBox } from 'element-plus';
   import ComTitle from './ComTitle.vue';
   import 'element-plus/es/components/message-box/style/index';
-  import { useUserIsPayGoods } from '@/hooks/useUsrIsPayGoods';
   import { getVXQunListUnauthAsync } from '@/http/api/website';
   import { panShareDownloadUrlAsync } from '@/http/api/panShare';
-  import { storeToRefs } from 'pinia';
-  const props = defineProps<{
+  defineProps<{
     content: any;
   }>();
 
   const { id } = useRoute().query;
-
-  // 获取用户会员信息
-  const { membershipInfo } = storeToRefs(appStore.useMembershipStore);
-
-  // 打开获取简币弹窗
-  const dialogGetIntegralVisible = ref<boolean>(false);
-  const openGetDialog = () => {
-    dialogGetIntegralVisible.value = true;
-  };
-
-  // 关闭弹窗
-  const cancleDialog = () => {
-    dialogGetIntegralVisible.value = false;
-  };
 
   // 查询微信微信群列表
   const vxQunList = ref<any>([]);
@@ -120,61 +89,15 @@
   };
   getVXQunListUnauth();
 
-  // 查询用户是否消费过该资源
-  const isPay = ref<any>(false);
-  onMounted(async () => {
-    isPay.value = await useUserIsPayGoods(id);
-  });
-
   // 点击下载
-  const router = useRouter();
   const toDownload = async (name: string) => {
     const token = localStorage.getItem('token'); // 判断是否登录
-    const userInfo = localStorage.getItem('userInfo');
     if (!token) {
-      LoginDialog(true, '', async () => {
-        isPay.value = await useUserIsPayGoods(id);
+      LoginDialog(() => {
+        downloadTemplate(name);
       });
     } else {
-      // 会员直接下载
-      if (membershipInfo.value.hasMembership && !membershipInfo.value.isExpired) {
-        downloadTemplate(name);
-        return;
-      }
-      // 判断邮箱是否验证
-      const emailVerify = JSON.parse(userInfo as string).auth.email.valid;
-      if (emailVerify) {
-        // 判断用户是否支付过
-        if (isPay.value) {
-          downloadTemplate(name);
-        } else {
-          // 判断当前用户简币是否充足
-          const userIntegralTotal = appStore.useUserInfoStore.userIntegralInfo.integralTotal;
-          if (userIntegralTotal < Math.abs(props.content.pan_source_price)) {
-            ElMessage.warning('您的简币数量不足！');
-            openGetDialog();
-            return;
-          } else {
-            const desc = `确定消费-${props.content.pan_source_price}简币下载当前资源？只需一次支付，即可多次下载！`;
-            ElMessageBox.confirm(desc, '警告', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning'
-            })
-              .then(async () => {
-                downloadTemplate(name);
-              })
-              .catch(() => {});
-          }
-        }
-      } else {
-        router.push({
-          path: '/emailVerify',
-          query: {
-            email: JSON.parse(userInfo as string).email
-          }
-        });
-      }
+      downloadTemplate(name);
     }
   };
 
@@ -190,7 +113,6 @@
           }
         }
       );
-      isPay.value = await useUserIsPayGoods(id); // 更新用户是否支付过的状态
     } else {
       ElMessage.error(data.data.message);
     }

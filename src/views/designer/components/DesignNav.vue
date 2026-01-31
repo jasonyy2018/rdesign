@@ -26,9 +26,6 @@
             </div>
           </el-tooltip>
         </div>
-        <div class="draft-tips-box">
-          <span class="draft-tips">{{ draftTips }}</span>
-        </div>
       </div>
       <div class="center">
         <p v-show="!isShowIpt">
@@ -61,12 +58,6 @@
           <span class="icon-tips">预览</span>
         </div>
       </el-tooltip>
-      <el-tooltip effect="dark" content="保存为草稿" placement="bottom">
-        <div class="icon-box" @click="saveDraft">
-          <svg-icon icon-name="icon-caogaoxiang1" color="#555" size="17px"></svg-icon>
-          <span class="icon-tips">暂存</span>
-        </div>
-      </el-tooltip>
       <el-tooltip effect="dark" content="重置所有设置" placement="bottom">
         <div class="icon-box" @click="reset">
           <svg-icon icon-name="icon-zhongzhi" color="#555" size="17px"></svg-icon>
@@ -77,12 +68,6 @@
         <div class="icon-box" @click="exportJSON">
           <svg-icon icon-name="icon-xiazai" color="#555" size="17px"></svg-icon>
           <span class="icon-tips">JSON</span>
-        </div>
-      </el-tooltip>
-      <el-tooltip effect="dark" content="将你的简历分享给别人" placement="bottom">
-        <div class="icon-box" @click="publishOnlineResume">
-          <svg-icon icon-name="icon-fenxiang" color="#555" size="17px"></svg-icon>
-          <span class="icon-tips">分享</span>
         </div>
       </el-tooltip>
       <el-tooltip effect="dark" content="快来一起参与评论吧！" placement="bottom">
@@ -112,13 +97,6 @@
     @cancle="cancleJsonDialog"
   ></import-json-dialog>
 
-  <!-- 在线简历发布成功弹窗 -->
-  <online-success-dialog
-    :dialog-online-visible="dialogOnlineVisible"
-    :resume-id="resumeId"
-    @cancle="cancleOnlineDialog"
-  ></online-success-dialog>
-
   <!-- 增加自定义模块抽屉 -->
   <add-custom-model-drawer :drawer-visible="drawerVisible" @close-add-drawer="closeAddDrawer">
   </add-custom-model-drawer>
@@ -138,8 +116,6 @@
   <!-- 下载弹窗 -->
   <download-dialog
     :dialog-download-visible="dialogDownloadVisible"
-    :export-pdf-pay-integral="exportPdfPayIntegral"
-    :export-img-pay-integral="exportImgPayIntegral"
     @close-download-dialog="closeDownloadDialog"
     @download-file="downloadResumeFile"
   ></download-dialog>
@@ -151,36 +127,23 @@
 </template>
 <script lang="ts" setup>
   import appStore from '@/store';
-  import { ElMessage, ElMessageBox } from 'element-plus';
+  import { ElMessageBox } from 'element-plus';
   import 'element-plus/es/components/message-box/style/index';
   import FileSaver from 'file-saver';
-  import moment from 'moment';
   import { storeToRefs } from 'pinia';
   import ImportJsonDialog from '@/components/ImportJsonDialog/ImportJsonDialog.vue';
-  import { cloneDeep, debounce } from 'lodash';
+  import { cloneDeep } from 'lodash';
   import { getUuid } from '@/utils/common';
-  import { getUserResumeListAsync, updateUserresumeAsync } from '@/http/api/resume';
-  import { publishOnlineResumeAsync } from '@/http/api/userResume';
-  import OnlineSuccessDialog from './OnlineSuccessDialog.vue';
   import AddCustomModelDrawer from './AddCustomModelDrawer.vue';
   import SwitchTemplateDrawer from './SwitchTemplateDrawer.vue';
   import DownloadDialog from './DownloadDialog.vue';
   import ViewJsonDrawer from './ViewJsonDrawer.vue';
-  import CONFIG from '@/config';
-  import { getIntegralPayNumber } from '@/views/LegoDesigner/utils/common';
 
   let { resumeJsonNewStore } = storeToRefs(appStore.useResumeJsonNewStore); // store里的模板数据
-  const emit = defineEmits([
-    'generateReport',
-    'generateReportNew',
-    'reset',
-    'saveDataToLocal',
-    'publishComment'
-  ]);
+  const emit = defineEmits(['generateReport', 'generateReportNew', 'reset', 'publishComment']);
   const route = useRoute();
-  const { name, id } = route.query; // 模板id和模板名称
+  const { name } = route.query; // 模板id和模板名称
   // 跳转到首页
-  const router = useRouter();
 
   // 更改标题
   const titleIpf = ref<any>(null);
@@ -193,75 +156,7 @@
     isShowIpt.value = false;
   };
 
-  // 查询导出为pdf需要的简币数
-  const exportPdfPayIntegral = ref<number>(0);
-  // 查询导出为图片需要的简币数
-  const exportImgPayIntegral = ref<number>(0);
-  onMounted(async () => {
-    exportImgPayIntegral.value = Number(await getIntegralPayNumber('9'));
-    exportPdfPayIntegral.value = Number(await getIntegralPayNumber('8'));
-  });
-
-  // 保存草稿
-  let draftTips = ref<string>('');
-  const saveDataToLocal = async (isHandle?: boolean) => {
-    return new Promise(async (resolve, reject) => {
-      // 先查询个人简历是否超过4份
-      const params = {
-        page: 1,
-        limit: 10
-      };
-      const listData = await getUserResumeListAsync(params);
-      if (listData.data.status === 200) {
-        // 过滤掉本条数据
-        let realList = [];
-        listData.data.data.list.map((item: any) => {
-          if (item.ID !== id) {
-            realList.push(item);
-          }
-        });
-        // 判断用户简历数量是否超过
-        if (realList.length >= CONFIG.maxUserResume) {
-          ElMessageBox.confirm(
-            `每位用户的简历数量最多${CONFIG.maxUserResume}份，您已超过${CONFIG.maxUserResume}份简历，如要继续使用，请前往个人中心删除部分简历！`,
-            '温馨提示',
-            {
-              confirmButtonText: '前往',
-              cancelButtonText: '取消',
-              type: 'warning'
-            }
-          )
-            .then(() => {
-              router.push('/person/myResume');
-            })
-            .catch(() => {});
-          // 简历份数过多
-          reject(null);
-        } else {
-          const data = await updateUserresumeAsync(resumeJsonNewStore.value);
-          if (data.data.status === 200) {
-            const time = moment(new Date()).format('YYYY.MM.DD HH:mm:ss');
-            draftTips.value = `已自动保存草稿  ${time}`;
-            // 手动保存
-            if (isHandle) {
-              ElMessage({
-                message: '保存草稿成功!',
-                type: 'success',
-                center: true
-              });
-            }
-            resolve('保存草稿成功！');
-          } else {
-            draftTips.value = '自动保存草稿失败！';
-            reject(null);
-          }
-        }
-      } else {
-        ElMessage.error(listData.data.message);
-        reject(null);
-      }
-    });
-  };
+  onMounted(async () => {});
 
   // 预览简历
   const dialogPreviewVisible = ref<boolean>(false);
@@ -273,27 +168,6 @@
   const closePreview = () => {
     dialogPreviewVisible.value = false;
   };
-
-  // 保存草稿
-  const saveDraft = () => {
-    saveDataToLocal(true);
-  };
-
-  // 自动保存草稿
-  const debounced = debounce(() => {
-    saveDataToLocal();
-  }, 5000);
-  watch(
-    () => resumeJsonNewStore.value, // JSON数据发生变化，则保存草稿
-    (newval, oldVal) => {
-      if (newval && oldVal.ID) {
-        debounced();
-      }
-    },
-    {
-      deep: true
-    }
-  );
 
   // 导出JSON
   const exportJSON = () => {
@@ -317,16 +191,9 @@
 
   // 点击下载
   const downloadResumeFile = async (type: string) => {
-    await saveDataToLocal();
     emit('generateReport', type);
     closeDownloadDialog();
   };
-
-  // 导出为pdf新方法
-  // const generateReportNew = async () => {
-  //   await saveDataToLocal();
-  //   emit('generateReportNew');
-  // };
 
   // 重置
   const reset = () => {
@@ -337,7 +204,6 @@
     })
       .then(() => {
         emit('reset');
-        draftTips.value = '';
       })
       .catch(() => {});
   };
@@ -353,38 +219,9 @@
     dialogVisible.value = false;
   };
 
-  // 发布为线上简历
-  const resumeId = ref<string>('');
-  const { userInfo } = appStore.useUserInfoStore;
-  const publishOnlineResume = async () => {
-    // 先保存草稿
-    let draft = await saveDataToLocal();
-    if (draft) {
-      let params = {
-        email: userInfo.email,
-        ID: route.query.id
-      };
-      const data = await publishOnlineResumeAsync(params);
-      if (data.data.status === 200) {
-        ElMessage.success('分享链接已生成');
-        resumeId.value = data.data.data.ONLINE_LINK;
-        dialogOnlineVisible.value = true;
-      } else {
-        ElMessage.error(data.data.message);
-      }
-    }
-  };
-
   // 发表评论
   const publishComment = () => {
     emit('publishComment');
-  };
-
-  // 在线简历发布成功弹窗
-  const dialogOnlineVisible = ref<boolean>(false);
-  // 关闭弹窗
-  const cancleOnlineDialog = () => {
-    dialogOnlineVisible.value = false;
   };
 
   // 打开添加自定义模块抽屉
@@ -422,9 +259,7 @@
     drawerViewJsonVisible.value = false;
   };
 
-  defineExpose({
-    saveDataToLocal
-  });
+  defineExpose({});
 </script>
 <style lang="scss" scopeds>
   .nav-box {

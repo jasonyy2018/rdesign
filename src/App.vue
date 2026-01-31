@@ -28,19 +28,6 @@
   const { refreshUuid } = appStore.useRefreshStore;
   const route = useRoute();
 
-  // 查询和更新用户信息
-  const { getAndUpdateUserInfo } = appStore.useUserInfoStore;
-  const { token } = appStore.useTokenStore;
-  if (token) {
-    getAndUpdateUserInfo();
-  }
-
-  // 查询用简币信息
-  const { getUserIntegralTotal } = appStore.useUserInfoStore;
-  if (token) {
-    getUserIntegralTotal();
-  }
-
   // 增加网站访问量
   const addWebsiteViews = () => {
     addWebsiteViewsAsync();
@@ -60,7 +47,7 @@
     if (isFirstLoad.value) {
       // 更新 canonical 链接
       const canonical: any = document.querySelector('link[rel="canonical"]');
-      const url = `https://aizhishengji.example.com${route.fullPath}`; // Using a placeholder domain
+      const url = `https://rdes.togomol.com${route.fullPath}`;
 
       if (canonical) {
         canonical.href = url;

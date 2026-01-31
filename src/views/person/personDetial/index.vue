@@ -8,26 +8,6 @@
       size="default"
       label-position="right"
     >
-      <!-- 全站免费用户不显示 -->
-      <template v-if="!userInfo.isAllFree">
-        <el-form-item label="会员:">
-          <div @click="toMembershipReach">
-            <div v-if="!membershipInfo.hasMembership" class="not-membership-img"></div>
-            <div
-              v-else-if="membershipInfo.hasMembership && membershipInfo.daysRemaining > 0"
-              class="content-box"
-            >
-              <span v-if="membershipInfo.type === 'lifetime'">永久会员</span>
-              <span v-else>还剩{{ membershipInfo.daysRemaining }}天到期</span>
-            </div>
-            <!-- 已过期 -->
-            <div v-else class="content-box expiredDays">
-              <span>已过期{{ membershipInfo.expiredDays }}天</span>
-            </div>
-          </div>
-        </el-form-item>
-      </template>
-
       <el-form-item label="昵称:" prop="name">
         <el-input v-if="isEdit" v-model="ruleForm.name" />
         <p v-else>{{ appStore.useUserInfoStore.userInfo.name }}</p>
@@ -66,7 +46,6 @@
   import appStore from '@/store';
   import { formatDateToYMD } from '@/utils/common';
   import { FormInstance, FormRules } from 'element-plus';
-  import { storeToRefs } from 'pinia';
 
   interface IPerson {
     name: string;
@@ -89,25 +68,12 @@
   const { getAndUpdateUserInfo } = appStore.useUserInfoStore;
   getAndUpdateUserInfo();
 
-  // 获取用户会员信息
-  const { membershipInfo } = storeToRefs(appStore.useMembershipStore);
-  console.log('用户会员信息', membershipInfo.value);
-
-  // 用户信息
-  const { userInfo } = storeToRefs(appStore.useUserInfoStore);
-
   const isEdit = ref<boolean>(false);
   const edit = () => {
     ruleForm.name = appStore.useUserInfoStore.userInfo.name;
     ruleForm.surname = appStore.useUserInfoStore.userInfo.surname;
     ruleForm.birthdaydate = appStore.useUserInfoStore.userInfo.birthdaydate;
     isEdit.value = true;
-  };
-
-  // 跳转会员充值
-  const router = useRouter();
-  const toMembershipReach = () => {
-    router.push('/membership');
   };
 
   // 取消更改
@@ -146,67 +112,6 @@
     :deep(.el-form-item__label) {
       margin-right: 20px;
       font-weight: 600;
-    }
-    .content-box {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 5px 10px;
-      padding: 2px 9px;
-      background-color: #83ffd1;
-      border-radius: 30px;
-      height: 30px;
-      span {
-        font-size: 12px;
-        letter-spacing: 1px;
-        color: #617745;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-    }
-    .expiredDays {
-      background-color: #3b7962;
-      span {
-        color: rgb(237, 218, 218);
-      }
-    }
-    .not-membership-img {
-      width: 65px;
-      height: 20px;
-      position: relative;
-      background-size: contain !important;
-      cursor: pointer;
-      background: url(@/assets/images/membership/not-membership.png) 100% / cover no-repeat;
-      &::before {
-        content: '';
-        position: absolute;
-        left: 6px;
-        top: 1px;
-        width: 59px;
-        height: 16px;
-        border-radius: 17px;
-        background: linear-gradient(
-          135deg,
-          hsla(0, 0%, 100%, 0) 30%,
-          hsla(0, 0%, 100%, 0.8) 50%,
-          hsla(0, 0%, 100%, 0) 70%
-        );
-        background-size: 100px 100%;
-        background-repeat: no-repeat;
-        background-position: -100px top;
-        animation: titleAnim 6.5s ease-in-out infinite;
-      }
-    }
-    @keyframes titleAnim {
-      0% {
-        background-position: -100px top;
-      }
-
-      30%,
-      100% {
-        background-position: 240px top;
-      }
     }
     .button-box {
       display: flex;

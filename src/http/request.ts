@@ -38,6 +38,17 @@ const http: any = new Request({
       return config;
     },
     responseInterceptors: (response: AxiosResponse) => {
+      // 增加对 HTML 响应的检测（通常是因为 Nginx 代理未配置，导致 404 falling back to index.html）
+      if (typeof response.data === 'string' && response.data.includes('<!DOCTYPE html>')) {
+        const errorMsg =
+          '服务器返回了错误的格式(HTML)，可能是 Nginx 代理配置有误，请检查 /huajian 路径映射';
+        ElMessage.error({
+          message: errorMsg,
+          duration: 8000,
+          showClose: true
+        });
+        throw new Error(errorMsg);
+      }
       return response;
     },
     responseInterceptorsCatch: (error: any) => {

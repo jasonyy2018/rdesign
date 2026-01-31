@@ -9,79 +9,27 @@
     @close="cancle"
   >
     <div class="ai-content-optimize-dialog">
-      <!-- 当前简币数量 -->
+      <!-- 选择模型 -->
       <div class="content-box">
         <h1 class="title">
-          <span v-if="!userInfo.isAllFree">您当前简币数量</span>
-          <span v-else>请选择AI模型</span>
-          <div v-if="!userInfo.isAllFree" class="get-bi-method" @click="openGetDialog"
-            >获取简币</div
-          >
+          <span>请选择AI模型</span>
         </h1>
-        <div v-if="!userInfo.isAllFree" class="content">
-          <p class="jb-num">
-            {{ formattedIntegral }}
-            <img width="22" src="@/assets/images/jianB.png" alt="简币" />
-          </p>
-        </div>
       </div>
 
       <!-- 模型选择器 -->
       <div class="model-selector">
         <el-radio-group v-model="selectedModel" @change="handleModelChange">
           <template v-if="modelList.length > 0">
-            <!-- 该用户是否全站免费 -->
-            <template v-if="userInfo.isAllFree">
-              <el-radio
-                v-for="(item, index) in modelList"
-                :key="index"
-                :value="item.model_name"
-                size="large"
-                border
-              >
-                {{ item.model_name }}
-              </el-radio>
-            </template>
-            <template v-else>
-              <el-tooltip
-                v-for="(item, index) in modelList"
-                :key="index"
-                effect="dark"
-                :content="item.model_is_free ? '限会员使用' : `每次消耗 ${Math.abs(payValue)} 简币`"
-                placement="top"
-              >
-                <el-radio
-                  v-if="item.model_is_free"
-                  :value="item.model_name"
-                  size="large"
-                  border
-                  :disabled="!isMember"
-                >
-                  {{ item.model_name }}
-                  <span class="free-tag">免费</span>
-                  <!-- 皇冠 -->
-                  <img
-                    class="vip-icon"
-                    src="@/assets/images/membership.svg"
-                    alt="会员"
-                    title="会员"
-                    width="20"
-                  />
-                </el-radio>
-                <el-radio v-else :value="item.model_name" size="large" border>
-                  {{ item.model_name }}
-                  <span class="tips">
-                    {{ Math.abs(payValue) }}
-                    <img
-                      width="22"
-                      src="@/assets/images/jianB.png"
-                      alt="简币"
-                      title="简币 - 您的专属虚拟货币"
-                    />
-                  </span>
-                </el-radio>
-              </el-tooltip>
-            </template>
+            <el-radio
+              v-for="(item, index) in modelList"
+              :key="index"
+              :value="item.model_name"
+              size="large"
+              border
+            >
+              {{ item.model_name }}
+              <span class="free-tag">免费</span>
+            </el-radio>
           </template>
         </el-radio-group>
       </div>
@@ -103,16 +51,6 @@
     </template>
   </el-dialog>
 
-  <!-- 获取简币弹窗 -->
-  <pay-integral-dialog
-    :title="title"
-    :dialog-get-integral-visible="dialogGetIntegralVisible"
-    :pay-number="-Math.abs(payValue) || 0"
-    placeholder="下载该创作"
-    @cancle="handleCancleDialog"
-    @confirm="handleConfirmDialog"
-  />
-
   <!-- 历史诊断记录弹窗 -->
   <ai-optimize-dialog-logs
     :dialog-ai-optimize-visible-logs="dialogAiOptimizeVisibleLogs"
@@ -121,22 +59,16 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, computed } from 'vue';
-  import { ElMessage, ElMessageBox } from 'element-plus';
+  import { ref } from 'vue';
+  import { ElMessage } from 'element-plus';
   import {
     getOptimizeResumeIntegralAsync,
     getOptimizeResumeModelListAsync,
     getOptimizeResumeUploadIntegralAsync
   } from '@/http/api/ai';
-  import { formatNumberWithCommas } from '@/utils/common';
-  import appStore from '@/store';
-  import jianBImage from '@/assets/images/jianB.png';
   import AiOptimizeDialogLogs from './AiOptimizeDialogLogs.vue';
-  import { storeToRefs } from 'pinia';
 
   const emit = defineEmits(['cancle', 'updateSuccess']);
-
-  const { userInfo } = storeToRefs(appStore.useUserInfoStore);
 
   interface TDialog {
     dialogAiOptimizeVisible: boolean;
@@ -155,24 +87,16 @@
   const isLoading = ref<boolean>(false);
   const errorMessage = ref<string>('');
   const isSubmitting = ref<boolean>(false);
-  const dialogGetIntegralVisible = ref<boolean>(false);
-  const title = ref<string>('');
 
   // 模型切换
   const handleModelChange = (value: string) => {
-    console.log('value:', value); // 打印 value 的值
     selectedModel.value = value;
   };
-
-  // 计算属性
-  const formattedIntegral = computed(() => {
-    return formatNumberWithCommas(appStore.useUserInfoStore.userIntegralInfo.integralTotal);
-  });
 
   // 弹窗打开
   const handleOpen = async () => {
     try {
-      // 查询简币数量和模型列表
+      // 查询模型列表
       await Promise.all([
         props.type === 'offline' ? getOptimizeResumeUploadIntegral() : getOptimizeResumeCoin(),
         getOptimizeResumeModelList()
@@ -184,21 +108,11 @@
     }
   };
 
-  // 判断是否是会员
-  const { membershipInfo } = storeToRefs(appStore.useMembershipStore);
-  const isMember = computed(() => {
-    if (membershipInfo.value.hasMembership && membershipInfo.value.daysRemaining > 0) {
-      return true;
-    } else {
-      return false;
-    }
-  });
-
-  // 查询上传文件进行AI优化需要的简币数量
+  // 查询上传文件进行AI优化需要的简币数量 (保留接口调用但设为0用于逻辑展示)
   const getOptimizeResumeUploadIntegral = async () => {
     const response = await getOptimizeResumeUploadIntegralAsync();
     if (response.data.status === 200) {
-      payValue.value = response.data.data;
+      payValue.value = 0; // 强制设为0
     } else {
       ElMessage.error(response.data.message);
     }
@@ -208,7 +122,7 @@
   const getOptimizeResumeCoin = async () => {
     const response = await getOptimizeResumeIntegralAsync();
     if (response.data.status === 200) {
-      payValue.value = response.data.data;
+      payValue.value = 0; // 强制设为0
     } else {
       ElMessage.error(response.data.message);
     }
@@ -229,10 +143,8 @@
   };
 
   // 提交
-  const { userIntegralInfo } = storeToRefs(appStore.useUserInfoStore);
   const submit = async () => {
     isSubmitting.value = true;
-    console.log('selectedModel:', selectedModel.value); // 打印 selectedModel 的值
     if (!selectedModel.value) {
       ElMessage.error('请先选择AI模型');
       isSubmitting.value = false;
@@ -241,57 +153,9 @@
 
     const modelObj = modelList.value.find((item: any) => item.model_name === selectedModel.value);
 
-    // 全站免费用户直接调用接口
-    if (userInfo.value.isAllFree) {
-      emit('updateSuccess', {
-        selectedModel: selectedModel.value,
-        payValue: payValue.value,
-        modelObj
-      });
-      isSubmitting.value = false;
-      return;
-    }
-
-    // 不是会员，选择了付费模型
-    if (!isMember.value && !modelObj.model_is_free) {
-      // 判断简币数量
-      if (userIntegralInfo.value.integralTotal < Math.abs(payValue.value)) {
-        ElMessage.warning('简币不足');
-        isSubmitting.value = false;
-        return;
-      }
-    }
-
-    if (!modelObj.model_is_free) {
-      try {
-        await ElMessageBox.confirm(
-          `<div style="display: flex; align-items: center;">本次操作将消耗 ${formatNumberWithCommas(
-            payValue.value
-          )} <img style="margin-left: 5px;" width="22" src="${jianBImage}" alt="简币" />，是否继续？</div>`,
-          '提示',
-          {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning',
-            dangerouslyUseHTMLString: true
-          }
-        );
-      } catch (error) {
-        // 用户点击了取消
-        isSubmitting.value = false;
-        return;
-      }
-    } else {
-      if (!isMember.value) {
-        ElMessage.warning('免费模型仅支持会员用户');
-        isSubmitting.value = false;
-        return;
-      }
-    }
-
     emit('updateSuccess', {
       selectedModel: selectedModel.value,
-      payValue: payValue.value,
+      payValue: 0,
       modelObj
     });
     isSubmitting.value = false;
@@ -300,22 +164,6 @@
   // 取消
   const cancle = () => {
     emit('cancle');
-  };
-
-  // 打开获取简币弹窗
-  const openGetDialog = () => {
-    title.value = '如何获取简币';
-    dialogGetIntegralVisible.value = true;
-  };
-
-  // 取消警告弹窗
-  const handleCancleDialog = () => {
-    dialogGetIntegralVisible.value = false;
-  };
-
-  // 确定警告弹窗
-  const handleConfirmDialog = () => {
-    dialogGetIntegralVisible.value = false;
   };
 
   // 打开历史诊断记录弹窗
@@ -372,25 +220,6 @@
       align-items: flex-start;
       border-bottom: none;
       margin-bottom: 15px;
-      p {
-        height: 40px;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        color: #fb8444;
-        img {
-          margin-left: 5px;
-        }
-      }
-      .jb-num {
-        font-size: 18px;
-        font-weight: 600;
-        background: -webkit-linear-gradient(top, #ff0000, #00ff00); /*设置线性渐变*/
-        /*为了支持更多的浏览器*/
-        background-clip: text; /*背景被裁剪到文字*/
-        -webkit-text-fill-color: transparent; /*设置文字的填充颜色*/
-        letter-spacing: 1px;
-      }
       .title {
         font-size: 16px;
         color: #009a74;
@@ -408,44 +237,16 @@
           background-color: #009a74;
           left: -10px;
         }
-        .get-bi-method {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 6px 10px;
-          height: 25px;
-          background-color: #70f5c4;
-          border-radius: 15px;
-          font-size: 13px;
-          transition: all 0.3s;
-          margin: 0 auto;
-          margin-left: 15px;
-          cursor: pointer;
-          letter-spacing: 1px;
-          user-select: none;
-          &:hover {
-            opacity: 0.8;
-          }
-        }
-      }
-      .content {
-        font-size: 14px;
-        color: #333333;
-        margin-top: 10px;
-        margin-left: 10px;
       }
     }
     .model-selector {
       width: 100%;
       margin-bottom: 20px;
-      .el-select {
+      .el-radio-group {
         width: 100%;
-      }
-      .model-tips {
-        font-size: 12px;
-        color: #999;
-        margin-top: 8px;
-        margin-left: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
       }
     }
     .history-optimize-list {
@@ -477,6 +278,7 @@
       padding: 10px; // 内边距
       transition: all 0.3s ease; // 过渡效果
       border: 1px solid #dcdfe6; // 默认边框颜色
+      margin-right: 0;
 
       &:hover {
         background-color: #f5f7fa; // 鼠标悬停背景色
@@ -509,36 +311,7 @@
           font-size: 12px;
           font-weight: bold;
         }
-
-        .tips {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-left: 10px;
-          font-size: 14px;
-          color: #4e97fb; // 简币文字颜色
-          font-weight: bold;
-
-          img {
-            margin-left: 5px;
-          }
-        }
       }
-      .vip-icon {
-        position: absolute; // 绝对定位
-        top: -12px;
-        right: -6px;
-      }
-    }
-  }
-
-  /* 添加旋转动画 */
-  @keyframes rotate {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
     }
   }
 

@@ -10,79 +10,20 @@
     @open="handleOpen"
   >
     <div class="ai-content-edit-page-select-warpper">
-      <!-- 当前简币数量 -->
-      <div class="content-box">
-        <h1 class="title">
-          <span v-if="!userInfo.isAllFree">您当前简币数量</span>
-          <span v-else>请选择AI模型</span>
-          <div v-if="!userInfo.isAllFree" class="get-bi-method" @click="openGetDialog"
-            >获取简币</div
-          >
-        </h1>
-        <div v-if="!userInfo.isAllFree" class="content">
-          <p class="jb-num"
-            >{{ formatNumberWithCommas(appStore.useUserInfoStore.userIntegralInfo.integralTotal) }}
-            <img width="22" src="@/assets/images/jianB.png" alt="简币"
-          /></p>
-        </div>
-        <!-- <div class="get-bi-method" @click="openGetDialog">获取简币</div> -->
-      </div>
-      <!-- 新增模型选择器 -->
+      <!-- 模型选择器 -->
       <div class="model-selector">
+        <h1 class="title">请选择AI模型</h1>
         <el-radio-group v-model="selectedModel">
           <template v-if="modelList.length > 0">
-            <!-- 该用户是否全站免费 -->
-            <template v-if="userInfo.isAllFree">
-              <el-radio
-                v-for="(item, index) in modelList"
-                :key="index"
-                :label="item.model_name"
-                size="large"
-                border
-              >
-                {{ item.model_name }}
-              </el-radio>
-            </template>
-            <template v-else>
-              <el-tooltip
-                v-for="(item, index) in modelList"
-                :key="index"
-                effect="dark"
-                :content="item.model_is_free ? '限会员使用' : `每次消耗 ${Math.abs(payValue)} 简币`"
-                placement="top"
-              >
-                <el-radio
-                  v-if="item.model_is_free"
-                  :label="item.model_name"
-                  size="large"
-                  border
-                  :disabled="!isMember"
-                >
-                  {{ item.model_name }}
-                  <span class="free-tag">免费</span>
-                  <!-- 皇冠 -->
-                  <img
-                    class="vip-icon"
-                    src="@/assets/images/membership.svg"
-                    alt="会员"
-                    title="会员"
-                    width="20"
-                  />
-                </el-radio>
-                <el-radio v-else :label="item.model_name" size="large" border>
-                  {{ item.model_name }}
-                  <span class="tips">
-                    {{ Math.abs(payValue) }}
-                    <img
-                      width="22"
-                      src="@/assets/images/jianB.png"
-                      alt="简币"
-                      title="简币 - 您的专属虚拟货币"
-                    />
-                  </span>
-                </el-radio>
-              </el-tooltip>
-            </template>
+            <el-radio
+              v-for="(item, index) in modelList"
+              :key="index"
+              :label="item.model_name"
+              size="large"
+              border
+            >
+              {{ item.model_name }}
+            </el-radio>
           </template>
         </el-radio-group>
       </div>
@@ -146,16 +87,6 @@
       </span>
     </template>
   </el-dialog>
-
-  <!-- 获取简币弹窗 -->
-  <pay-integral-dialog
-    :title="title"
-    :dialog-get-integral-visible="dialogGetIntegralVisible"
-    :pay-number="-Math.abs(payValue) || 0"
-    placeholder="下载该创作"
-    @cancle="handleCancleDialog"
-    @confirm="handleConfirmDialog"
-  ></pay-integral-dialog>
 </template>
 
 <script lang="ts" setup>
@@ -164,19 +95,13 @@
     createTextStreamAsync,
     cancelPolishTextStreamAsync,
     cancelCreateTextStreamAsync,
-    getPolishIntegralAsync,
     getPolishModelListAsync,
-    getCreateIntegralAsync,
     getCreateModelListAsync,
     getSerialNumberAsync,
     aiFailAsync
   } from '@/http/api/ai';
-  import { ElMessage, ElNotification, ElMessageBox } from 'element-plus'; // 引入 ElMessageBox
+  import { ElMessage, ElNotification } from 'element-plus';
   import { ref, watch, computed } from 'vue';
-  import { formatNumberWithCommas } from '@/utils/common';
-  import appStore from '@/store';
-  import jianBImage from '@/assets/images/jianB.png';
-  import { storeToRefs } from 'pinia';
 
   const emit = defineEmits(['cancle', 'updateSuccess']);
   interface TDialog {
@@ -203,59 +128,18 @@
   const selectedModel = ref<string>(''); // 选中的模型
   const streamController = ref<AbortController | null>(null); // 流式请求控制器
   const modelList = ref<any>([]); // 模型列表
-  const payValue = ref<number>(0); // 消费简币数量
-  const { getAndUpdateUserInfo } = appStore.useUserInfoStore;
 
   // 默认模型
   const defaultModel = computed(() => (selectedModel.value ? selectedModel.value : ''));
 
-  const { userInfo } = storeToRefs(appStore.useUserInfoStore);
-
   // 弹窗打开
   const handleOpen = () => {
-    console.log('selectedModel:', selectedModel.value); // 确保初始值为空字符串
     if (props.type === 'edit') {
-      // 查询AI润色需要的简币数量
-      getPolishCoin();
-      // 查询简历润色支持的模型列表
       getPolishModelList();
     } else {
-      getCreateIntegral();
       getCreateModelList();
     }
-    selectedModel.value = ''; // 确保初始值为空字符串
-  };
-
-  // 判断是否是会员
-  const { membershipInfo } = storeToRefs(appStore.useMembershipStore);
-  const isMember = computed(() => {
-    if (membershipInfo.value.hasMembership && membershipInfo.value.daysRemaining > 0) {
-      return true;
-    } else {
-      return false;
-    }
-  });
-
-  // 查询AI润色需要的简币数量
-  const getPolishCoin = async () => {
-    const response = await getPolishIntegralAsync();
-    if (response.data.status === 200) {
-      // 设置简币数量
-      payValue.value = response.data.data;
-    } else {
-      ElMessage.error(response.data.message);
-    }
-  };
-
-  // 查询AI创作需要的简币数量
-  const getCreateIntegral = async () => {
-    const response = await getCreateIntegralAsync();
-    if (response.data.status === 200) {
-      // 设置简币数量
-      payValue.value = response.data.data;
-    } else {
-      ElMessage.error(response.data.message);
-    }
+    selectedModel.value = '';
   };
 
   // 查询简历润色支持的模型列表
@@ -297,7 +181,7 @@
         currentModule.value = props.module;
         aiLoading.value = false;
         aiEditContent.value = '';
-        selectedModel.value = ''; // 确保初始值为空字符串
+        selectedModel.value = '';
       }
     }
   );
@@ -334,7 +218,6 @@
 
   // 点击开始润色或创作
   const serialNumber = ref<string>('');
-  const { userIntegralInfo } = storeToRefs(appStore.useUserInfoStore);
   const aiEdit = async () => {
     if (aiLoading.value) return;
     aiLoading.value = true;
@@ -354,43 +237,6 @@
       ElMessage.error('请先选择AI模型');
       aiLoading.value = false;
       return;
-    }
-
-    const modelObj = modelList.value.find((item: any) => item.model_name === defaultModel.value);
-
-    // 如果不是全站免费用户
-    if (!userInfo.value.isAllFree) {
-      // 不是会员，选择了付费模型
-      if (!isMember.value && !modelObj.model_is_free) {
-        // 判断简币数量
-        if (userIntegralInfo.value.integralTotal < Math.abs(payValue.value)) {
-          ElMessage.warning('简币不足');
-          aiLoading.value = false;
-          return;
-        }
-      }
-
-      // 如果选择了付费模型，弹出确认框
-      if (!modelObj.model_is_free) {
-        try {
-          await ElMessageBox.confirm(
-            `<div style="display: flex; align-items: center;">本次操作将消耗 ${formatNumberWithCommas(
-              payValue.value
-            )} <img style="margin-left: 5px;" width="22" src="${jianBImage}" alt="简币" />，是否继续？</div>`,
-            '提示',
-            {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning',
-              dangerouslyUseHTMLString: true
-            }
-          );
-        } catch (error) {
-          // 用户点击了取消
-          aiLoading.value = false;
-          return;
-        }
-      }
     }
 
     aiEditContent.value = '';
@@ -416,12 +262,6 @@
       },
       () => {
         aiLoading.value = false;
-        getAndUpdateUserInfo();
-        if (!modelObj.model_is_free) {
-          // 手动更新用户简币数量
-          appStore.useUserInfoStore.userIntegralInfo.integralTotal =
-            appStore.useUserInfoStore.userIntegralInfo.integralTotal + payValue.value;
-        }
         ElMessage.success(`${props.type === 'edit' ? '简历润色' : '简历创作'}成功`);
       }
     );
@@ -430,27 +270,8 @@
 
   // 提交
   const submit = () => {
-    console.log('ai内容:', aiEditContent.value);
     emit('updateSuccess', aiEditContent.value);
     cancle();
-  };
-
-  // 打开获取简币弹窗
-  const dialogGetIntegralVisible = ref<boolean>(false);
-  const title = ref<string>('');
-  const openGetDialog = () => {
-    title.value = '如何获取简币';
-    dialogGetIntegralVisible.value = true;
-  };
-
-  // 取消警告弹窗
-  const handleCancleDialog = () => {
-    dialogGetIntegralVisible.value = false;
-  };
-
-  // 确定警告弹窗
-  const handleConfirmDialog = () => {
-    dialogGetIntegralVisible.value = false;
   };
 </script>
 <style lang="scss">

@@ -147,12 +147,7 @@
   import { getTemplateByIdAsync, getUsertemplateAsync } from '@/http/api/createTemplate';
   import AiModelSelect from './components/AiModelSelect.vue';
   import SelectWayDialog from './components/SelectWayDialog.vue';
-  import {
-    extractResumeData,
-    formatNumberWithCommas,
-    restoreData,
-    restoreDataId
-  } from '@/utils/common';
+  import { extractResumeData, restoreData, restoreDataId } from '@/utils/common';
   import appStore from '@/store';
   import { storeToRefs } from 'pinia';
   import {
@@ -166,7 +161,6 @@
   import AiLoading from './components/AiLoading.vue';
   import ResumePreview from './components/ResumePreview.vue';
   import { ElNotification, ElMessage, ElMessageBox } from 'element-plus';
-  import jianBImage from '@/assets/images/jianB.png';
 
   import FooterCom from '@/components/FooterCom/FooterCom.vue';
   import { Loading } from '@element-plus/icons-vue';
@@ -176,7 +170,7 @@
 
   const active = ref(0);
   const isEditing = ref(false); // 是否正在处理编辑
-  const { userInfo } = storeToRefs(appStore.useUserInfoStore);
+
   const route = useRoute();
   const router = useRouter();
 
@@ -184,9 +178,9 @@
   const templateId = route.query.templateId as string;
   const lastActive = ref(2); // 最后一步的active
 
-  const generateParams = ref({
+  const generateParams = ref<any>({
     model: '',
-    keyWords: '',
+    keyWords: null,
     template: null
   });
 
@@ -326,26 +320,10 @@
     }
   };
 
-  // 判断是否是会员
-  const { membershipInfo } = storeToRefs(appStore.useMembershipStore);
-  const isMember = computed(() => {
-    if (
-      membershipInfo.value.hasMembership &&
-      membershipInfo.value.daysRemaining > 0 &&
-      !membershipInfo.value.isExpired
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  });
-
   // 生成简历
   const isAiLoading = ref(false); // AI是否正在返回
   const modelObj = ref<any>(null);
   const generateResumeSuccess = ref(false); // 生成简历是否成功
-  const { getUserIntegralTotal } = appStore.useUserInfoStore;
-  const { userIntegralInfo } = storeToRefs(appStore.useUserInfoStore);
   const { HJNewJsonStore, fromAiGenerate } = storeToRefs(appStore.useCreateTemplateStore);
   const mdResume = ref(false); // 是否生成的是md简历
   const mdResumeLoading = ref(false); // md简历是否正在生成
@@ -367,37 +345,6 @@
       return;
     }
 
-    // 如果不会全站免费用户
-    if (!userInfo.value.isAllFree) {
-      // 不是会员，选择了付费模型
-      if (!isMember.value && !modelObj.value.model_is_free) {
-        // 判断简币数量
-        if (userIntegralInfo.value.integralTotal < Math.abs(aiModelSelectRef.value.payValue)) {
-          ElMessage.warning('简币不足');
-          return;
-        }
-      }
-      // 如果选择了付费模型，弹出确认框
-      if (!modelObj.value.model_is_free) {
-        try {
-          await ElMessageBox.confirm(
-            `<div style="display: flex; align-items: center;">本次操作将消耗 ${formatNumberWithCommas(
-              aiModelSelectRef.value.payValue
-            )} <img style="margin-left: 5px;" width="22" src="${jianBImage}" alt="简币" />，是否继续？</div>`,
-            '提示',
-            {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning',
-              dangerouslyUseHTMLString: true
-            }
-          );
-        } catch (error) {
-          // 用户点击了取消
-          return;
-        }
-      }
-    }
     if (generateParams.value.template) {
       HJNewJsonStore.value = generateParams.value.template;
     } else {
@@ -529,7 +476,7 @@
             mdResumeLoading.value = false;
             generateResumeSuccess.value = true;
             if (modelObj.value && !modelObj.value.model_is_free) {
-              getUserIntegralTotal();
+              // getUserIntegralTotal(); // Removed paywall logic
             }
           } catch (e) {
             console.log('Markdown 转换失败', e);
@@ -566,7 +513,7 @@
       isAiLoading.value = false;
       generateResumeSuccess.value = true;
       if (modelObj.value && !modelObj.value.model_is_free) {
-        getUserIntegralTotal();
+        // getUserIntegralTotal(); // Removed paywall logic
       }
     } catch (e) {
       console.log('JSON 转换失败', e);

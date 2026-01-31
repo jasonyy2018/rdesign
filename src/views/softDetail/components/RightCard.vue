@@ -20,13 +20,6 @@
           class="button"
           @click="toDownload(item.name)"
         >
-          <!-- 先判断是否是会员 -->
-          <template v-if="!membershipInfo.hasMembership || membershipInfo.isExpired">
-            <div v-if="!isPay" class="how-much"
-              >{{ Math.abs(content.payValue) || '' }}
-              <img width="20" src="@/assets/images/jianB.png" alt="简币"
-            /></div>
-          </template>
           {{ item.name }}
           <span v-if="item.pass">{{ `(提取码:${item.pass})` }}</span>
         </div>
@@ -65,42 +58,20 @@
         <p>③群：961251875</p>
       </div>
     </div>
-
-    <!-- 下载警告弹窗 -->
-    <pay-integral-dialog
-      :dialog-get-integral-visible="dialogGetIntegralVisible"
-      :title="`确定消费${content.payValue}简币下载当前软件？只需一次支付，即可多次下载！`"
-      btn-text="确认下载"
-      :confirm-disabled="confirmDisabled"
-      :confirm-tip="confirmTip"
-      @cancle="cancleDialog"
-      @confirm="confirmDialog"
-    ></pay-integral-dialog>
   </div>
 </template>
 <script lang="ts" setup>
   import LoginDialog from '@/components/LoginDialog/LoginDialog';
-  import appStore from '@/store';
   import ComTitle from './ComTitle.vue';
   import 'element-plus/es/components/message-box/style/index';
-  import { useUserIsPayGoods } from '@/hooks/useUsrIsPayGoods';
   import { softDownloadUrl } from '@/http/api/softShare';
   import { getVXQunListUnauthAsync } from '@/http/api/website';
-  import { storeToRefs } from 'pinia';
-  const props = defineProps<{
+  defineProps<{
     content: any;
   }>();
 
   const route = useRoute();
   const sourceId = route.params.sourceId;
-
-  // 获取用户会员信息
-  const { membershipInfo } = storeToRefs(appStore.useMembershipStore);
-
-  // 关闭弹窗
-  const cancleDialog = () => {
-    dialogGetIntegralVisible.value = false;
-  };
 
   // 查询微信微信群列表
   const vxQunList = ref<any>([]);
@@ -119,67 +90,16 @@
   };
   getVXQunListUnauth();
 
-  // 查询用户是否消费过该资源
-  const isPay = ref<any>(false);
-  onMounted(async () => {
-    isPay.value = await useUserIsPayGoods(sourceId);
-    console.log('isPay', isPay.value);
-  });
-
   // 点击下载
-  const dialogGetIntegralVisible = ref<boolean>(false);
-  const confirmDisabled = ref<boolean>(false);
-  const sourceName = ref<string>('');
-  const confirmTip = ref<string>('');
-  const router = useRouter();
   const toDownload = async (name: string) => {
     const token = localStorage.getItem('token'); // 判断是否登录
-    const userInfo = localStorage.getItem('userInfo');
     if (!token) {
-      LoginDialog(true, '', async () => {
-        isPay.value = await useUserIsPayGoods(sourceId);
+      LoginDialog(() => {
+        downloadTemplate(name);
       });
     } else {
-      // 会员直接下载
-      if (membershipInfo.value.hasMembership && membershipInfo.value.isExpired) {
-        downloadTemplate(name);
-        return;
-      }
-      // 判断邮箱是否验证
-      const emailVerify = JSON.parse(userInfo as string).auth.email.valid;
-      if (emailVerify) {
-        // 判断用户是否支付过
-        if (isPay.value) {
-          downloadTemplate(name);
-        } else {
-          // 判断当前用户简币是否充足
-          const userIntegralTotal = appStore.useUserInfoStore.userIntegralInfo.integralTotal;
-          if (userIntegralTotal < Math.abs(props.content.payValue)) {
-            confirmDisabled.value = true;
-            dialogGetIntegralVisible.value = true;
-            confirmTip.value = '您的简币数量不足！';
-            return;
-          } else {
-            confirmTip.value = '';
-            dialogGetIntegralVisible.value = true;
-            sourceName.value = name;
-          }
-        }
-      } else {
-        router.push({
-          path: '/emailVerify',
-          query: {
-            email: JSON.parse(userInfo as string).email
-          }
-        });
-      }
+      downloadTemplate(name);
     }
-  };
-
-  // 下载弹窗确认
-  const confirmDialog = () => {
-    dialogGetIntegralVisible.value = false;
-    downloadTemplate(sourceName.value);
   };
 
   // 下载文件
@@ -194,7 +114,6 @@
           }
         }
       );
-      isPay.value = await useUserIsPayGoods(sourceId); // 更新用户是否支付过的状态
     } else {
       ElMessage.error(data.data.message);
     }
