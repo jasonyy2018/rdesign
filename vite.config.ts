@@ -241,7 +241,7 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
               path.join(outputPath, 'sitemap.html')
             );
             // 3. Templates (Parallel batches to save memory and speed up)
-            const BATCH_SIZE = 5;
+            const BATCH_SIZE = 10;
             for (let i = 0; i < templates.length; i += BATCH_SIZE) {
               const batch = templates.slice(i, i + BATCH_SIZE);
               console.log(

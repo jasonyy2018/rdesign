@@ -1,9 +1,9 @@
 # ==========================================
-# Phase 1: Build Stage (Node.js)
+# Phase 1: Build & Prerender Stage (Node.js)
 # ==========================================
 FROM node:20-slim AS build-stage
 
-# Install system dependencies for Puppeteer (necessary for prerendering)
+# Install system dependencies for Puppeteer in one go
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
@@ -46,19 +46,15 @@ RUN apt-get update && apt-get install -y \
     libxkbcommon0 \
     libatspi2.0-0 \
     --no-install-recommends \
+    && npm install -g pnpm \
     && rm -rf /var/lib/apt/lists/*
 
-# Install pnpm
-RUN npm install -g pnpm
-
-# Set working directory
 WORKDIR /app
 
 # Copy lockfile and package.json
 COPY pnpm-lock.yaml package.json ./
 
 # Install ALL dependencies (including devDependencies for build/prerender)
-RUN pnpm config set store-dir /pnpm/store
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --no-frozen-lockfile --ignore-scripts
 
 # Install Puppeteer Chrome explicitly
@@ -76,39 +72,26 @@ ENV NODE_OPTIONS="--max_old_space_size=4096" \
 RUN pnpm run build:ssr
 
 # ==========================================
-# Phase 2: Production Dependencies Stage
+# Phase 2: Final Production Stage (Minimal)
 # ==========================================
-FROM node:20-alpine AS deps-stage
+FROM node:20-slim AS production-stage
 
 WORKDIR /app
 
-# Copy production-related files
-COPY package.json pnpm-lock.yaml ./
-
-# Install pnpm and production dependencies only
-RUN npm install -g pnpm && \
-    pnpm config set store-dir /pnpm/store
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --no-frozen-lockfile
-
-# ==========================================
-# Phase 3: Final Production Stage (Minimal)
-# ==========================================
-FROM node:20-alpine AS production-stage
-
-WORKDIR /app
-
-# Copy built assets from Phase 1
+# Copy assets and node_modules from build stage
 COPY --from=build-stage /app/dist ./dist
 COPY --from=build-stage /app/server.js ./server.js
 COPY --from=build-stage /app/package.json ./package.json
+COPY --from=build-stage /app/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=build-stage /app/node_modules ./node_modules
 
-# Copy production dependencies from Phase 2
-COPY --from=deps-stage /app/node_modules ./node_modules
+# Install pnpm and prune to production dependencies only
+RUN npm install -g pnpm && pnpm prune --prod
 
-# Expose the port used by server.js
+# Expose the port
 EXPOSE 8080
 
-# Use a non-root user (alpine has a 'node' user)
+# Use non-root user
 USER node
 
 # Start the Node server
