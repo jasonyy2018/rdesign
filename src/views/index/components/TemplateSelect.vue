@@ -88,7 +88,7 @@
     if (data.status === 200) {
       templateList.value = data.data.list;
     } else {
-      ElMessage.error(data.data.message);
+      ElMessage.error(data.message || data.data?.message || '获取模板列表失败');
     }
   };
   getTemplateList();

@@ -21,7 +21,7 @@
     if (data.status === 200) {
       vxQunList.value = data.data;
     } else {
-      ElMessage.error(data.data.message);
+      ElMessage.error(data.message || data.data?.message || '获取微信群列表失败');
     }
   };
   getVXQunListUnauth();
@@ -36,7 +36,7 @@
     if (data.status === 200) {
       linksList.value = data.data.list.filter((item: any) => item.audit === 1);
     } else {
-      ElMessage.error(data.data.message);
+      ElMessage.error(data.message || data.data?.message || '获取友链列表失败');
     }
   };
   getLinksList();

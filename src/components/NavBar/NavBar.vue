@@ -334,7 +334,7 @@
     if (data.status === 200) {
       attendanceTotal.value = data.data;
     } else {
-      ElMessage.error(data.message);
+      ElMessage.error(data.message || data.data?.message || '获取签到人数失败');
     }
   };
   getTodayAttendancePersonTotal();
@@ -353,7 +353,7 @@
         };
       });
     } else {
-      ElMessage.error(data.data.message);
+      ElMessage.error(data.message || data.data?.message || '获取会员配置失败');
     }
   };
   getMembershipConfigsByUser();

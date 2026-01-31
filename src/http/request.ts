@@ -1,7 +1,7 @@
 import Request from './index';
 import { AxiosResponse } from 'axios';
-import CONFIG from '@/config/index';
-import appStore from '@/store';
+import CONFIG from '../config/index';
+import appStore from '../store';
 
 import { ElMessage } from 'element-plus';
 
@@ -62,7 +62,20 @@ const http: any = new Request({
         errorMessage = errorMessages[status as number] || `连接出错(${status || '服务端错误'})!`;
 
         // 添加具体错误信息
-        const serverMessage = error.response?.data?.message;
+        let serverMessage = '';
+        if (error.response?.data) {
+          if (typeof error.response.data === 'string') {
+            // 如果返回的是 HTML 或字符串
+            if (error.response.data.includes('<html')) {
+              serverMessage = '服务器返回了错误的格式(HTML)，请检查代理配置';
+            } else {
+              serverMessage = error.response.data;
+            }
+          } else if (typeof error.response.data === 'object') {
+            serverMessage = error.response.data.message || error.response.data.data?.message;
+          }
+        }
+
         if (serverMessage) {
           errorMessage += `: ${serverMessage}`;
         }

@@ -38,7 +38,7 @@
     if (data.status === 200) {
       vxQunList.value = data.data;
     } else {
-      ElMessage.error(data.data.message);
+      ElMessage.error(data.message || data.data?.message || '获取客服微信失败');
     }
   };
   getVXQunListUnauth();
