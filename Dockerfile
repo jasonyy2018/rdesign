@@ -58,7 +58,7 @@ WORKDIR /app
 COPY pnpm-lock.yaml package.json ./
 
 # Install ALL dependencies (including devDependencies for build/prerender)
-RUN pnpm install --frozen-lockfile --ignore-scripts
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
 
 # Install Puppeteer Chrome explicitly
 RUN npx puppeteer browsers install chrome
