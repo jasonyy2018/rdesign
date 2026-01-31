@@ -4,7 +4,6 @@
 FROM node:20-slim AS build-stage
 
 # Install system dependencies for Puppeteer (necessary for prerendering)
-# We combined them and added cleanup to reduce layer size
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
@@ -55,10 +54,10 @@ RUN npm install -g pnpm
 # Set working directory
 WORKDIR /app
 
-# Copy lockfile and package.json for better caching
+# Copy lockfile and package.json
 COPY pnpm-lock.yaml package.json ./
 
-# Install dependencies (including devDependencies for build)
+# Install ALL dependencies (including devDependencies for build/prerender)
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Install Puppeteer Chrome explicitly
@@ -76,29 +75,39 @@ ENV NODE_OPTIONS="--max_old_space_size=4096" \
 RUN pnpm run build:ssr
 
 # ==========================================
-# Phase 2: Production Stage (Node.js)
+# Phase 2: Production Dependencies Stage
+# ==========================================
+FROM node:20-alpine AS deps-stage
+
+WORKDIR /app
+
+# Copy production-related files
+COPY package.json pnpm-lock.yaml ./
+
+# Install pnpm and production dependencies only
+RUN npm install -g pnpm && \
+    pnpm install --prod --no-frozen-lockfile
+
+# ==========================================
+# Phase 3: Final Production Stage (Minimal)
 # ==========================================
 FROM node:20-alpine AS production-stage
 
 WORKDIR /app
 
-# Install pnpm for production dependency installation
-RUN npm install -g pnpm
-
-# Copy only what's needed for production
+# Copy built assets from Phase 1
 COPY --from=build-stage /app/dist ./dist
-COPY --from=build-stage /app/package.json ./package.json
-COPY --from=build-stage /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=build-stage /app/server.js ./server.js
+COPY --from=build-stage /app/package.json ./package.json
 
-# Install production dependencies only
-RUN pnpm install --prod --no-frozen-lockfile
+# Copy production dependencies from Phase 2
+COPY --from=deps-stage /app/node_modules ./node_modules
 
 # Expose the port used by server.js
 EXPOSE 8080
 
-# Use a non-root user for security (if possible, node image has a 'node' user)
+# Use a non-root user (alpine has a 'node' user)
 USER node
 
 # Start the Node server
-CMD ["npm", "start"]
+CMD ["node", "server.js"]

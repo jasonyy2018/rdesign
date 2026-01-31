@@ -27,6 +27,11 @@
     }
   },
   "dependencies": {
+    "express": "^5.1.0",
+    "serve-static": "^2.2.0",
+    "compression": "^1.7.4"
+  },
+  "devDependencies": {
     "@cerebras/cerebras_cloud_sdk": "^1.64.1",
     "@codemirror/lang-javascript": "^6.2.4",
     "@codemirror/lang-json": "^6.0.2",
@@ -73,11 +78,6 @@
     "vue3-pdfjs": "^0.1.6",
     "vuedraggable": "^4.1.0",
     "xlsx": "^0.18.5",
-    "express": "^5.1.0",
-    "serve-static": "^2.2.0",
-    "compression": "^1.7.4"
-  },
-  "devDependencies": {
     "@commitlint/cli": "^16.3.0",
     "@commitlint/config-conventional": "^16.2.4",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
@@ -104,7 +104,6 @@
     "puppeteer": "^24.15.0",
     "rimraf": "^6.0.1",
     "sass": "^1.89.2",
-    "serve-static": "^2.2.0",
     "sharp": "^0.34.3",
     "terser": "^5.43.1",
     "ts-node": "^10.9.2",
