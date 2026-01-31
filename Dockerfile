@@ -3,12 +3,11 @@
 # ==========================================
 FROM node:20-slim AS build-stage
 
-# Install pnpm and system dependencies for Puppeteer (necessary for prerendering)
+# Install system dependencies for Puppeteer (necessary for prerendering)
+# We combined them and added cleanup to reduce layer size
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
-    dbus \
-    dbus-x11 \
     ca-certificates \
     fonts-liberation \
     libasound2 \
@@ -22,8 +21,6 @@ RUN apt-get update && apt-get install -y \
     libfontconfig1 \
     libgbm1 \
     libgcc1 \
-    libgconf-2-4 \
-    libgdk-pixbuf2.0-0 \
     libglib2.0-0 \
     libgtk-3-0 \
     libnss3 \
@@ -46,10 +43,8 @@ RUN apt-get update && apt-get install -y \
     libxshmfence1 \
     libxss1 \
     libxtst6 \
-    lsb-release \
     xdg-utils \
     libxkbcommon0 \
-    libxkbcommon-x11-0 \
     libatspi2.0-0 \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
@@ -60,15 +55,14 @@ RUN npm install -g pnpm
 # Set working directory
 WORKDIR /app
 
-# Copy lockfile and package.json
+# Copy lockfile and package.json for better caching
 COPY pnpm-lock.yaml package.json ./
 
 # Install dependencies (including devDependencies for build)
 RUN pnpm install --frozen-lockfile
 
-# Install Puppeteer Chrome explicitly to ensure it's available for prerendering
-RUN npx puppeteer browsers install chrome && \
-    chmod +x ~/.cache/puppeteer/chrome/*/chrome-linux64/chrome
+# Install Puppeteer Chrome explicitly
+RUN npx puppeteer browsers install chrome
 
 # Copy the rest of the application
 COPY . .
@@ -76,38 +70,35 @@ COPY . .
 # Set environment variables for Docker build
 ENV NODE_OPTIONS="--max_old_space_size=4096" \
     DOCKER_BUILD="true" \
-    PUPPETEER_CACHE_DIR="/root/.cache/puppeteer" \
-    PUPPETEER_SKIP_DOWNLOAD="true"
-
-# Increase shm size to avoid browser crashes in Docker
-RUN echo '{"default-runtime":"runc"}' > /etc/docker/daemon.json || true
+    VITE_BUILD_MODE="ssr"
 
 # Run build process (SSR mode with prerendering)
-RUN echo "Starting build process with memory allocation..." && \
-    ulimit -n 65536 && \
-    pnpm run build:ssr || \
-    (echo "Build failed, checking for issues..." && \
-    find /app -name "*.log" -type f -exec tail -100 {} \; && \
-    exit 1)
+RUN pnpm run build:ssr
 
 # ==========================================
-# Phase 2: Production Stage (Nginx)
+# Phase 2: Production Stage (Node.js)
 # ==========================================
-FROM nginx:stable-alpine
+FROM node:20-alpine AS production-stage
 
-# Copy built assets from build-stage
-COPY --from=build-stage /app/dist /usr/share/nginx/html
+WORKDIR /app
 
-# Ensure template directory permissions
-RUN chmod -R 755 /usr/share/nginx/html/template && \
-    chmod -R 755 /usr/share/nginx/html/template/*
+# Install pnpm for production dependency installation
+RUN npm install -g pnpm
 
-# Expose ports
-EXPOSE 80
-EXPOSE 443
+# Copy only what's needed for production
+COPY --from=build-stage /app/dist ./dist
+COPY --from=build-stage /app/package.json ./package.json
+COPY --from=build-stage /app/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=build-stage /app/server.js ./server.js
 
-# Copy custom nginx config (if needed)
-# COPY nginx.conf /etc/nginx/nginx.conf
+# Install production dependencies only
+RUN pnpm install --prod --frozen-lockfile
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Expose the port used by server.js
+EXPOSE 8080
+
+# Use a non-root user for security (if possible, node image has a 'node' user)
+USER node
+
+# Start the Node server
+CMD ["npm", "start"]

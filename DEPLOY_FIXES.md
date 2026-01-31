@@ -4,7 +4,7 @@
 
 本次 Docker 构建失败的主要原因:
 
-1. **API DNS 解析失败** - `aizhishengji.example.com` 在 Docker 构建阶段无法访问
+1. **API DNS 解析失败** - `rdes.togomol.com` 在 Docker 构建阶段无法访问
 2. **Puppeteer 配置冲突** - vite-plugin-prerender 和自定义预渲染同时运行导致资源竞争和超时
 3. **DBUS 进程错误** - Docker 中缺少 DBUS 服务的 Chrome 兼容性问题
 4. **CSS 兼容性警告** - autoprefixer 配置过时
@@ -19,7 +19,7 @@
 - **默认数据**: 提供微信群和友链的默认数据
 
 ```typescript
-const API_BASE = process.env.VITE_SERVER_ADDRESS || 'https://aizhishengji.example.com';
+const API_BASE = process.env.VITE_SERVER_ADDRESS || 'https://rdes.togomol.com';
 // 请求失败时返回默认数据
 ```
 
@@ -101,7 +101,7 @@ ls -la /usr/share/nginx/html/template
 
 ### ✅ 修复 API 请求失败
 
-**问题**: ENOTFOUND aizhishengji.example.com
+**问题**: ENOTFOUND rdes.togomol.com
 
 **解决**: 添加容错机制和默认数据
 
@@ -152,7 +152,7 @@ overrideBrowserslist: ['Android >= 4.4', 'iOS >= 9', 'last 2 versions', 'not dea
 
 ```env
 VITE_ENV=production
-VITE_SERVER_ADDRESS=https://aizhishengji.com
+VITE_SERVER_ADDRESS=https://rdes.togomol.com
 VITE_OUTPUT_DIR=dist
 VITE_PUBLIC_PATH=/
 VITE_BUILD_MODE=ssr

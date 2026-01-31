@@ -19,7 +19,8 @@
     "prettier": "prettier . --write",
     "commit": "git-cz",
     "postinstall": "husky install",
-    "fix-memory-limit": "cross-env LIMIT=4096 increase-memory-limit"
+    "fix-memory-limit": "cross-env LIMIT=4096 increase-memory-limit",
+    "start": "node server.js"
   },
   "config": {
     "commitizen": {
@@ -72,7 +73,10 @@
     "vue3-count-to": "^1.1.2",
     "vue3-pdfjs": "^0.1.6",
     "vuedraggable": "^4.1.0",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "express": "^5.1.0",
+    "serve-static": "^2.2.0",
+    "compression": "^1.7.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.3.0",
@@ -96,9 +100,6 @@
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-vue": "^8.7.1",
-    "express": "^5.1.0",
-    "husky": "^7.0.4",
-    "lint-staged": "^16.1.2",
     "postcss": "8.5.6",
     "prettier": "^2.8.8",
     "puppeteer": "^24.15.0",

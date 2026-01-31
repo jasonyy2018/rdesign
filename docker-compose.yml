@@ -6,12 +6,10 @@ services:
       dockerfile: Dockerfile
     restart: always
     ports:
-      - "8084:80"
-      - "8444:443"
-    volumes:
-      - ./certs:/etc/nginx/ssl
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - "8084:8080"
+    # 移除了 Nginx 相关的卷挂载，因为现在是直接 Node.js 部署
+    # 项目网址: https://rdes.togomol.com/
 
-## 执行命令 
-## docker-compose down
-## docker-compose up --build -d
+    ## 执行命令 
+    ## docker-compose down
+    ## docker-compose up --build -d

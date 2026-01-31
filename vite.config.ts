@@ -35,12 +35,12 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
     build: {
       sourcemap: isDev,
       outDir: VITE_OUTPUT_DIR,
-      cssCodeSplit: false,
+      cssCodeSplit: true,
       reportCompressedSize: false,
       target: 'esnext',
       minify: isProduction ? 'terser' : 'esbuild',
       assetsInlineLimit: 4096,
-      chunkSizeWarningLimit: 5000,
+      chunkSizeWarningLimit: 2000,
       assetsDir: 'static',
       rollupOptions: {
         output: {
@@ -51,7 +51,8 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
             wangeditor: ['@wangeditor/editor', '@wangeditor/editor-for-vue'],
             codemirror: ['codemirror', '@codemirror/lang-javascript', '@codemirror/lang-json'],
             lodash: ['lodash'],
-            vendor: ['axios']
+            utils: ['axios', 'qs', 'moment', 'file-saver'],
+            vendor: ['dompurify', 'xlsx', 'image-conversion']
           },
           chunkFileNames: 'static/js/[name]-[hash].js',
           entryFileNames: 'static/js/[name]-[hash].js',
