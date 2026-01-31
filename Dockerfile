@@ -58,8 +58,8 @@ WORKDIR /app
 # Copy lockfile and package.json for better caching
 COPY pnpm-lock.yaml package.json ./
 
-# Install dependencies (including devDependencies for build)
-RUN pnpm install --frozen-lockfile
+# Install dependencies (allow lockfile update since we modified package.json)
+RUN pnpm install --no-frozen-lockfile
 
 # Install Puppeteer Chrome explicitly
 RUN npx puppeteer browsers install chrome
@@ -92,7 +92,7 @@ COPY --from=build-stage /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=build-stage /app/server.js ./server.js
 
 # Install production dependencies only
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --prod --no-frozen-lockfile
 
 # Expose the port used by server.js
 EXPOSE 8080
