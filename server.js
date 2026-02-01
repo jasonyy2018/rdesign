@@ -15,14 +15,12 @@ app.use(compression());
 const distPath = path.join(__dirname, 'dist');
 
 // 代理配置：将 /huajian 和 /api 请求代理到后端服务器
+// 注意：后端期望保留 /huajian 前缀，所以不要重写路径
 const proxyOptions = {
   target: backendUrl,
   changeOrigin: true,
-  secure: false,
-  pathRewrite: {
-    '^/huajian': '', // 移除 /huajian 前缀
-    '^/api': '' // 移除 /api 前缀
-  }
+  secure: false
+  // 不需要 pathRewrite，后端期望完整的 /huajian/* 路径
 };
 
 app.use('/huajian', createProxyMiddleware(proxyOptions));

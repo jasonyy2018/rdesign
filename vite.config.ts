@@ -280,13 +280,12 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
       proxy: {
         '/huajian': {
           target: 'http://localhost:3000',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/huajian/, '')
+          changeOrigin: true
+          // 不重写路径，后端期望完整的 /huajian/* 路径
         },
         '/api': {
           target: 'http://localhost:3000',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, '')
+          changeOrigin: true
         }
       }
     }
