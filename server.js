@@ -7,24 +7,62 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const app = express();
 const port = process.env.PORT || 8080;
 const backendUrl = process.env.BACKEND_URL || 'http://119.91.202.144:3399';
+const articlesUrl = process.env.ARTICLES_URL || 'http://119.91.202.144:3210';
 
 // 启用 Gzip 压缩
 app.use(compression());
 
-// 设置静态文件目录
-const distPath = path.join(__dirname, 'dist');
+// 1. 爬虫检测中间件（预渲染逻辑）
+const botRegex =
+  /googlebot|bingbot|yandex|baiduspider|sogouspider|haosouspider|360spider|shenmaspider|sm|yahoo|msnbot|duckduckbot|exabot|facebot|ia_archiver|applebot|slurp|gigabot|teoma|twiceler|rogerbot|voilabot|findlinks|naverbot|mj12bot|ahrefsbot|semrushbot|zoombot|mail\.ru|seznambot|dotbot|liebaospider|curl|wget|python|java|httpclient|go-http|okhttp/i;
 
-// 代理配置：将 /huajian 和 /api 请求代理到后端服务器
+app.use((req, res, next) => {
+  const ua = req.headers['user-agent'] || '';
+  if (botRegex.test(ua)) {
+    // 排除静态资源请求
+    const isStaticAsset =
+      /\.(js|css|png|jpg|jpeg|gif|svg|woff|woff2|ico|webp|mp4|webm|mp3|ttf|eot)$/i.test(req.path);
+    if (!isStaticAsset && !req.path.startsWith('/huajian') && !req.path.startsWith('/api')) {
+      console.log(`[Bot Detected] Proxying to prerender: ${req.path}`);
+      return createProxyMiddleware({
+        target: backendUrl,
+        changeOrigin: true,
+        pathRewrite: (path) => `/huajian/render${path}`
+      })(req, res, next);
+    }
+  }
+  next();
+});
+
+// 2. 代理配置：将 /huajian 和 /api 请求代理到后端服务器
 // 注意：后端期望保留 /huajian 前缀，所以不要重写路径
 const proxyOptions = {
   target: backendUrl,
   changeOrigin: true,
-  secure: false
-  // 不需要 pathRewrite，后端期望完整的 /huajian/* 路径
+  secure: false,
+  onProxyReq: (proxyReq) => {
+    // 确保 Host 头部正确
+    proxyReq.setHeader('Host', new URL(backendUrl).host);
+  }
 };
 
 app.use('/huajian', createProxyMiddleware(proxyOptions));
 app.use('/api', createProxyMiddleware(proxyOptions));
+
+// 3. 职场攻略 (WordPress) 代理
+app.use(
+  '/articles',
+  createProxyMiddleware({
+    target: articlesUrl,
+    changeOrigin: true,
+    pathRewrite: {
+      '^/articles': '/' // Nginx 中的 rewrite ^/articles(/.*)$ $1 break;
+    }
+  })
+);
+
+// 设置静态文件目录
+const distPath = path.join(__dirname, 'dist');
 
 // 缓存控制：为哈希资源设置强缓存，为 HTML 设置协商缓存
 const staticOptions = {
