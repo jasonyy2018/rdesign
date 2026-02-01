@@ -7,7 +7,7 @@ import axios from 'axios'; // 需要安装 axios，或者改成你用的请求�
 // 兼容 ESModule 的 __dirname 获取
 const __dirname = path.resolve(); // ✅ 直接使用 Node.js 的 __dirname
 
-const API_BASE = process.env.VITE_SERVER_ADDRESS || 'https://rdes.togomol.com';
+const API_BASE = process.env.VITE_SERVER_ADDRESS || 'http://119.91.202.144:3399';
 const isDockerBuild = process.env.DOCKER_BUILD === 'true' || !process.env.VITE_SERVER_ADDRESS;
 
 // 请求获取无需权限微信群列表
@@ -54,8 +54,8 @@ function getDefaultLinks() {
     {
       id: '1',
       name: 'AI职升姬官网',
-      link: 'https://aizhishengji.com',
-      url: 'https://aizhishengji.com',
+      link: '/',
+      url: '/',
       audit: 1
     }
   ];
@@ -273,7 +273,7 @@ const generateFooterHtml = (vxquns = [], links = []) => {
         </div>
         <div class="links">
           <h4>网站地图</h4>
-          <a class="site-map" href="https://aizhishengji.example.com/sitemap.xml">🗺️ 站点地图</a>
+          <a class="site-map" href="/sitemap.xml">🗺️ 站点地图</a>
         </div>
       </div>
       <div class="line"></div>

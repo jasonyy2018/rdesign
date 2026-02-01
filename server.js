@@ -40,9 +40,18 @@ const proxyOptions = {
   target: backendUrl,
   changeOrigin: true,
   secure: false,
-  onProxyReq: (proxyReq) => {
+  logLevel: 'debug',
+  onProxyReq: (proxyReq, req) => {
     // 确保 Host 头部正确
     proxyReq.setHeader('Host', new URL(backendUrl).host);
+    console.log(`[Proxy] ${req.method} ${req.path} -> ${backendUrl}${req.path}`);
+  },
+  onProxyRes: (proxyRes, req) => {
+    console.log(`[Proxy Response] ${req.method} ${req.path} -> ${proxyRes.statusCode}`);
+  },
+  onError: (err, req, res) => {
+    console.error(`[Proxy Error] ${req.method} ${req.path}:`, err.message);
+    res.status(502).json({ error: 'Proxy error', message: err.message });
   }
 };
 

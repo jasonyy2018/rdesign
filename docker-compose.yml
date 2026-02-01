@@ -11,8 +11,8 @@ services:
       - BACKEND_URL=http://119.91.202.144:3399
       - ARTICLES_URL=http://119.91.202.144:3210
       - PORT=8080
-    # 移除了 Nginx 相关的卷挂载，因为现在是直接 Node.js 部署
-    # 项目网址: https://rdes.togomol.com/
+    # 直接通过 IP:端口 访问，无需 Nginx
+    # 访问方式: http://<服务器IP>:8084
 
     ## 执行命令
     ## docker-compose down

@@ -49,9 +49,9 @@
   watchEffect(() => {
     // 只在第一次加载时执行
     if (isFirstLoad.value) {
-      // 更新 canonical 链接
+      // 更新 canonical 链接 - 使用当前域名
       const canonical: any = document.querySelector('link[rel="canonical"]');
-      const url = `https://rdes.togomol.com${route.fullPath}`;
+      const url = `${window.location.origin}${route.fullPath}`;
 
       if (canonical) {
         canonical.href = url;
