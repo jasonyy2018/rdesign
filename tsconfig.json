@@ -1,33 +1,22 @@
 {
   "compilerOptions": {
-    "typeRoots": [
-      "node_modules/@types",
-      "src/interface",
-      "types"
-    ],
+    "typeRoots": ["node_modules/@types", "src/interface", "types"],
     "noEmit": true,
     "allowImportingTsExtensions": true,
-    "target": "esnext",
+    "target": "ES2022",
     "useDefineForClassFields": true,
-    "module": "esnext",
+    "module": "ES2022",
     "moduleResolution": "node",
     "strict": false,
     "jsx": "preserve",
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "lib": [
-      "esnext",
-      "dom"
-    ],
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "baseUrl": "./",
     "paths": {
-      "@": [
-        "src"
-      ],
-      "@/*": [
-        "src/*"
-      ]
+      "@": ["src"],
+      "@/*": ["src/*"]
     },
     "skipLibCheck": true,
     "strictNullChecks": false,

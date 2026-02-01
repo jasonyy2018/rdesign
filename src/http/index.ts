@@ -1,4 +1,4 @@
-import axios, { AxiosResponse, AxiosError, AxiosRequestConfig, AxiosInstance } from 'axios';
+import axios, { AxiosResponse, AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import type { RequestConfig, RequestInterceptors } from './types/types';
 import qs from 'qs';
 
@@ -13,7 +13,7 @@ class Request {
     this.interceptorsObj = config.interceptors;
 
     this.instance.interceptors.request.use(
-      (config: AxiosRequestConfig) => {
+      (config: InternalAxiosRequestConfig) => {
         // 在此处添加请求拦截逻辑
         return config;
       },
