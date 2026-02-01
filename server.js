@@ -46,8 +46,8 @@ const staticOptions = {
 app.use(serveStatic(distPath, staticOptions));
 
 // SPA 路由回退：所有不匹配的路由都返回 index.html
-// 在 Express 5 中，通配符语法已更改，使用 * 来匹配所有路径
-app.get('*', (req, res) => {
+// 在 Express 5 中，通配符语法已更改，必须使用命名参数，例如 *any
+app.get('*any', (req, res) => {
   // 排除 API 和 代理路径
   if (req.path.startsWith('/api') || req.path.startsWith('/huajian')) return;
   res.sendFile(path.join(distPath, 'index.html'));

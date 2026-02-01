@@ -1,0 +1,20 @@
+Testing: (.*)
+  PARSE ERROR: Missing parameter name at index 3: (.*); visit https://git.new/pathToRegexpError for info
+Testing: /:path*
+  PARSE ERROR: Missing parameter name at index 7: /:path*; visit https://git.new/pathToRegexpError for info
+Testing: {:path}*
+  PARSE ERROR: Missing parameter name at index 8: {:path}*; visit https://git.new/pathToRegexpError for info
+Testing: /*any
+  /: false
+  /a: true
+  /a/b: true
+Testing: /*
+  PARSE ERROR: Missing parameter name at index 2: /*; visit https://git.new/pathToRegexpError for info
+Testing: *path
+  /: true
+  /a: true
+  /a/b: true
+Testing: /*path
+  /: false
+  /a: true
+  /a/b: true

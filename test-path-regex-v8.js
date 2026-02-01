@@ -1,6 +1,6 @@
 const { match } = require('path-to-regexp');
 
-const paths = ['*path', '/*path', '/:path*', '(.*)'];
+const paths = ['*path', '/*path', '/:path*', '/:any*', '(.*)'];
 const testUrls = ['/', '/dashboard', '/api/user', '/huajian/test'];
 
 paths.forEach((path) => {
