@@ -79,16 +79,20 @@
   const limit = 8;
   const templateList = ref<Array<any>>([]);
   const getTemplateList = async () => {
-    let params = {
-      page: page,
-      limit: limit,
-      templateStatus: 1
-    };
-    const data = await templateListAsync(params);
-    if (data.status === 200) {
-      templateList.value = data.data.list;
-    } else {
-      ElMessage.error(data.message || data.data?.message || '获取模板列表失败');
+    try {
+      let params = {
+        page: page,
+        limit: limit,
+        templateStatus: 1
+      };
+      const data = await templateListAsync(params);
+      if (data.status === 200) {
+        templateList.value = data.data.list;
+      } else {
+        console.warn('获取模板列表失败:', data.message);
+      }
+    } catch (error) {
+      console.warn('获取模板列表请求失败:', error);
     }
   };
   getTemplateList();

@@ -26,16 +26,17 @@ export const useIndexMenuStore = defineStore('indexMenuStore', () => {
 
   // 查询首页导航信息
   async function getIndexMenuList() {
-    const data = await getIndexMenuListAsync();
-    if (data.status === 200) {
-      const treeData = buildTree(data.data);
-      console.log('首页导航菜单', treeData);
-      saveIndexMenu(treeData);
-    } else {
-      ElMessage({
-        message: data.message || data.data?.message || '获取导航菜单失败',
-        type: 'error'
-      });
+    try {
+      const data = await getIndexMenuListAsync();
+      if (data.status === 200) {
+        const treeData = buildTree(data.data);
+        console.log('首页导航菜单', treeData);
+        saveIndexMenu(treeData);
+      } else {
+        console.warn('获取导航菜单失败:', data.message);
+      }
+    } catch (error) {
+      console.warn('获取导航菜单请求失败:', error);
     }
   }
 

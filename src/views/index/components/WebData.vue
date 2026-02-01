@@ -90,13 +90,17 @@
     trafficnumber: 0
   });
   const getWebAnalycData = async () => {
-    const data = await getWebAnalycDataAsync();
-    if (data.status === 200) {
-      webData.usernumber = data.data.usernumber;
-      webData.resumenumber = data.data.resumenumber;
-      webData.trafficnumber = data.data.trafficnumber;
-    } else {
-      ElMessage.error(data.message);
+    try {
+      const data = await getWebAnalycDataAsync();
+      if (data.status === 200) {
+        webData.usernumber = data.data.usernumber;
+        webData.resumenumber = data.data.resumenumber;
+        webData.trafficnumber = data.data.trafficnumber;
+      } else {
+        console.warn('获取网站分析数据失败:', data.message);
+      }
+    } catch (error) {
+      console.warn('获取网站分析数据请求失败:', error);
     }
   };
   getWebAnalycData();

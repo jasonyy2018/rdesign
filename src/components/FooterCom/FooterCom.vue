@@ -17,11 +17,15 @@
   // 查询微信微信群列表
   const vxQunList = ref<any>([]);
   const getVXQunListUnauth = async () => {
-    const data = await getVXQunListUnauthAsync();
-    if (data.status === 200) {
-      vxQunList.value = data.data;
-    } else {
-      ElMessage.error(data.message || data.data?.message || '获取微信群列表失败');
+    try {
+      const data = await getVXQunListUnauthAsync();
+      if (data.status === 200) {
+        vxQunList.value = data.data;
+      } else {
+        console.warn('获取微信群列表失败:', data.message);
+      }
+    } catch (error) {
+      console.warn('获取微信群列表请求失败:', error);
     }
   };
   getVXQunListUnauth();
@@ -29,14 +33,18 @@
   // 查询友链列表
   const linksList = ref<any>([]);
   const getLinksList = async () => {
-    const data = await getLinksListAsync({
-      page: 1,
-      limit: 20
-    });
-    if (data.status === 200) {
-      linksList.value = data.data.list.filter((item: any) => item.audit === 1);
-    } else {
-      ElMessage.error(data.message || data.data?.message || '获取友链列表失败');
+    try {
+      const data = await getLinksListAsync({
+        page: 1,
+        limit: 20
+      });
+      if (data.status === 200) {
+        linksList.value = data.data.list.filter((item: any) => item.audit === 1);
+      } else {
+        console.warn('获取友链列表失败:', data.message);
+      }
+    } catch (error) {
+      console.warn('获取友链列表请求失败:', error);
     }
   };
   getLinksList();

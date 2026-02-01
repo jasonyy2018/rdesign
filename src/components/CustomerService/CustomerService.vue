@@ -33,12 +33,16 @@
   // 查询微信微信群列表
   const vxQunList = ref<any>([]);
   const getVXQunListUnauth = async () => {
-    vxQunList.value = [];
-    const data = await getVXQunListUnauthAsync();
-    if (data.status === 200) {
-      vxQunList.value = data.data;
-    } else {
-      ElMessage.error(data.message || data.data?.message || '获取客服微信失败');
+    try {
+      vxQunList.value = [];
+      const data = await getVXQunListUnauthAsync();
+      if (data.status === 200) {
+        vxQunList.value = data.data;
+      } else {
+        console.warn('获取客服微信失败:', data.message);
+      }
+    } catch (error) {
+      console.warn('获取客服微信请求失败:', error);
     }
   };
   getVXQunListUnauth();

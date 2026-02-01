@@ -29,8 +29,12 @@
   const route = useRoute();
 
   // 增加网站访问量
-  const addWebsiteViews = () => {
-    addWebsiteViewsAsync();
+  const addWebsiteViews = async () => {
+    try {
+      await addWebsiteViewsAsync();
+    } catch (error) {
+      console.warn('增加网站访问量请求失败:', error);
+    }
   };
   addWebsiteViews();
 

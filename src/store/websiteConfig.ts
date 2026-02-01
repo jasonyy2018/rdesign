@@ -57,11 +57,15 @@ export const useWebsiteConfigStore = defineStore('websiteConfig', () => {
   }
   // 查询网站配置信息
   async function getWebsiteConfig() {
-    const data = await getWebsiteConfigAsync();
-    if (data.status === 200) {
-      saveWebsiteConfig(data.data);
-    } else {
-      ElMessage.error(data.message);
+    try {
+      const data = await getWebsiteConfigAsync();
+      if (data.status === 200) {
+        saveWebsiteConfig(data.data);
+      } else {
+        console.warn('获取网站配置失败:', data.message);
+      }
+    } catch (error) {
+      console.warn('获取网站配置请求失败:', error);
     }
   }
   return {
