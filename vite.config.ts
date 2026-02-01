@@ -138,7 +138,7 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
           const app = express();
           const staticDir = path.resolve(__dirname, VITE_OUTPUT_DIR);
           app.use(express.static(staticDir));
-          app.get('/:path*', (req, res) => {
+          app.get('*path', (req, res) => {
             if (req.path.startsWith('/api')) return;
             res.sendFile(path.join(staticDir, 'index.html'));
           });
