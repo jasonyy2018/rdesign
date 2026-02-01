@@ -138,8 +138,8 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
           const app = express();
           const staticDir = path.resolve(__dirname, VITE_OUTPUT_DIR);
           app.use(express.static(staticDir));
-          app.get('*path', (req, res) => {
-            if (req.path.startsWith('/api')) return;
+          app.get('*', (req, res) => {
+            if (req.path.startsWith('/api') || req.path.startsWith('/huajian')) return;
             res.sendFile(path.join(staticDir, 'index.html'));
           });
 
@@ -280,11 +280,13 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
       proxy: {
         '/huajian': {
           target: 'http://localhost:3000',
-          changeOrigin: true
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/huajian/, '')
         },
         '/api': {
           target: 'http://localhost:3000',
-          changeOrigin: true
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, '')
         }
       }
     }

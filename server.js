@@ -18,7 +18,11 @@ const distPath = path.join(__dirname, 'dist');
 const proxyOptions = {
   target: backendUrl,
   changeOrigin: true,
-  secure: false // 如果后端是 self-signed certificate 可以设为 false
+  secure: false,
+  pathRewrite: {
+    '^/huajian': '', // 移除 /huajian 前缀
+    '^/api': '' // 移除 /api 前缀
+  }
 };
 
 app.use('/huajian', createProxyMiddleware(proxyOptions));
@@ -42,10 +46,10 @@ const staticOptions = {
 app.use(serveStatic(distPath, staticOptions));
 
 // SPA 路由回退：所有不匹配的路由都返回 index.html
-// 在 Express 5 中，通配符语法已更改，必须使用 *name 形式的通配符
-// 使用 *path 来匹配所有路径（包含根路径）
-app.get('*path', (req, res) => {
-  if (req.path.startsWith('/api')) return;
+// 在 Express 5 中，通配符语法已更改，使用 * 来匹配所有路径
+app.get('*', (req, res) => {
+  // 排除 API 和 代理路径
+  if (req.path.startsWith('/api') || req.path.startsWith('/huajian')) return;
   res.sendFile(path.join(distPath, 'index.html'));
 });
 
