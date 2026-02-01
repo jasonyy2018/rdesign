@@ -6,7 +6,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 const port = process.env.PORT || 8080;
-const backendUrl = process.env.BACKEND_URL || 'https://rdes.togomol.com';
+const backendUrl = process.env.BACKEND_URL || 'http://119.91.202.144:3399';
 
 // 启用 Gzip 压缩
 app.use(compression());

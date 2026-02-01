@@ -38,7 +38,7 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
       cssCodeSplit: true,
       reportCompressedSize: false,
       target: 'esnext',
-      minify: isProduction ? 'terser' : 'esbuild',
+      minify: 'esbuild', // esbuild is 10-100x faster than terser
       assetsInlineLimit: 4096,
       chunkSizeWarningLimit: 2000,
       assetsDir: 'static',
@@ -74,7 +74,7 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
           drop_console: true,
           drop_debugger: true,
           pure_funcs: ['console.*'],
-          passes: 3,
+          passes: 1, // Reduced from 3 for faster builds
           dead_code: true,
           unused: true
         },
@@ -242,7 +242,7 @@ export default defineConfig(async ({ command, mode }: ConfigEnv): Promise<UserCo
               path.join(outputPath, 'sitemap.html')
             );
             // 3. Templates (Parallel batches to save memory and speed up)
-            const BATCH_SIZE = 10;
+            const BATCH_SIZE = 20; // Increased from 10 for faster prerendering
             for (let i = 0; i < templates.length; i += BATCH_SIZE) {
               const batch = templates.slice(i, i + BATCH_SIZE);
               console.log(
