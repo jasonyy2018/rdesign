@@ -132,6 +132,19 @@ app.post('/huajian/resume/saveResume', authMiddleware, async (req, res) => {
   res.json({ code: 200, data: resume });
 });
 
+// --- 职场攻略 (WordPress 接口模拟) ---
+app.get('/articles/wp-json/wp/v2/posts', (req, res) => {
+  res.json([
+    {
+      id: 1,
+      title: { rendered: '本地指南：如何通过 AI 优化你的简历' },
+      excerpt: { rendered: '本文将介绍如何利用本地部署的 AI 职升姬进行简历的高效优化...' },
+      date: new Date().toISOString(),
+      link: '#'
+    }
+  ]);
+});
+
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 后端已启动: http://localhost:${PORT}`);
 });

@@ -11,7 +11,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      test: [ 'CMD-SHELL', 'pg_isready -U postgres' ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -33,7 +33,7 @@ services:
       - AI_MODEL=zai-glm-4.7
       - JWT_SECRET=your_super_secret_key_123456
     ports:
-      - '3000:3000'
+      - '3004:3000'
 
   # 3. Frontend Web Server
   web:
@@ -46,7 +46,7 @@ services:
       - '8084:8080'
     environment:
       - BACKEND_URL=http://backend:3000
-      - ARTICLES_URL=http://119.91.202.144:3210
+      - ARTICLES_URL=http://backend:3000
       - PORT=8080
     depends_on:
       - backend
