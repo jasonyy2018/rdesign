@@ -1,0 +1,16 @@
+# 端口配置
+PORT=3000
+
+# PostgreSQL 连接字符串
+DATABASE_URL="postgresql://postgres:password@localhost:5432/rdesign?schema=public"
+
+# AI 配置
+# 如果使用 Cerebras: https://api.cerebras.ai/v1
+# 如果使用 DeepSeek: https://api.deepseek.com
+AI_BASE_URL="https://api.cerebras.ai/v1"
+AI_API_KEY="你的_API_KEY"
+AI_MODEL="llama3.1-70b"
+
+# JWT 秘钥
+JWT_SECRET="your_super_secret_key_123456"
+

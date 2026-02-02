@@ -1,19 +1,55 @@
 services:
-  ai-zhishengji:
-    container_name: ai-zhishengji-web
+  # 1. PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    container_name: rdesign-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: rdesign
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Replicated Backend (The one we just built)
+  backend:
+    build:
+      context: ./server-backend
+      dockerfile: Dockerfile
+    container_name: rdesign-backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/rdesign?schema=public
+      - PORT=3000
+      - CEREBRAS_API_KEY=csk-w4365x8x3hde35nnphn44jc4mtkntjyvfhym5x56yh9djwy2
+      - AI_MODEL=zai-glm-4.7
+      - JWT_SECRET=your_super_secret_key_123456
+    ports:
+      - '3000:3000'
+
+  # 3. Frontend Web Server
+  web:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: rdesign-web
     restart: always
     ports:
       - '8084:8080'
     environment:
-      - BACKEND_URL=http://119.91.202.144:3399
+      - BACKEND_URL=http://backend:3000
       - ARTICLES_URL=http://119.91.202.144:3210
       - PORT=8080
-    # 直接通过 IP:端口 访问，无需 Nginx
-    # 访问方式: http://<服务器IP>:8084
+    depends_on:
+      - backend
 
-    ## 执行命令
-    ## docker-compose down
-    ## docker-compose up --build -d
+volumes:
+  postgres_data:
