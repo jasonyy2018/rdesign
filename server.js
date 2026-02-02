@@ -35,14 +35,36 @@ app.use((req, res, next) => {
 });
 
 // 2. 代理配置：将 /huajian 和 /api 请求代理到后端服务器
-// 注意：后端期望保留 /huajian 前缀，所以不要重写路径
-const proxyOptions = {
+// 注意：后端期望的路径不包含 /huajian 前缀，需要重写路径
+const huajianProxyOptions = {
+  target: backendUrl,
+  changeOrigin: true,
+  secure: false,
+  logLevel: 'debug',
+  pathRewrite: {
+    '^/huajian': '' // 去掉 /huajian 前缀，例如 /huajian/common/xxx -> /common/xxx
+  },
+  onProxyReq: (proxyReq, req) => {
+    // 确保 Host 头部正确
+    proxyReq.setHeader('Host', new URL(backendUrl).host);
+    const rewrittenPath = req.path.replace(/^\/huajian/, '');
+    console.log(`[Proxy] ${req.method} ${req.path} -> ${backendUrl}${rewrittenPath}`);
+  },
+  onProxyRes: (proxyRes, req) => {
+    console.log(`[Proxy Response] ${req.method} ${req.path} -> ${proxyRes.statusCode}`);
+  },
+  onError: (err, req, res) => {
+    console.error(`[Proxy Error] ${req.method} ${req.path}:`, err.message);
+    res.status(502).json({ error: 'Proxy error', message: err.message });
+  }
+};
+
+const apiProxyOptions = {
   target: backendUrl,
   changeOrigin: true,
   secure: false,
   logLevel: 'debug',
   onProxyReq: (proxyReq, req) => {
-    // 确保 Host 头部正确
     proxyReq.setHeader('Host', new URL(backendUrl).host);
     console.log(`[Proxy] ${req.method} ${req.path} -> ${backendUrl}${req.path}`);
   },
@@ -55,8 +77,8 @@ const proxyOptions = {
   }
 };
 
-app.use('/huajian', createProxyMiddleware(proxyOptions));
-app.use('/api', createProxyMiddleware(proxyOptions));
+app.use('/huajian', createProxyMiddleware(huajianProxyOptions));
+app.use('/api', createProxyMiddleware(apiProxyOptions));
 
 // 3. 职场攻略 (WordPress) 代理
 app.use(

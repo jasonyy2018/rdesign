@@ -1,0 +1,31 @@
+# ==========================================
+# Optimized Dockerfile - Uses Pre-built Assets
+# Build time: ~1-2 minutes (vs 46 minutes)
+# ==========================================
+# Usage: 
+#   1. Run `pnpm run build:spa` locally first
+#   2. Then deploy with this Dockerfile
+
+FROM node:20-slim
+
+WORKDIR /app
+
+# Only copy production dependencies file
+COPY package.json pnpm-lock.yaml ./
+
+# Install pnpm and production dependencies only
+RUN npm install -g pnpm && \
+    pnpm install --prod --no-frozen-lockfile --ignore-scripts
+
+# Copy pre-built dist and server
+COPY dist ./dist
+COPY server.js ./
+
+# Expose the port
+EXPOSE 8080
+
+# Use non-root user for security
+USER node
+
+# Start the Node server
+CMD ["node", "server.js"]
