@@ -15,7 +15,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 
 COPY package.json ./
 RUN npm config set registry https://registry.npmmirror.com && \
-    npm install
+    npm install || (npm config set registry https://registry.npmjs.org && npm install)
 
 COPY . .
 
